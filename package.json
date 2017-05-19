@@ -1,32 +1,39 @@
 {
-  "name": "@ull-esit-pl-1617/evaluar-pegjs-translate",
-  "version": "0.1.6",
-  "description": "A PEGjs exercise for ULL-ESIT-PL-16-17",
-  "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec"
+  "name": "AnalizadorDPR",
+  "version": "1.0.0",
+  "description": "Analizador DPR",
+  "main": "app.js",
+  "directories": {
+    "test": "tests"
   },
+  "dependencies": {
+    "body-parser": "*",
+    "chai": "*",
+    "del": "*",
+    "ejs": "*",
+    "express": "*",
+    "express-ejs-layouts": "*",
+    "mocha": "latest",
+    "node-sass-middleware": "*",
+    "node-static": "*",
+    "pug": "^0.1.0",
+    "serve-favicon": "^2.4.2",
+    "sinon": "*",
+    "underscore": "*",
+    "pegjs": ">=0.10.0"
+  },
+  "engines": {
+    "node": "7.x"
+  },
+  "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "git@github.com:ULL-ESIT-PL-16-17/evaluar-pegjs-translate.git"
+    "url": "https://github.com/ULL-ESIT-PL-1617/parser-pdr-example"
   },
-  "keywords": [
-    "pegjs",
-    "grammars",
-    "parsing"
-  ],
-  "author": "Casiano Rodriguez <casiano.rodriguez.leon@gmail.com>",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/ULL-ESIT-PL-16-17/evaluar-pegjs-translate/blob/master/LICENSE-MIT"
-    }
-  ],
+  "author": "Casiano",
+  "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ULL-ESIT-PL-16-17/evaluar-pegjs-translate/issues"
+    "url": "https://github.com/ULL-ESIT-PL-1617/parser-pdr-example/issues"
   },
-  "devDependencies": {
-    "chai": "*",
-    "mocha": "*",
-    "pegjs": ">=0.10.0"
-  }
+  "homepage": "https://github.com/alu0100204148/analizadordpr"
 }

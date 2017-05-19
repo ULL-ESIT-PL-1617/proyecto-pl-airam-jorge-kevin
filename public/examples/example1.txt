@@ -1,0 +1,8 @@
+
+function add(x, y) {
+  return x + y;
+}
+
+z = 1;
+y = 2 * 3;
+add(99 + z, y);

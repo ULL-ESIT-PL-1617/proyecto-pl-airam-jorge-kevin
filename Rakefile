@@ -3,22 +3,10 @@ task :default => :exe
 
 desc "Compile grammar.pegjs"
 task :compile do
-  sh "#{PEGJS} grammar.pegjs"
+  sh "#{PEGJS} -o ./public/grammar.js ./grammar/grammar.pegjs"
 end
 
-desc "Run main.js"
-task :exe => :compile do
-  sh "node main.js"
-end
-
-desc "Run mainfromfile.js input1"
-task :run => :compile do
-  sh "node mainfromfile.js input1"
-end
-
-desc "rm grammar.js"
+desc "rm ./public/grammar.js"
 task :clean do
-  sh "rm grammar.js"
+  sh "rm ./public/grammar.js"
 end
-
-

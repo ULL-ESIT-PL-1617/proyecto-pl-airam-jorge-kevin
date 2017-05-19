@@ -1,0 +1,14 @@
+
+function foo(){}
+
+function value() {
+  return 1;
+}
+
+for (x = 0, y = 0; (x * y) < 0; x = x + 1) {
+  y = x - value();
+  foo();
+  if y > 10 {
+    exit;
+  }
+}
