@@ -1,0 +1,32 @@
+{
+  "name": "@ull-esit-pl-1617/evaluar-pegjs-translate",
+  "version": "0.1.6",
+  "description": "A PEGjs exercise for ULL-ESIT-PL-16-17",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ULL-ESIT-PL-16-17/evaluar-pegjs-translate.git"
+  },
+  "keywords": [
+    "pegjs",
+    "grammars",
+    "parsing"
+  ],
+  "author": "Casiano Rodriguez <casiano.rodriguez.leon@gmail.com>",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/ULL-ESIT-PL-16-17/evaluar-pegjs-translate/blob/master/LICENSE-MIT"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/ULL-ESIT-PL-16-17/evaluar-pegjs-translate/issues"
+  },
+  "devDependencies": {
+    "chai": "*",
+    "mocha": "*",
+    "pegjs": ">=0.10.0"
+  }
+}
