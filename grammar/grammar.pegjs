@@ -56,12 +56,24 @@ assign
   }
   / expression
 
+function
+  = returnType:(TYPE | VOID) functionName:ID LEFTPAR params:(TYPE ID (COMMA TYPE ID)*)? RIGHTPAR code:block
+    {
+      return {
+        type: "function",
+        returnType: returnType,
+        functionName: functionName,
+        params: params,
+        code: code
+      };
+    }
+
 block
   = LEFTBRACE code:statements RIGHTBRACE
   {
     return {
-      type:     "block",
-      contents: code
+      type:       "block",
+      statements: code
     };
   }
 
@@ -193,39 +205,19 @@ factor
   }
 
 classBlock
-  = LEFTBRACE code:(classStatement)* RIGHTBRACE
-  {
+  = LEFTBRACE code:(classStatement)* RIGHTBRACE {
     return {
-      type:     "classBlock",
-      contents: code
+      type: "classBlock",
+      classStatement: code
     };
   }
 
 class
-  = CLASS id:ID classBlock:classBlock
-  {
+  = CLASS id:ID c:classBlock {
     return {
-      type:    "class",
-      id:      id[1],
+      type: "class",
+      id: id[1],
       content: classBlock
-    };
-  }
-
-classStatement
-  = visibility:VISIBILITY assign:assign SEMICOLON
-  {
-    return {
-      type:       "attribute",
-      visibility: visibility,
-      attribute:  assign
-    };
-  }
-  / visibility:VISIBILITY funct:function
-  {
-    return {
-      type:       "method",
-      visibility: visibility,
-      method:     funct
     };
   }
 
@@ -269,7 +261,6 @@ _ = $[ \t\n\r]*
 
 ADDOP       = PLUS / MINUS
 MULOP       = MULT / DIV
-VISIBILITY  = _"public"_ / _"private"_
 COMMA       = _","_
 PLUS        = _"+"_
 MINUS       = _"-"_
@@ -297,3 +288,4 @@ ID          = _ $([a-z_]i$([a-z0-9_]i*)) _
 COMPARASION = _ $([<>!=]"=" / [<>]) _
 DOT         = _"."_
 CLASS       = _"class"_
+VOID        = _"void"_
