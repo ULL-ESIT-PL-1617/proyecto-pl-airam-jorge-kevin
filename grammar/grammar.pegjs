@@ -76,8 +76,8 @@ block
   = LEFTBRACE code:statements RIGHTBRACE
   {
     return {
-      type:       "block",
-      statements: code
+      type:     "block",
+      contents: code
     };
   }
 
@@ -112,24 +112,6 @@ expression
     };
   }
   / term
-
-classStatement
-  = visibility:VISIBILITY assign:assign SEMICOLON
-  {
-    return {
-      type:       "attribute",
-      visibility: visibility,
-      attribute:  assign
-    };
-  }
-  / visibility:VISIBILITY funct:function
-  {
-    return {
-      type:       "method",
-      visibility: visibility,
-      method:     funct
-    };
-  }
 
 term
   = left:factor op:MULOP right:term
@@ -185,19 +167,39 @@ factor
   }
 
 classBlock
-  = LEFTBRACE code:(classStatement)* RIGHTBRACE {
+  = LEFTBRACE code:(classStatement)* RIGHTBRACE
+  {
     return {
-      type: "classBlock",
-      classStatement: code
+      type:     "classBlock",
+      contents: code
     };
   }
 
 class
-  = CLASS id:ID c:classBlock {
+  = CLASS id:ID classBlock:classBlock
+  {
     return {
-      type: "class",
-      id: id[1],
+      type:    "class",
+      id:      id[1],
       content: classBlock
+    };
+  }
+
+classStatement
+  = visibility:VISIBILITY assign:assign SEMICOLON
+  {
+    return {
+      type:       "attribute",
+      visibility: visibility,
+      attribute:  assign
+    };
+  }
+  / visibility:VISIBILITY funct:function
+  {
+    return {
+      type:       "method",
+      visibility: visibility,
+      method:     funct
     };
   }
 
