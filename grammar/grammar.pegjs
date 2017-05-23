@@ -29,6 +29,22 @@ statement
   / assign SEMICOLON
   / return SEMICOLON
 
+block
+  = LEFTBRACE code:statements RIGHTBRACE {
+    return {
+      type: "BLOCK",
+      statements: code
+    };
+  }
+
+return
+  = RETURN assign:(assign)? {
+    return {
+      type: "RETURN",
+      assign: assign
+    }
+  }
+
 sentences
   = a:(sentence)* {
     return {  sentences: a };
