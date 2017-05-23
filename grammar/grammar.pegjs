@@ -52,15 +52,6 @@ for
     };
   }
 
-class
-  = CLASS id:ID c:classBlock {
-    return {
-      type: "class",
-      id: id[1],
-      content: classBlock
-    };
-  }
-
 assign
   = (constant:CONST? type:TYPE)? id:ID ASSIGN assign:assign other:(COMMA ID ASSIGN assign)*
   {
@@ -170,26 +161,17 @@ factor
     };
   }
   / arguments
-  / LEFTPAR assg:assign RIGHTPAR
+  / LEFTPAR a:assign RIGHTPAR
   {
-    return assg;
+    return a;
   }
 
 arguments
-  = LEFTPAR args:(assign (COMMA assign)*)? RIGHTPAR
+  = LEFTPAR comma:(comma)? RIGHTPAR
   {
-    var funcArgs = [];
-
-    if (args !== undefined) {
-      funcArgs.push(args[0]);
-      args[1].forEach(x => {
-        funcArgs.push(x[1]);
-      });
-    }
-
     return {
       type:      "arguments",
-      arguments: funcArgs
+      arguments: (comma == null ? [] : comma)
     };
   }
 
