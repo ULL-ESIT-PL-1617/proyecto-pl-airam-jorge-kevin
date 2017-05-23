@@ -59,11 +59,17 @@
         / factor
 
  16. factor →
-        number
+        numeric
+        / string
+        / bool
         / ID arguments
         / ID ('.' ID arguments?)*
         / arguments
         / '(' assign ')'
 
  17. arguments →
-        '(' (assign (',' assign)*)? ')'
+        '(' (assign (',' assign)\*)? ')'
+
+ 18. numeric → NUMBER
+ 19. bool    → BOOL
+ 20. string  → STRING

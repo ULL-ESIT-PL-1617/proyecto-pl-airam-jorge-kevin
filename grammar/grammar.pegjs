@@ -65,9 +65,10 @@ assign
   / expression
 
 block
-  = LEFTBRACE code:statements RIGHTBRACE {
+  = LEFTBRACE code:statements RIGHTBRACE
+  {
     return {
-      type: "BLOCK",
+      type:       "block",
       statements: code
     };
   }
@@ -75,7 +76,7 @@ block
 return
   = RETURN assign:(assign)? {
     return {
-      type: "RETURN",
+      type:   "return",
       assign: assign
     }
   }
@@ -224,50 +225,81 @@ term
   / factor
 
 factor
-  = int:integer {
+  = numeric
+  / string
+  / bool
+  / id:ID args:arguments
+  {
     return {
-      type:  "NUM",
-      value: parseInt(int[1])
+      type: "call",
+      args: args,
+      id:   id[1]
     };
   }
-  / id:ID args:arguments {
-
-    id = id[1];
-
-    var argsTable = functionTable[id].params  === undefined ? 0 : functionTable[id].params.length;
-    var argsCall  = args.arguments.operations === undefined ? 0 : args.arguments.operations.length;
-
-    if (!functionTable[id])
-      throw "'" + id + "' not defined as function.";
-
-    else if (argsTable != argsCall)
-      throw "Invalid number of arguments for function '" + id + "'.";
+  / id:ID access:(DOT ID arguments?)+ {
+    var accessId = [];
+    access.forEach(x =>
+      accessId.push(
+        (x[2] === undefined)
+        ? { type: "attribute", id: x[1] }
+        : {type: "method", id: x[1], arguments: x[2]}
+      );
+    );
 
     return {
-      type: "CALL",
-      args: args,
+      type:   "idAccess",
+      base:   id,
+      access: accessId
+    };
+  }
+  / id:ID
+  {
+    return {
+      type: "id",
       id:   id
     };
   }
-  / id1:ID (DOT id2:ID args:arguments)* {
-    return {
-      type: "ID",
-      id1: id1,
-      id2: id2,
-      arguments: args
-    };
-  }
-  / LEFTPAR a:assign RIGHTPAR {
+  / arguments
+  / LEFTPAR a:assign RIGHTPAR
+  {
     return a;
   }
 
 arguments
-  = LEFTPAR comma:(comma)? RIGHTPAR {
+  = LEFTPAR comma:(comma)? RIGHTPAR
+  {
     return {
-      type:      "ARGUMENTS",
+      type:      "arguments",
       arguments: (comma == null ? [] : comma)
     };
   }
+
+numeric
+ = num:NUMBER
+ {
+   return {
+     type:  "numeric",
+     value: parseInt(num[1])
+   };
+ }
+
+string
+ = str:STRING
+ {
+   return {
+     type:  "string",
+     value: str[1]
+   }
+ }
+
+bool
+ = bool:BOOL
+ {
+   return {
+     type:  "bool",
+     value: bool[1]
+   }
+ }
 
 _ = $[ \t\n\r]*
 
@@ -294,6 +326,7 @@ ELSE        = _"else"_
 CONST       = _"const"_
 TYPE        = _"numeric"_ / _"string"_ / _"bool"_
 NUMBER      = _ $[0-9]+ _
+BOOL        = _"true"_ / _"false"_
 ID          = _ $([a-z_]i$([a-z0-9_]i*)) _
 COMPARASION = _ $([<>!=]"=" / [<>]) _
 DOT         = _"."_
