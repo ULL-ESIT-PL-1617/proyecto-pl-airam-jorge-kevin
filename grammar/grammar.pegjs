@@ -64,6 +64,22 @@ assign
   }
   / expression
 
+block
+  = LEFTBRACE code:statements RIGHTBRACE {
+    return {
+      type: "BLOCK",
+      statements: code
+    };
+  }
+
+return
+  = RETURN assign:(assign)? {
+    return {
+      type: "RETURN",
+      assign: assign
+    }
+  }
+
 sentences
   = a:(sentence)* {
     return {  sentences: a };
@@ -214,17 +230,6 @@ factor
       value: parseInt(int[1])
     };
   }
-  / RETURN assign:(assign)? {
-    return {
-      type: "RETURN",
-      assign: (assign == null ? {} : assign)
-    };
-  }
-  / EXIT {
-    return {
-      type: "EXIT"
-    };
-  }
   / id:ID args:arguments {
 
     id = id[1];
@@ -244,17 +249,12 @@ factor
       id:   id
     };
   }
-  / id:ID {
-
-    id = id[1];
-
-    var currSymbolTable = getCurrentSymbolTable();
-    if ((currSymbolTable[id] != "volatile") && (currSymbolTable[id] != "constant"))
-      throw id + " not defined as variable (or constant)";
-
+  / id1:ID (DOT id2:ID args:arguments)* {
     return {
       type: "ID",
-      id: id
+      id1: id1,
+      id2: id2,
+      arguments: args
     };
   }
   / LEFTPAR a:assign RIGHTPAR {
@@ -296,3 +296,4 @@ TYPE        = _"numeric"_ / _"string"_ / _"bool"_
 NUMBER      = _ $[0-9]+ _
 ID          = _ $([a-z_]i$([a-z0-9_]i*)) _
 COMPARASION = _ $([<>!=]"=" / [<>]) _
+DOT         = _"."_
