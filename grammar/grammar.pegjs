@@ -113,6 +113,24 @@ expression
   }
   / term
 
+classStatement
+  = visibility:VISIBILITY assign:assign SEMICOLON
+  {
+    return {
+      type:       "attribute",
+      visibility: visibility,
+      attribute:  assign
+    };
+  }
+  / visibility:VISIBILITY funct:function
+  {
+    return {
+      type:       "method",
+      visibility: visibility,
+      method:     funct
+    };
+  }
+
 term
   = left:factor op:MULOP right:term
   {
@@ -215,6 +233,7 @@ _ = $[ \t\n\r]*
 
 ADDOP       = PLUS / MINUS
 MULOP       = MULT / DIV
+VISIBILITY  = _"public"_ / _"private"_
 COMMA       = _","_
 PLUS        = _"+"_
 MINUS       = _"-"_

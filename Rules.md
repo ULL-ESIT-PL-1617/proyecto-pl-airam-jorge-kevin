@@ -31,11 +31,11 @@
         ['else' block ]?
 
  08. assign →
-        ['const'? type]? ID '=' assign (',' ID '=' assign)*
+        ['const'? TYPE]? ID '=' assign (',' ID '=' assign)*
         / expression
 
  09. function →
-        (type|'void') ID '(' (type ID (',' type ID)* )? ')' block
+        (TYPE|'void') ID '(' (TYPE ID (',' TYPE ID)* )? ')' block
 
  10. return →
         'return' assign?
