@@ -161,17 +161,26 @@ factor
     };
   }
   / arguments
-  / LEFTPAR a:assign RIGHTPAR
+  / LEFTPAR assg:assign RIGHTPAR
   {
-    return a;
+    return assg;
   }
 
 arguments
-  = LEFTPAR comma:(comma)? RIGHTPAR
+  = LEFTPAR args:(assign (COMMA assign)*)? RIGHTPAR
   {
+    var funcArgs = [];
+
+    if (args !== undefined) {
+      funcArgs.push(args[0]);
+      args[1].forEach(x => {
+        funcArgs.push(x[1]);
+      });
+    }
+
     return {
       type:      "arguments",
-      arguments: (comma == null ? [] : comma)
+      arguments: funcArgs
     };
   }
 
