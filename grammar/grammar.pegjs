@@ -174,6 +174,15 @@ classBlock
     };
   }
 
+class
+  = CLASS id:ID c:classBlock {
+    return {
+      type: "class",
+      id: id[1],
+      content: classBlock
+    };
+  }
+
 arguments
   = LEFTPAR comma:(comma)? RIGHTPAR
   {
@@ -240,3 +249,4 @@ BOOL        = _"true"_ / _"false"_
 ID          = _ $([a-z_]i$([a-z0-9_]i*)) _
 COMPARASION = _ $([<>!=]"=" / [<>]) _
 DOT         = _"."_
+CLASS       = _"class"_
