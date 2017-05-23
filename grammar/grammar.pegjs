@@ -166,6 +166,14 @@ factor
     return a;
   }
 
+classBlock
+  = LEFTBRACE code:(classStatement)* RIGHTBRACE {
+    return {
+      type: "classBlock",
+      classStatement: code
+    };
+  }
+
 arguments
   = LEFTPAR comma:(comma)? RIGHTPAR
   {
