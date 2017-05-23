@@ -12,15 +12,22 @@
 }
 
 start
-  = a:sentences {
+  = stt:statements {
     return {
-      reservedWords:        Array.from(reservedWords),
-      initialConstantTable: initialConstantTable,
-      functionTable:        functionTable,
-      symbolTable:          symbolTable,
-      result: a
+      reservedWords:  Array.from(reservedWords),
+      symbolTable:    symbolTable,
+      result:         a
     };
   }
+
+statement
+  = if
+  / for
+  / while
+  / function
+  / class
+  / assign SEMICOLON
+  / return SEMICOLON
 
 sentences
   = a:(sentence)* {
