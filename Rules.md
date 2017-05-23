@@ -30,6 +30,9 @@
         'for' '(' assign ';' expression ';' assign ')' block
         ['else' block ]?
 
+ 09. parexpression →
+        '(' expression ')'
+
  08. assign →
         ['const'? TYPE]? ID '=' assign (',' ID '=' assign)*
         / expression
@@ -63,7 +66,8 @@
         / string
         / bool
         / ID arguments
-        / ID ('.' ID arguments?)*
+        / ID ('.' ID arguments?)+
+        / ID
         / arguments
         / '(' assign ')'
 

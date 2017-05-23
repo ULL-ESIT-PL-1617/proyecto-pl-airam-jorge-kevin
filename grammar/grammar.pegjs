@@ -21,6 +21,15 @@ start
     };
   }
 
+block
+  = LEFTBRACE code:statements RIGHTBRACE
+  {
+    return {
+      type:       "block",
+      statements: code
+    };
+  }
+
 statements
   = stt:(statement)*
   {
@@ -35,6 +44,59 @@ statement
   / class
   / assg:assign SEMICOLON { return assg; }
   / retu:return SEMICOLON { return retu; }
+
+if
+  = IF ifCheck:parexpression ifContents:block elseIfBlock:(ELIF parexpression block)* elseBlock:(ELSE block)?
+  {
+    var ifCode = {
+     check:    ifCheck,
+     contents: ifContents
+    };
+
+    var elseCode = {
+      contents: (elseBlock === undefined) ? undefined : elseBlock[2]
+    };
+
+    let elseIfCode = [];
+    elseIfBlock.forEach(x => elseIfCode.push({
+      check:    x[1],
+      contents: x[2]
+    }));
+
+    return {
+      type:       "IF",
+      ifCode:     ifCode,
+      elseIfCode: elseIfCode,
+      elseCode:   elseCode
+    }
+  }
+
+while
+  = WHILE check:parexpression block:block elseBlock:(ELSE block)?
+  {
+    return {
+      type:     "while",
+      check:    check,
+      contents: block,
+      else:     elseBlock
+    };
+  }
+
+for
+  = FOR LEFTPAR start:assign SEMICOLON check:expression SEMICOLON iterate:assign RIGHTPAR block:block elseBlock:(ELSE block)?
+  {
+    return {
+      type:     "for",
+      start:    start,
+      check:    check,
+      iterate:  iterate,
+      contents: block,
+      else:     elseBlock
+    };
+  }
+
+parexpression
+  = LEFTPAR exp:expression RIGHTPAR { return exp; }
 
 assign
   = (constant:CONST? type:TYPE)? id:ID ASSIGN assign:assign other:(COMMA ID ASSIGN assign)*
@@ -77,15 +139,6 @@ function
       };
     }
 
-block
-  = LEFTBRACE code:statements RIGHTBRACE
-  {
-    return {
-      type:       "block",
-      statements: code
-    };
-  }
-
 return
   = RETURN assign:(assign)?
   {
@@ -95,57 +148,39 @@ return
     }
   }
 
-if
-  = IF ifCheck:parexpression ifContents:block elseIfBlock:(ELIF parexpression block)* elseBlock:(ELSE block)?
-  {
-    var ifCode = {
-     check:    ifCheck,
-     contents: ifContents
-    };
-
-    var elseCode = {
-      contents: (elseBlock === undefined) ? undefined : elseBlock[2]
-    };
-
-    let elseIfCode = [];
-    elseIfBlock.forEach(x => elseIfCode.push({
-      check:    x[1],
-      contents: x[2]
-    }));
-
+class
+  = CLASS id:ID c:classBlock {
     return {
-      type:       "IF",
-      ifCode:     ifCode,
-      elseIfCode: elseIfCode,
-      elseCode:   elseCode
+      type: "class",
+      id: id[1],
+      content: classBlock
+    };
+  }
+
+classBlock
+  = LEFTBRACE code:(classStatement)* RIGHTBRACE {
+    return {
+      type: "classBlock",
+      classStatement: code
+    };
+  }
+
+classStatement
+  = visibility:VISIBLITY assign:assign SEMICOLON
+  {
+    return {
+      type:       "attribute",
+      visibility: visibility,
+      assign:     assign
     }
   }
-
-while
-  = WHILE check:parexpression block:block elseBlock:(ELSE block)?
+  / visibility:VISIBLITY func:function
   {
     return {
-      type:     "while",
-      check:    check,
-      contents: block,
-      else:     elseBlock
-    };
-  }
-
-parexpression
-  = LEFTPAR exp:expression RIGHTPAR { return exp; }
-
-for
-  = FOR LEFTPAR start:assign SEMICOLON check:expression SEMICOLON iterate:assign RIGHTPAR block:block elseBlock:(ELSE block)?
-  {
-    return {
-      type:     "for",
-      start:    start,
-      check:    check,
-      iterate:  iterate,
-      contents: block,
-      else:     elseBlock
-    };
+      type:       "method",
+      visibility: visibility,
+      method:     func
+    }
   }
 
 expression
@@ -208,36 +243,24 @@ factor
     };
   }
   / arguments
-  / LEFTPAR a:assign RIGHTPAR
-  {
-    return a;
-  }
-
-classBlock
-  = LEFTBRACE code:(classStatement)* RIGHTBRACE {
-    return {
-      type: "classBlock",
-      classStatement: code
-    };
-  }
-
-class
-  = CLASS id:ID c:classBlock {
-    return {
-      type: "class",
-      id: id[1],
-      content: classBlock
-    };
-  }
+  / LEFTPAR assign:assign RIGHTPAR { return assign; }
 
 arguments
-  = LEFTPAR comma:(comma)? RIGHTPAR
-  {
+  = LEFTPAR args:(assign (COMMA assign)*)? RIGHTPAR
+   {
+    var funcArgs = [];
+    if (args !== undefined) {
+      funcArgs.push(args[0]);
+      args[1].forEach(x => {
+        funcArgs.push(x[1]);		
+      });
+    }
+
     return {
       type:      "arguments",
-      arguments: (comma == null ? [] : comma)
+      arguments: funcArgs
     };
-  }
+   }
 
 numeric
  = num:NUMBER
@@ -270,6 +293,7 @@ _ = $[ \t\n\r]*
 
 ADDOP       = PLUS / MINUS
 MULOP       = MULT / DIV
+VISIBLITY   = _"public"_ / _"private"_
 COMMA       = _","_
 PLUS        = _"+"_
 MINUS       = _"-"_
