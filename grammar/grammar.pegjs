@@ -5,18 +5,19 @@
   ]);
 
   var symbolTable = {
-    PI:     3.141516,
+    PI:     3.14159265359,
     TRUE:   true,
     FALSE:  false
   };
 }
 
 start
-  = stt:statements {
+  = stt:statements
+  {
     return {
-      reservedWords:  Array.from(reservedWords),
-      symbolTable:    symbolTable,
-      result:         a
+      reservedWords: Array.from(reservedWords),
+      symbolTable:   symbolTable,
+      result:        stt
     };
   }
 
@@ -26,8 +27,42 @@ statement
   / while
   / function
   / class
-  / assign SEMICOLON
-  / return SEMICOLON
+  / assg:assign SEMICOLON { return assg; }
+  / retu:return SEMICOLON { return retu; }
+
+for
+  = FOR LEFTPAR start:assign SEMICOLON check:expression SEMICOLON iterate:assign RIGHTPAR block:block elseBlock:(ELSE block)?
+  {
+    return {
+      type:     "for",
+      start:    start,
+      check:    check,
+      iterate:  iterate,
+      contents: block,
+      else:     elseBlock
+    }
+  }
+
+assign
+  = (constant:CONST? type:TYPE)? id:ID ASSIGN assign:assign other:(COMMA ID ASSIGN assign)*
+  {
+    var assignations = [];
+
+    assignations.push({id: id, assign: assign});
+    other.forEach(x => assignations.push({id: x[1], assign: x[3]}));
+
+    if (type === undefined) return {
+      type:         "assign",
+      assignations: assignations
+    }
+    else return {
+      type:         "declaration",
+      constant:     (constant === undefined),
+      varType:      type,
+      assignations: assignations
+    }
+  }
+  / expression
 
 sentences
   = a:(sentence)* {
@@ -249,7 +284,7 @@ RIGHTPAR    = _")"_
 SEMICOLON   = _";"_
 LEFTBRACE   = _"{"_
 RIGHTBRACE  = _"}"_
-LOOP        = _"for"_
+FOR         = _"for"_
 RETURN      = _"return"_
 EXIT        = _"exit"_
 FUNCTION    = _"function"_
@@ -257,6 +292,7 @@ IF          = _"if"_
 ELIF        = _"else if"_
 ELSE        = _"else"_
 CONST       = _"const"_
+TYPE        = _"numeric"_ / _"string"_ / _"bool"_
 NUMBER      = _ $[0-9]+ _
 ID          = _ $([a-z_]i$([a-z0-9_]i*)) _
 COMPARASION = _ $([<>!=]"=" / [<>]) _

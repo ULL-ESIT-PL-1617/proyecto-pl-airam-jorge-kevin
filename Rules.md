@@ -18,15 +18,17 @@
         / return ';'
 
  05. if →
-        'if' '(' condition1 ')' block
-        ['else' 'if' '(' condition2 ')' block]*  
-        ['else' '(' condition ')' block]?
+        'if' '(' expression ')' block
+        ['else' 'if' '(' expression ')' block]*  
+        ['else' '(' expression ')' block]?
 
  06. while →
-        'while' '(' condition ')' block ['else' block ]
+        'while' '(' condition ')' block
+        ['else' block ]?
 
  07. for →
         'for' '(' assign ';' expression ';' assign ')' block
+        ['else' block ]?
 
  08. assign →
         ['const'? type]? ID '=' assign (',' ID '=' assign)*
