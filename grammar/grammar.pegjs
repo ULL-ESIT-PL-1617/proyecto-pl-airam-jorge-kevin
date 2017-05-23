@@ -52,6 +52,15 @@ for
     };
   }
 
+class
+  = CLASS id:ID c:classBlock {
+    return {
+      type: "class",
+      id: id[1],
+      content: classBlock
+    };
+  }
+
 assign
   = (constant:CONST? type:TYPE)? id:ID ASSIGN assign:assign other:(COMMA ID ASSIGN assign)*
   {
