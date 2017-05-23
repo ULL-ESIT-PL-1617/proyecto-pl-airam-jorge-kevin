@@ -57,14 +57,23 @@ assign
   / expression
 
 function
-  = returnType:(TYPE | VOID) functionName:ID LEFTPAR params:(TYPE ID (COMMA TYPE ID)*)? RIGHTPAR code:block
+  = returnType:RETURNTYPE functionName:ID LEFTPAR params:(TYPE ID (COMMA TYPE ID)*)? RIGHTPAR block:block
     {
+      var funcParams = [];
+
+      if (params !=== undefined) {
+        funcParams.push({type: "parameter", vartype: params[0], id: params[1]});
+        params.forEach(x => {
+          funcParams.push({ type: "parameter", vartype: x[1], id: x[2]});
+        });
+      }
+
       return {
-        type: "function",
-        returnType: returnType,
+        type:         "function",
+        returnType:   returnType,
         functionName: functionName,
-        params: params,
-        code: code
+        params:       funcParams,
+        contents:     block
       };
     }
 
@@ -282,6 +291,7 @@ ELIF        = _"else"_"if"_
 ELSE        = _"else"_
 CONST       = _"const"_
 TYPE        = _"numeric"_ / _"string"_ / _"bool"_
+RETURNTYPE  = TYPE / VOID
 NUMBER      = _ $[0-9]+ _
 BOOL        = _"true"_ / _"false"_
 ID          = _ $([a-z_]i$([a-z0-9_]i*)) _
