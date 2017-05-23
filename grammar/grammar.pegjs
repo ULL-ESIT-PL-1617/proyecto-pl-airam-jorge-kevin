@@ -1,69 +1,14 @@
 {
   var reservedWords = new Set([
-    "else", "if", "exit", "return", "for", "function", "const"
+    "else", "if", "while", "for", "const", "numeric", "bool", "string", "void",
+    "public", "private", "class", "true", "false", "return"
   ]);
 
-  var functionTable = {};
-
-  var symbolTable = { // Tipos: constant, volatile
-    PI:     "constant",
-    TRUE:   "constant",
-    FALSE:  "constant"
+  var symbolTable = {
+    PI:     3.141516,
+    TRUE:   true,
+    FALSE:  false
   };
-
-  var initialConstantTable = {
-    PI:    Math.PI,
-    TRUE:  1,
-    FALSE: 0
-  };
-
-  var depth   = 0;
-  var idStack = [];
-
-  var resolveParams = function(par) {
-      var params = [];
-      if (par != null) {
-        params.push(par[0][1]);
-        par[1].forEach(x => params.push(x[1][1]));
-      }
-      return params;
-  }
-
-  var symbolTableFromParams = function(params) {
-    var table = {}
-    params.forEach(x => table[x] = "volatile");
-    return table;
-  }
-
-  var saveFunctionInTable = function(id, params) {
-
-    if (depth > 0)
-      throw "Cant declare function inside another function.";
-
-    else if (functionTable[id])
-      throw "Function already declared '" + id + "'.";
-
-    else if (reservedWords.has(id))
-      throw "Cant declare reserved word as function '" + id + "'";
-
-    functionTable[id] = {
-      params: params,
-      symbolTable: symbolTableFromParams(params)
-    }
-  }
-
-  var currentStackId = function() {
-    return idStack[idStack.length - 1];
-  }
-
-  var getCurrentSymbolTable = function() {
-    if (depth == 0)
-      return symbolTable;
-    else
-      for (var f in functionTable)
-        if (f == currentStackId())
-          return functionTable[f].symbolTable;
-  }
 }
 
 start
@@ -281,9 +226,6 @@ arguments
       arguments: (comma == null ? [] : comma)
     };
   }
-
-integer "integer"
-  = NUMBER
 
 _ = $[ \t\n\r]*
 

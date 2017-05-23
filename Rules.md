@@ -59,7 +59,7 @@
  16. factor →
         number
         / ID arguments
-        / ID
+        / ID ('.' ID arguments?)*
         / arguments
         / '(' assign ')'
 
