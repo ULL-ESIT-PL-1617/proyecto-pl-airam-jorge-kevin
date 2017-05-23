@@ -179,26 +179,34 @@ factor
     };
   }
   / arguments
-  / LEFTPAR assg:assign RIGHTPAR
+  / LEFTPAR a:assign RIGHTPAR
   {
-    return assg;
+    return a;
+  }
+
+classBlock
+  = LEFTBRACE code:(classStatement)* RIGHTBRACE {
+    return {
+      type: "classBlock",
+      classStatement: code
+    };
+  }
+
+class
+  = CLASS id:ID c:classBlock {
+    return {
+      type: "class",
+      id: id[1],
+      content: classBlock
+    };
   }
 
 arguments
-  = LEFTPAR args:(assign (COMMA assign)*)? RIGHTPAR
+  = LEFTPAR comma:(comma)? RIGHTPAR
   {
-    var funcArgs = [];
-
-    if (args !== undefined) {
-      funcArgs.push(args[0]);
-      args[1].forEach(x => {
-        funcArgs.push(x[1]);
-      });
-    }
-
     return {
       type:      "arguments",
-      arguments: funcArgs
+      arguments: (comma == null ? [] : comma)
     };
   }
 
@@ -260,3 +268,4 @@ BOOL        = _"true"_ / _"false"_
 ID          = _ $([a-z_]i$([a-z0-9_]i*)) _
 COMPARASION = _ $([<>!=]"=" / [<>]) _
 DOT         = _"."_
+CLASS       = _"class"_
