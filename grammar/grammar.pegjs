@@ -124,6 +124,17 @@ function_statement
     };
   }
 
+loop_statement
+  = LOOP LEFTPAR left:comma SEMICOLON condition:condition SEMICOLON right:comma RIGHTPAR LEFTBRACE code:sentences RIGHTBRACE {
+    return {
+      type:      "LOOP",
+      left:      left,
+      condition: condition,
+      right:     right,
+      sentences: code.sentences
+    };
+  }
+
 while
   = WHILE LEFTPAR e:expression RIGHTPAR b:block el:(ELSE block)? {
     return {
@@ -133,7 +144,6 @@ while
       else: el
     };
   }
-
 
 assign
   = c:CONST? id:ID ASSIGN right:assign {
