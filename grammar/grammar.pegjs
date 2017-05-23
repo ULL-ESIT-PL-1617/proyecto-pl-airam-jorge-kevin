@@ -20,6 +20,14 @@ start
     };
   }
 
+statements
+  = s:(statement)* {
+    return {
+      statement: s
+    };
+  }
+
+
 statement
   = if
   / for
@@ -116,16 +124,16 @@ function_statement
     };
   }
 
-loop_statement
-  = LOOP LEFTPAR left:comma SEMICOLON condition:condition SEMICOLON right:comma RIGHTPAR LEFTBRACE code:sentences RIGHTBRACE {
+while
+  = WHILE LEFTPAR e:expression RIGHTPAR b:block el:(ELSE block)? {
     return {
-      type:      "LOOP",
-      left:      left,
-      condition: condition,
-      right:     right,
-      sentences: code.sentences
+      type: "WHILE",
+      expression: e,
+      block: b,
+      else: el
     };
   }
+
 
 assign
   = c:CONST? id:ID ASSIGN right:assign {
@@ -249,7 +257,7 @@ RIGHTPAR    = _")"_
 SEMICOLON   = _";"_
 LEFTBRACE   = _"{"_
 RIGHTBRACE  = _"}"_
-LOOP        = _"for"_
+WHILE       = _"while"_
 RETURN      = _"return"_
 EXIT        = _"exit"_
 FUNCTION    = _"function"_
