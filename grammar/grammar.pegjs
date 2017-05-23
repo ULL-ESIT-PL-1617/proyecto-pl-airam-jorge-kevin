@@ -22,13 +22,10 @@ start
   }
 
 statements
-  = s:(statement)*
+  = stt:(statement)*
   {
-    return {
-      statement: s
-    };
+    return sst;
   }
-
 
 statement
   = if
@@ -38,19 +35,6 @@ statement
   / class
   / assg:assign SEMICOLON { return assg; }
   / retu:return SEMICOLON { return retu; }
-
-for
-  = FOR LEFTPAR start:assign SEMICOLON check:expression SEMICOLON iterate:assign RIGHTPAR block:block elseBlock:(ELSE block)?
-  {
-    return {
-      type:     "for",
-      start:    start,
-      check:    check,
-      iterate:  iterate,
-      contents: block,
-      else:     elseBlock
-    };
-  }
 
 assign
   = (constant:CONST? type:TYPE)? id:ID ASSIGN assign:assign other:(COMMA ID ASSIGN assign)*
@@ -90,12 +74,54 @@ return
     }
   }
 
+if
+  = IF ifCheck:parexpression ifContents:block elseIfBlock:(ELIF parexpression block)* elseBlock:(ELSE block)?
+  {
+    var ifCode = {
+     check:    ifCheck,
+     contents: ifContents
+    };
+
+    var elseCode = {
+      contents: (elseBlock === undefined) ? undefined : elseBlock[2]
+    };
+
+    let elseIfCode = [];
+    elseIfBlock.forEach(x => elseIfCode.push({
+      check:    x[1],
+      contents: x[2]
+    }));
+
+    return {
+      type:       "IF",
+      ifCode:     ifCode,
+      elseIfCode: elseIfCode,
+      elseCode:   elseCode
+    }
+  }
+
 while
-  = WHILE LEFTPAR check:expression RIGHTPAR block:block elseBlock:(ELSE block)?
+  = WHILE check:parexpression block:block elseBlock:(ELSE block)?
   {
     return {
       type:     "while",
       check:    check,
+      contents: block,
+      else:     elseBlock
+    };
+  }
+
+parexpression
+  = LEFTPAR exp:expression RIGHTPAR { return exp; }
+
+for
+  = FOR LEFTPAR start:assign SEMICOLON check:expression SEMICOLON iterate:assign RIGHTPAR block:block elseBlock:(ELSE block)?
+  {
+    return {
+      type:     "for",
+      start:    start,
+      check:    check,
+      iterate:  iterate,
       contents: block,
       else:     elseBlock
     };
@@ -261,7 +287,7 @@ RETURN      = _"return"_
 EXIT        = _"exit"_
 FUNCTION    = _"function"_
 IF          = _"if"_
-ELIF        = _"else if"_
+ELIF        = _"else"_"if"_
 ELSE        = _"else"_
 CONST       = _"const"_
 TYPE        = _"numeric"_ / _"string"_ / _"bool"_
