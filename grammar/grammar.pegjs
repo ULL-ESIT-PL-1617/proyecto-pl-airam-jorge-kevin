@@ -21,6 +21,14 @@ start
     };
   }
 
+statements
+  = s:(statement)* {
+    return {
+      statement: s
+    };
+  }
+
+
 statement
   = if
   / for
@@ -160,6 +168,16 @@ loop_statement
       condition: condition,
       right:     right,
       sentences: code.sentences
+    };
+  }
+
+while
+  = WHILE LEFTPAR e:expression RIGHTPAR b:block el:(ELSE block)? {
+    return {
+      type: "WHILE",
+      expression: e,
+      block: b,
+      else: el
     };
   }
 
@@ -317,6 +335,7 @@ SEMICOLON   = _";"_
 LEFTBRACE   = _"{"_
 RIGHTBRACE  = _"}"_
 FOR         = _"for"_
+WHILE       = _"while"_
 RETURN      = _"return"_
 EXIT        = _"exit"_
 FUNCTION    = _"function"_
