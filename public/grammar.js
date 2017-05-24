@@ -249,7 +249,7 @@ function peg$parse(input, options) {
             returnValue: assign
           }
         },
-      peg$c13 = function(id, c) {
+      peg$c13 = function(id, classBlock) {
           return {
             type:    "class",
             id:      id,

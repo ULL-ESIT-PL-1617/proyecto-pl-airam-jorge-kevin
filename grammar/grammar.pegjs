@@ -158,7 +158,7 @@ return
   }
 
 class
-  = CLASS id:ID c:classBlock {
+  = CLASS id:ID classBlock:classBlock {
     return {
       type:    "class",
       id:      id,
