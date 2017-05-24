@@ -30,50 +30,54 @@
         'for' '(' assign ';' expression ';' assign ')' block
         ['else' block ]?
 
- 09. parexpression →
+ 08. parexpression →
         '(' expression ')'
 
- 08. assign →
-        ['const'? TYPE]? ID '=' assign (',' ID '=' assign)*
+ 09. assign →
+        ['const'? TYPE ARRAY*]? ID '=' assign (',' ID '=' assign)*
         / expression
 
- 09. function →
-        (TYPE|'void') ID '(' (TYPE ID (',' TYPE ID)* )? ')' block
+ 10. function →
+        type ID '(' (type ID (',' type ID)* )? ')' block
 
- 10. return →
+ 11. return →
         'return' assign?
 
- 11. class →
+ 12. class →
         'class' ID classBlock
 
- 12. classBlock →
+ 13. classBlock →
         '{' (classStatement)* '}'
 
- 13. classStatement →
+ 14. classStatement →
         ('private'|'public') assign ';'
         / ('private'|'public') function
 
- 14. expression →
+ 15. expression →
         term ADDOP expression
         / term
 
- 15. term →
+ 16. term →
         factor MULOP term
         / factor
 
- 16. factor →
+ 17. factor →
         numeric
+        / array
         / string
         / bool
         / ID arguments
         / ID ('.' ID arguments?)+
+        / ID '[' INTEGER ']'+
         / ID
         / arguments
         / '(' assign ')'
 
- 17. arguments →
+ 18. arguments →
         '(' (assign (',' assign)\*)? ')'
 
- 18. numeric → NUMBER
- 19. bool    → BOOL
- 20. string  → STRING
+ 22. type    → TYPE '[]'*
+ 19. numeric → NUMBER
+ 20. bool    → BOOL
+ 21. string  → STRING
+ 22. array   → '{' factor (',' factor)* '}'

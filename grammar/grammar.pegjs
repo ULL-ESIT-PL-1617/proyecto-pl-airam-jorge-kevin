@@ -25,15 +25,15 @@ block
   = LEFTBRACE code:statements RIGHTBRACE
   {
     return {
-      type:       "block",
-      statements: code
+      type:     "block",
+      contents: code
     };
   }
 
 statements
   = stt:(statement)*
   {
-    return sst;
+    return stt;
   }
 
 statement
@@ -42,8 +42,8 @@ statement
   / while
   / function
   / class
-  / assg:assign SEMICOLON { return assg; }
   / retu:return SEMICOLON { return retu; }
+  / assg:assign SEMICOLON { return assg; }
 
 if
   = IF ifCheck:parexpression ifContents:block elseIfBlock:(ELIF parexpression block)* elseBlock:(ELSE block)?
@@ -72,18 +72,18 @@ if
   }
 
 while
-  = WHILE check:parexpression block:block elseBlock:(ELSE block)?
+  = WHILE check:parexpression? block:block elseBlock:(ELSE block)?
   {
     return {
       type:     "while",
       check:    check,
       contents: block,
-      else:     elseBlock
+      else:     elseBlock[1]
     };
   }
 
 for
-  = FOR LEFTPAR start:assign SEMICOLON check:expression SEMICOLON iterate:assign RIGHTPAR block:block elseBlock:(ELSE block)?
+  = FOR LEFTPAR start:assign? SEMICOLON check:expression? SEMICOLON iterate:assign? RIGHTPAR block:block elseBlock:(ELSE block)?
   {
     return {
       type:     "for",
@@ -91,7 +91,7 @@ for
       check:    check,
       iterate:  iterate,
       contents: block,
-      else:     elseBlock
+      else:     elseBlock[1]
     };
   }
 
@@ -99,31 +99,40 @@ parexpression
   = LEFTPAR exp:expression RIGHTPAR { return exp; }
 
 assign
-  = (constant:CONST? type:TYPE)? id:ID ASSIGN assign:assign other:(COMMA ID ASSIGN assign)*
+  = id:ID ASSIGN assign:assign other:(COMMA ID ASSIGN assign)*
   {
     var assignations = [];
 
-    assignations.push({id: id, assign: assign});
-    other.forEach(x => assignations.push({id: x[1], assign: x[3]}));
+    assignations.push({id: id[1], to: assign});
+    other.forEach(x => assignations.push({id: x[1][1], to: x[3]}));
 
-    return (type === undefined) ? {
+    return {
       type:         "assign",
       assignations: assignations
-    } : {
+    };
+  }
+  / constant:CONST? type:type? id:ID ASSIGN assign:assign other:(COMMA ID ASSIGN assign)*
+  {
+    var assignations = [];
+
+    assignations.push({id: id[1], to: assign});
+    other.forEach(x => assignations.push({id: x[1][1], to: x[3]}));
+
+    return {
       type:         "declaration",
-      constant:     (constant !== undefined),
-      varType:      type,
+      constant:     (constant !== null),
+      varType:      type[1],
       assignations: assignations
     };
   }
   / expression
 
 function
-  = returnType:RETURNTYPE functionName:ID LEFTPAR params:(TYPE ID (COMMA TYPE ID)*)? RIGHTPAR block:block
+  = returnType:type functionName:ID LEFTPAR params:(type ID (COMMA type ID)*)? RIGHTPAR block:block
     {
       var funcParams = [];
 
-      if (params !=== undefined) {
+      if (params !== undefined) {
         funcParams.push({type: "parameter", vartype: params[0], id: params[1]});
         params.forEach(x => {
           funcParams.push({ type: "parameter", vartype: x[1], id: x[2]});
@@ -143,8 +152,8 @@ return
   = RETURN assign:(assign)?
   {
     return {
-      type:   "return",
-      assign: assign
+      type:       "return",
+      returnValue: assign
     }
   }
 
@@ -219,27 +228,38 @@ factor
       id:   id[1]
     };
   }
-  / id:ID access:(DOT ID arguments?)+ {
+  / id:ID access:(DOT ID arguments?)+
+  {
     var accessId = [];
-    access.forEach(x =>
-      accessId.push(
-        (x[2] === undefined)
-        ? { type: "attribute", id: x[1] }
-        : {type: "method", id: x[1], arguments: x[2]}
-      );
-    );
+    access.forEach(x => {
+      if (x[2] === undefined)
+        accessId.push({type: "attribute", id: x[1][1]});
+      else
+        accessId.push({type: "method", id: x[1][1], arguments: x[2]});
+    });
 
     return {
       type:   "idAccess",
-      base:   id,
+      base:   id[1],
       access: accessId
+    };
+  }
+  / id:ID index:(LEFTBRACKET INTEGER RIGHTBRACKET)+
+  {
+    var indexAccess = [];
+    index.forEach(x => indexAccess.push(index[2]));
+
+    return {
+      type:  "arrayAccess",
+      id:    id[1],
+      index: index
     };
   }
   / id:ID
   {
     return {
       type: "id",
-      id:   id
+      id:   id[1]
     };
   }
   / arguments
@@ -252,74 +272,99 @@ arguments
     if (args !== undefined) {
       funcArgs.push(args[0]);
       args[1].forEach(x => {
-        funcArgs.push(x[1]);		
+        funcArgs.push(x[1]);
       });
     }
-
     return {
       type:      "arguments",
       arguments: funcArgs
     };
    }
 
-numeric
- = num:NUMBER
+type
+ = type:(TYPES ARRAY*)
  {
-   return {
-     type:  "numeric",
-     value: parseInt(num[1])
-   };
+   if (type[1].length == 0)
+    return type[0];
+   else
+    return {
+      array:      "true",
+      arrayCount: type[1].length,
+      type:       type[0]
+    };
  }
+
+numeric
+  = num:NUMBER
+  {
+    return {
+      type:  "numeric",
+      value: parseInt(num[1])
+    };
+  }
 
 string
- = str:STRING
- {
-   return {
-     type:  "string",
-     value: str[1]
-   }
- }
+  = str:STRING
+  {
+    return {
+      type:  "string",
+      value: str[1]
+    }
+  }
 
 bool
- = bool:BOOL
- {
-   return {
-     type:  "bool",
-     value: bool[1]
-   }
- }
+  = bool:BOOL
+  {
+    return {
+      type:  "bool",
+      value: bool[1]
+    }
+  }
+
+array
+  = LEFTBRACE value:factor values:(COMMA factor)* RIGHTBRACKET
+  {
+    var array = [];
+    array.push(factor);
+    values.forEach(x => array.push(x[1]));
+    return array;
+  }
 
 _ = $[ \t\n\r]*
 
-ADDOP       = PLUS / MINUS
-MULOP       = MULT / DIV
-VISIBLITY   = _"public"_ / _"private"_
-COMMA       = _","_
-PLUS        = _"+"_
-MINUS       = _"-"_
-MULT        = _"*"_
-ASSIGN      = _"="_
-DIV         = _"/"_
-LEFTPAR     = _"("_
-RIGHTPAR    = _")"_
-SEMICOLON   = _";"_
-LEFTBRACE   = _"{"_
-RIGHTBRACE  = _"}"_
-FOR         = _"for"_
-WHILE       = _"while"_
-RETURN      = _"return"_
-EXIT        = _"exit"_
-FUNCTION    = _"function"_
-IF          = _"if"_
-ELIF        = _"else"_"if"_
-ELSE        = _"else"_
-CONST       = _"const"_
-TYPE        = _"numeric"_ / _"string"_ / _"bool"_
-RETURNTYPE  = TYPE / VOID
-NUMBER      = _ $[0-9]+ _
-BOOL        = _"true"_ / _"false"_
-ID          = _ $([a-z_]i$([a-z0-9_]i*)) _
-COMPARASION = _ $([<>!=]"=" / [<>]) _
-DOT         = _"."_
-CLASS       = _"class"_
-VOID        = _"void"_
+ADDOP        = PLUS / MINUS
+MULOP        = MULT / DIV
+VISIBLITY    = _"public"_ / _"private"_
+COMMA        = _","_
+PLUS         = _"+"_
+MINUS        = _"-"_
+MULT         = _"*"_
+ASSIGN       = _"="_
+DIV          = _"/"_
+LEFTPAR      = _"("_
+RIGHTPAR     = _")"_
+SEMICOLON    = _";"_
+LEFTBRACE    = _"{"_
+RIGHTBRACE   = _"}"_
+LEFTBRACKET  = _"]"_
+RIGHTBRACKET = _"["_
+FOR          = _"for"_
+WHILE        = _"while"_
+RETURN       = _"return"_
+EXIT         = _"exit"_
+FUNCTION     = _"function"_
+IF           = _"if"_
+ELIF         = _"else"_"if"_
+ELSE         = _"else"_
+CONST        = _"const"_
+ARRAY        = _"[]"_
+TYPES        = ID
+STRING       = _"\"(\\.|[^\"])*\""_
+NUMBER       = _ $([0-9]+"."?[0-9]*)_
+INTEGER      = _ $[0-9]_
+BOOL         = _"true"_ / _"false"_
+ID           = _ $([a-z_]i$([a-z0-9_]i*))_
+COMPARASION  = _ $([<>!=]"="/[<>])_
+DOT          = _"."_
+CLASS        = _"class"_
+VOID         = _"void"_
