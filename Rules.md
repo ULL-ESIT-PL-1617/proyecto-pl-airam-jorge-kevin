@@ -18,24 +18,24 @@
         / return ';'
 
  05. if →
-        'if' '(' expression ')' block
-        ['else' 'if' '(' expression ')' block]*  
-        ['else' '(' expression ')' block]?
+        'if' parcondition block
+        ['else' 'if' parcondition block]*  
+        ['else' parcondition block]?
 
  06. while →
-        'while' '(' condition ')' block
+        'while' parcondition block
         ['else' block ]?
 
  07. for →
         'for' '(' assign ';' expression ';' assign ')' block
         ['else' block ]?
 
- 08. parexpression →
-        '(' expression ')'
+ 08. parcondition →
+        '(' condition ')'
 
  09. assign →
         ['const'? TYPE ARRAY*]? ID '=' assign (',' ID '=' assign)*
-        / expression
+        / condition
 
  10. function →
         type ID '(' (type ID (',' type ID)* )? ')' block
@@ -52,6 +52,10 @@
  14. classStatement →
         ('private'|'public') assign ';'
         / ('private'|'public') function
+
+ 16. condition →
+        expression COMPARASION condition
+        / expression
 
  15. expression →
         term ADDOP expression

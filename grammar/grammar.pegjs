@@ -46,7 +46,7 @@ statement
   / assg:assign SEMICOLON { return assg; }
 
 if
-  = IF ifCheck:parexpression ifContents:block elseIfBlock:(ELIF parexpression block)* elseBlock:(ELSE block)?
+  = IF ifCheck:parcondition ifContents:block elseIfBlock:(ELIF parcondition block)* elseBlock:(ELSE block)?
   {
     var ifCode = {
      check:    ifCheck,
@@ -72,7 +72,7 @@ if
   }
 
 while
-  = WHILE check:parexpression? block:block elseBlock:(ELSE block)?
+  = WHILE check:parcondition? block:block elseBlock:(ELSE block)?
   {
     return {
       type:     "while",
@@ -83,7 +83,7 @@ while
   }
 
 for
-  = FOR LEFTPAR start:assign? SEMICOLON check:expression? SEMICOLON iterate:assign? RIGHTPAR block:block elseBlock:(ELSE block)?
+  = FOR LEFTPAR start:assign? SEMICOLON check:condition? SEMICOLON iterate:assign? RIGHTPAR block:block elseBlock:(ELSE block)?
   {
     return {
       type:     "for",
@@ -95,8 +95,8 @@ for
     };
   }
 
-parexpression
-  = LEFTPAR exp:expression RIGHTPAR { return exp; }
+parcondition
+  = LEFTPAR exp:condition RIGHTPAR { return exp; }
 
 assign
   = id:ID ASSIGN assign:assign other:(COMMA ID ASSIGN assign)*
@@ -125,7 +125,7 @@ assign
       assignations: assignations
     };
   }
-  / expression
+  / condition
 
 function
   = returnType:type functionName:ID LEFTPAR params:(type ID (COMMA type ID)*)? RIGHTPAR block:block
@@ -193,6 +193,19 @@ classStatement
       method:     func
     }
   }
+
+condition
+  = left:expression op:COMPARASION right:condition
+  {
+    return {
+      type:  "condition",
+      op:    op[1],
+      left:  left,
+      right: right
+    };
+  }
+  / expression
+
 
 expression
   = left:term op:ADDOP right:expression
@@ -366,7 +379,7 @@ NUMBER       = _ $([0-9]+"."?[0-9]*)_
 INTEGER      = _ $[0-9]_
 BOOL         = _"true"_ / _"false"_
 ID           = _ $([a-z_]i$([a-z0-9_]i*))_
-COMPARASION  = _ $([<>!=]"="/[<>])_
+COMPARASION  = _ $([<>!=]"="/[<>]/"&&"/"||")_
 DOT          = _"."_
 CLASS        = _"class"_
 VOID         = _"void"_
