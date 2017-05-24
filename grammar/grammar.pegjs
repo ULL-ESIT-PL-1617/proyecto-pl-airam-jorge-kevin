@@ -67,7 +67,7 @@ if
       type:       "IF",
       ifCode:     ifCode,
       elseIfCode: elseIfCode,
-      elseCode:   elseCode
+      elseCode:   (elseBlock === null) ? null : elseBlock[1]
     }
   }
 
@@ -78,7 +78,7 @@ while
       type:     "while",
       check:    check,
       contents: block,
-      else:     elseBlock[1]
+      else:     (elseBlock === null) ? null : elseBlock[1]
     };
   }
 
@@ -91,7 +91,7 @@ for
       check:    check,
       iterate:  iterate,
       contents: block,
-      else:     elseBlock[1]
+      else:     (elseBlock === null) ? null : elseBlock[1]
     };
   }
 

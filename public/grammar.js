@@ -166,7 +166,7 @@ function peg$parse(input, options) {
           };
 
           var elseCode = {
-            contents: (elseBlock === undefined) ? undefined : elseBlock[2]
+            contents: (elseBlock === null) ? null : elseBlock[2]
           };
 
           let elseIfCode = [];
@@ -179,7 +179,7 @@ function peg$parse(input, options) {
             type:       "IF",
             ifCode:     ifCode,
             elseIfCode: elseIfCode,
-            elseCode:   elseCode
+            elseCode:   (elseBlock === null) ? null : elseBlock[1]
           }
         },
       peg$c6 = function(check, block, elseBlock) {
@@ -187,7 +187,7 @@ function peg$parse(input, options) {
             type:     "while",
             check:    check,
             contents: block,
-            else:     elseBlock[1]
+            else:     (elseBlock === null) ? null : elseBlock[1]
           };
         },
       peg$c7 = function(start, check, iterate, block, elseBlock) {
@@ -197,7 +197,7 @@ function peg$parse(input, options) {
             check:    check,
             iterate:  iterate,
             contents: block,
-            else:     elseBlock[1]
+            else:     (elseBlock === null) ? null : elseBlock[1]
           };
         },
       peg$c8 = function(exp) { return exp; },
@@ -228,7 +228,7 @@ function peg$parse(input, options) {
       peg$c11 = function(returnType, functionName, params, block) {
             var funcParams = [];
 
-            if (params !== undefined) {
+            if (params !== null) {
               funcParams.push({type: "parameter", vartype: params[0], id: params[1]});
               params.forEach(x => {
                 funcParams.push({ type: "parameter", vartype: x[1], id: x[2]});
@@ -302,7 +302,7 @@ function peg$parse(input, options) {
       peg$c20 = function(id, access) {
           var accessId = [];
           access.forEach(x => {
-            if (x[2] === undefined)
+            if (x[2] === null)
               accessId.push({type: "attribute", id: x[1][1]});
             else
               accessId.push({type: "method", id: x[1][1], arguments: x[2]});
@@ -333,7 +333,7 @@ function peg$parse(input, options) {
       peg$c23 = function(assign) { return assign; },
       peg$c24 = function(args) {
           var funcArgs = [];
-          if (args !== undefined) {
+          if (args !== null) {
             funcArgs.push(args[0]);
             args[1].forEach(x => {
               funcArgs.push(x[1]);
