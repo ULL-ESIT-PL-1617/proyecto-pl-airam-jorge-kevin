@@ -133,16 +133,18 @@ function
       var funcParams = [];
 
       if (params !== null) {
-        funcParams.push({type: "parameter", vartype: params[0], id: params[1]});
-        params.forEach(x => {
-          funcParams.push({ type: "parameter", vartype: x[1], id: x[2]});
+        funcParams.push({type: "parameter", vartype: params[0][1], id: params[1][1]});
+        params[2].forEach(x => {
+          funcParams.push({ type: "parameter", vartype: x[1][1], id: x[2][1]});
         });
       }
 
+
+      console.log(params[1]);
       return {
         type:         "function",
-        returnType:   returnType,
-        functionName: functionName,
+        returnType:   returnType[1],
+        functionName: functionName[1],
         params:       funcParams,
         contents:     block
       };
