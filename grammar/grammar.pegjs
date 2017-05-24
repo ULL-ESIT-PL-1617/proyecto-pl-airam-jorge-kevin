@@ -54,7 +54,7 @@ if
     };
 
     var elseCode = {
-      contents: (elseBlock === undefined) ? undefined : elseBlock[2]
+      contents: (elseBlock === null) ? null : elseBlock[2]
     };
 
     let elseIfCode = [];
@@ -132,7 +132,7 @@ function
     {
       var funcParams = [];
 
-      if (params !== undefined) {
+      if (params !== null) {
         funcParams.push({type: "parameter", vartype: params[0], id: params[1]});
         params.forEach(x => {
           funcParams.push({ type: "parameter", vartype: x[1], id: x[2]});
@@ -232,7 +232,7 @@ factor
   {
     var accessId = [];
     access.forEach(x => {
-      if (x[2] === undefined)
+      if (x[2] === null)
         accessId.push({type: "attribute", id: x[1][1]});
       else
         accessId.push({type: "method", id: x[1][1], arguments: x[2]});
@@ -269,7 +269,7 @@ arguments
   = LEFTPAR args:(assign (COMMA assign)*)? RIGHTPAR
    {
     var funcArgs = [];
-    if (args !== undefined) {
+    if (args !== null) {
       funcArgs.push(args[0]);
       args[1].forEach(x => {
         funcArgs.push(x[1]);
