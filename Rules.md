@@ -20,7 +20,7 @@
  05. if →
         'if' parcondition block
         ['else' 'if' parcondition block]*  
-        ['else' parcondition block]?
+        ['else' block]?
 
  06. while →
         'while' parcondition block
