@@ -7,33 +7,41 @@ let scopeAnalisis = function(tree) {
     let symbolTable = generateSymbolTable(tree.result)
 };
 
+let currentTable = null;
+
 /* Recorre el árbol y guarda todos los tipos que se encuentran con los IDs */
 let generateSymbolTable = function(resultsArray) {
-    let symbolTable = {};
-    let currentTable = symbolTable;
+    let symbolTable = {
+        father: null
+    };
 
-    traverse(resultsArray, process, currentTable, symbolTable);
+    currentTable = symbolTable;
+    traverse(resultsArray, process);
 }
 
 // Called with every property and its value
-function process(key, value, currentTable) {
+function process(key, value) {
     if (typeof(value) == "object") {
         switch (value.type) {
-            case "declaration": console.log("Declaration", value.assignations[0].id); break;
-            case "function":    console.log("Function", value.returnType); break;
+            case "declaration":
+                console.log("Declaration", value.assignations[0].id);
+                break;
+            case "function":
+                console.log("Function", value.returnType);
+                break;
             default: break;
         }
     }
 }
 
-function traverse(o, func, currentTable, symbolTable) {
+function traverse(o, func) {
     for (var i in o) {
-        func.apply(this, [i, o[i], currentTable]);
+        func.apply(this, [i, o[i]]);
         if (o[i] !== null && typeof(o[i]) == "object") {
-            traverse2(o[i], func);
+            traverse(o[i], func);
         }
-        if (o[i].type === "function") {
-            goBack = true;
+        if ((o[i].type === "function") && (currentTable.father !== null)) {
+            currentTable = currentTable.father;
         }
     }
 }
