@@ -11,11 +11,11 @@
       scopeAnalisis(tree);
       semanticAnalisis(tree);
       code = genCode(tree);
+      result = code + "\n" + JSON.stringify(tree, null, 2)
     } catch (error) {
-      result = error;
-      result = "<div class=\"error\">" + result + "</div>";
+      result = "<div class=\"error\">" + error + "</div>";
     }
-    return OUTPUT.innerHTML = code + "\n" + JSON.stringify(tree, null, 2);
+    return OUTPUT.innerHTML = result;
   };
 
   window.onload = function() {

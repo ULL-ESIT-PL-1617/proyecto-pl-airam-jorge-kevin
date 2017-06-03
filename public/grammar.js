@@ -176,7 +176,7 @@ function peg$parse(input, options) {
           }));
 
           return {
-            type:       "IF",
+            type:       "if",
             ifCode:     ifCode,
             elseIfCode: elseIfCode,
             elseCode:   (elseBlock === null) ? null : elseBlock[1]
