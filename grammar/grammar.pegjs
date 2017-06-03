@@ -260,12 +260,12 @@ factor
   / id:ID index:(LEFTBRACKET INTEGER RIGHTBRACKET)+
   {
     var indexAccess = [];
-    index.forEach(x => indexAccess.push(index[2]));
+    index.forEach(x => indexAccess.push(x[1]));
 
     return {
       type:  "arrayAccess",
       id:    id,
-      index: index
+      index: indexAccess
     };
   }
   / id:ID
@@ -352,8 +352,8 @@ RIGHTPAR     = _ ")" _
 SEMICOLON    = _ ";" _
 LEFTBRACE    = _ "{" _
 RIGHTBRACE   = _ "}" _
-LEFTBRACKET  = _ "]" _
-RIGHTBRACKET = _ "[" _
+LEFTBRACKET  = _ "[" _
+RIGHTBRACKET = _ "]" _
 FOR          = _ "for" _
 WHILE        = _ "while" _
 RETURN       = _ "return" _

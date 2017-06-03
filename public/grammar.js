@@ -324,12 +324,12 @@ function peg$parse(input, options) {
         },
       peg$c22 = function(id, index) {
           var indexAccess = [];
-          index.forEach(x => indexAccess.push(index[2]));
+          index.forEach(x => indexAccess.push(x[1]));
 
           return {
             type:  "arrayAccess",
             id:    id,
-            index: index
+            index: indexAccess
           };
         },
       peg$c23 = function(id) {
@@ -402,10 +402,10 @@ function peg$parse(input, options) {
       peg$c44 = peg$literalExpectation("{", false),
       peg$c45 = "}",
       peg$c46 = peg$literalExpectation("}", false),
-      peg$c47 = "]",
-      peg$c48 = peg$literalExpectation("]", false),
-      peg$c49 = "[",
-      peg$c50 = peg$literalExpectation("[", false),
+      peg$c47 = "[",
+      peg$c48 = peg$literalExpectation("[", false),
+      peg$c49 = "]",
+      peg$c50 = peg$literalExpectation("]", false),
       peg$c51 = "for",
       peg$c52 = peg$literalExpectation("for", false),
       peg$c53 = "while",
@@ -2260,7 +2260,7 @@ function peg$parse(input, options) {
     s0 = peg$currPos;
     s1 = peg$parse_();
     if (s1 !== peg$FAILED) {
-      if (input.charCodeAt(peg$currPos) === 93) {
+      if (input.charCodeAt(peg$currPos) === 91) {
         s2 = peg$c47;
         peg$currPos++;
       } else {
@@ -2294,7 +2294,7 @@ function peg$parse(input, options) {
     s0 = peg$currPos;
     s1 = peg$parse_();
     if (s1 !== peg$FAILED) {
-      if (input.charCodeAt(peg$currPos) === 91) {
+      if (input.charCodeAt(peg$currPos) === 93) {
         s2 = peg$c49;
         peg$currPos++;
       } else {

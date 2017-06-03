@@ -34,5 +34,5 @@ let genCode = function(tree) {
 
 let translate = function(tree) {
     console.log("Translate");
-    return " ";
+    return "var a = 0 ";
 }
