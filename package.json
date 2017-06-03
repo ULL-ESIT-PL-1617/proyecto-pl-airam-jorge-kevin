@@ -13,19 +13,22 @@
     "ejs": "*",
     "express": "*",
     "express-ejs-layouts": "*",
+    "js-beautify": "^1.6.14",
     "mocha": "latest",
     "node-sass-middleware": "*",
     "node-static": "*",
+    "pegjs": ">=0.10.0",
     "pug": "^0.1.0",
     "serve-favicon": "^2.4.2",
     "sinon": "*",
-    "underscore": "*",
-    "pegjs": ">=0.10.0"
+    "underscore": "*"
   },
   "engines": {
     "node": "7.x"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "js-beautify": "^1.6.14"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ULL-ESIT-PL-1617/parser-pdr-example"
