@@ -251,9 +251,9 @@ factor
     var accessId = [];
     access.forEach(x => {
       if (x[2] === null)
-        accessId.push({type: "attribute", id: x[1]});
+        accessId.push({type: "attributeAccess", id: x[1]});
       else
-        accessId.push({type: "method", id: x[1], arguments: x[2]});
+        accessId.push({type: "methodAccess", id: x[1], arguments: x[2]});
     });
 
     return {
