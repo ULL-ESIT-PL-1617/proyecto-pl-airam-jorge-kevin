@@ -182,7 +182,7 @@ let semanticAnalisis = function(tree) {
 
 
     //block **
-    //if
+    //if **
     //while **
     //for **
     //function
@@ -194,13 +194,13 @@ let semanticAnalisis = function(tree) {
     //call
     //idAccess
     //arrayAccess
-    //arguments
 
 
     //numeric **
     //string **
     //bool **
 
+    //arguments ?
 
     //comprobar palabras reservadas
 
