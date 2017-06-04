@@ -59,26 +59,50 @@ let translate2 = function(obj, result) {
                             }
 
           break;
-      case "while":         obj.code += "while (";
-                            translate2(obj, result.check);
-                            obj.code += ")";
-                            translate2(obj, result.contents);
-                            if(result.else != null){
-                              obj.code += " else ";
+      case "while":         if(result.else != null){
+                              obj.code += "if (";
+                              translate2(obj, result.check);
+                              obj.code += ") {\n     ";
+                              obj.code += "while (";
+                              translate2(obj, result.check);
+                              obj.code += ")";
+                              translate2(obj, result.contents);
+                              obj.code += "\n     }";
+                              obj.code += " else "
                               translate2(obj, result.else);
                             }
+                            else{
+                              obj.code += "while (";
+                              translate2(obj, result.check);
+                              obj.code += ")";
+                              translate2(obj, result.contents);
+                            }
           break;
-      case "for":           obj.code += "for (";
-                            translate2(obj, result.start);
-                            obj.code += "; ";
-                            translate2(obj, result.check);
-                            obj.code += "; ";
-                            translate2(obj, result.iterate);
-                            obj.code += ")";
-                            translate2(obj, result.contents);
-                            if(result.else != null){
-                              obj.code += " else ";
+      case "for":           if(result.else != null){
+                              obj.code += "if (";
+                              translate2(obj, result.check);
+                              obj.code += ") {\n     ";
+                              obj.code += "for (";
+                              translate2(obj, result.start);
+                              obj.code += "; ";
+                              translate2(obj, result.check);
+                              obj.code += "; ";
+                              translate2(obj, result.iterate);
+                              obj.code += ")";
+                              translate2(obj, result.contents);
+                              obj.code += "\n     }";
+                              obj.code += " else "
                               translate2(obj, result.else);
+                            }
+                            else{
+                              obj.code += "for (";
+                              translate2(obj, result.start);
+                              obj.code += "; ";
+                              translate2(obj, result.check);
+                              obj.code += "; ";
+                              translate2(obj, result.iterate);
+                              obj.code += ")";
+                              translate2(obj, result.contents);
                             }
           break;
       case "assign":        for(let i = 0; i < result.assignations.length; i++){
@@ -125,21 +149,23 @@ let translate2 = function(obj, result) {
                               translate2(obj, result.returnValue);
                             obj.code += ";";
           break;
-      case "class":         obj.code += "class " + result.id;
+      case "class":         obj.code += "var " + result.id + " = ";
                             translate2(obj, result.content);
           break;
       case "classBlock":    obj.code += "{\n     ";
                             for(let i = 0; i < result.classStatement.length; i++){
                               translate2(obj, result.classStatement[i]);
+                              if(result.classStatement.length > 1 && i < result.classStatement.length - 1)
+                                obj.code += ",";
                               obj.code += "\n     ";
                             }
                             obj.code += "}";
           break;
-      case "attribute":     obj.code += result.visibility + " ";
-                            translate2(obj, result.assign);
+      case "attribute":     obj.code += result.assign.assignations[0].id + ": ";
+                            translate2(obj, result.assign.assignations[0].to);
           break;
-      case "method":        obj.code += result.visibility + " ";
-                            translate2(obj, result.method);
+      case "method":        obj.code += result.method.functionName + ": function () ";
+                            translate2(obj, result.method.contents);
           break;
       case "condition":     translate2(obj, result.left);
                             obj.code += " " + result.op + " ";
