@@ -4,6 +4,10 @@
     "public", "private", "class", "true", "false", "return"
   ]);
 
+  var builtInTypes = new Set([
+    "numeric", "bool", "string", "void"
+  ]);
+
   var symbolTable = {
     PI:     3.14159265359,
     TRUE:   true,
@@ -15,6 +19,7 @@ start
   = stt:statements
   {
     return {
+      builtInTypes:  Array.from(builtInTypes),
       reservedWords: Array.from(reservedWords),
       symbolTable:   symbolTable,
       result:        stt

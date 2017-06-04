@@ -6,15 +6,15 @@
   main = function() {
     var tree, source, code;
     source = original.value;
-    try {
+    //try {
       tree = peg$parse(source);
       scopeAnalisis(tree);
       semanticAnalisis(tree);
       code = genCode(tree);
       result = code + "\n" + JSON.stringify(tree, null, 2)
-    } catch (error) {
-      result = "<div class=\"error\">" + error + "</div>";
-    }
+    //} catch (error) {
+    //  result = "<div class=\"error\">" + error + "</div>";
+    //}
     return OUTPUT.innerHTML = result;
   };
 

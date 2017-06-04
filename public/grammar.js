@@ -143,6 +143,7 @@ function peg$parse(input, options) {
 
       peg$c0 = function(stt) {
           return {
+            builtInTypes:  Array.from(builtInTypes),
             reservedWords: Array.from(reservedWords),
             symbolTable:   symbolTable,
             result:        stt
@@ -3461,6 +3462,10 @@ function peg$parse(input, options) {
     var reservedWords = new Set([
       "else", "if", "while", "for", "const", "numeric", "bool", "string", "void",
       "public", "private", "class", "true", "false", "return"
+    ]);
+
+    var builtInTypes = new Set([
+      "numeric", "bool", "string", "void"
     ]);
 
     var symbolTable = {
