@@ -87,11 +87,24 @@ let translate2 = function(obj, result) {
                             }
           break;
       case "declaration":   obj.code += "var ";
-                            for(let i = 0; i < result.assignations.length; i++){
-                              obj.code += result.assignations[i].id + " = ";
-                              translate2(obj, result.assignations[i].to);
-                              if(result.assignations.length > 1 && i < result.assignations.length - 1)
-                                obj.code += ", ";
+                            if(result.varType.array != undefined){
+                              for(let i = 0; i < result.assignations.length; i++){
+                                obj.code += result.assignations[i].id + " = [";
+                                for(let j = 0; j < result.assignations[i].to.length; j++){
+                                  translate2(obj, result.assignations[i].to[j]);
+                                  if(result.assignations[i].to.length > 1 && j < result.assignations[i].to.length - 1)
+                                    obj.code += ", ";
+                                }
+                              }
+                              obj.code += "];";
+                            }
+                            else{
+                              for(let i = 0; i < result.assignations.length; i++){
+                                obj.code += result.assignations[i].id + " = ";
+                                translate2(obj, result.assignations[i].to);
+                                if(result.assignations.length > 1 && i < result.assignations.length - 1)
+                                  obj.code += ", ";
+                              }
                             }
           break;
       case "function":      obj.code += "function " + result.functionName;
