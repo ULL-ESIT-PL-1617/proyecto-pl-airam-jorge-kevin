@@ -184,13 +184,9 @@ let translate2 = function(obj, result) {
       //TODO  array por hacer
       default:
   }
-  //console.log(obj.code);
 }
 
 let translate = function(tree) {
-    console.log("-----------");
-    console.log("-Translate-");
-    console.log("-----------");
     var obj = { code: "   " };
     for(let i = 0; i < tree.result.length; i++){
       translate2(obj, tree.result[i]);
