@@ -41,7 +41,23 @@ let translate2 = function(obj, result) {
                             }
                             obj.code += "\n     }";
           break;
-      case "IF":
+      case "if":            obj.code += "if (";
+                            translate2(obj, result.ifCode.check);
+                            obj.code += ")";
+                            translate2(obj, result.ifCode.contents);
+                            if(result.elseIfCode != null){
+                              for (let i = 0; i < result.elseIfCode.length; i++) {
+                                obj.code += " else if (";
+                                translate2(obj, result.elseIfCode[i].check);
+                                obj.code += ")";
+                                translate2(obj, result.ifCode.contents);
+                              }
+                            }
+                            if(result.elseCode != null){
+                              obj.code += " else ";
+                              translate2(obj, result.elseCode);
+                            }
+
           break;
       case "while":         obj.code += "while (";
                             translate2(obj, result.check);
@@ -54,18 +70,21 @@ let translate2 = function(obj, result) {
           break;
       case "for":           obj.code += "for (";
                             translate2(obj, result.start);
+                            obj.code += "; ";
                             translate2(obj, result.check);
+                            obj.code += "; ";
                             translate2(obj, result.iterate);
                             obj.code += ")";
                             translate2(obj, result.contents);
-          break;
-      case "parcondition":
+                            if(result.else != null){
+                              obj.code += " else ";
+                              translate2(obj, result.else);
+                            }
           break;
       case "assign":        for(let i = 0; i < result.assignations.length; i++){
                               obj.code += result.assignations[i].id + " = ";
                               translate2(obj, result.assignations[i].to);
                             }
-                            obj.code += ";";
           break;
       case "declaration":   obj.code += "var ";
                             for(let i = 0; i < result.assignations.length; i++){
@@ -74,7 +93,6 @@ let translate2 = function(obj, result) {
                               if(result.assignations.length > 1 && i < result.assignations.length - 1)
                                 obj.code += ", ";
                             }
-                            obj.code += ";";
           break;
       case "function":      obj.code += "function " + result.functionName;
                             obj.code += "(";
@@ -92,7 +110,6 @@ let translate2 = function(obj, result) {
       case "return":        obj.code += "return ";
                             if(result.returnValue != null)
                               translate2(obj, result.returnValue);
-                            obj.code += ";";
           break;
       case "class":
           break;
@@ -102,9 +119,13 @@ let translate2 = function(obj, result) {
           break;
       case "method":
           break;
-      case "condition":
+      case "condition":   translate2(obj, result.left);
+                          obj.code += " " + result.op + " ";
+                          translate2(obj, result.right);
           break;
-      case "expression":
+      case "expression":  translate2(obj, result.left);
+                          obj.code += " " + result.op + " ";
+                          translate2(obj, result.right);
           break;
       case "term":
           break;
@@ -114,7 +135,7 @@ let translate2 = function(obj, result) {
           break;
       case "arrayAccess":
           break;
-      case "id":
+      case "id":            obj.code += result.id;
           break;
       case "arguments":
           break;
