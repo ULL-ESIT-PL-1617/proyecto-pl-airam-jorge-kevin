@@ -111,33 +111,55 @@ let translate2 = function(obj, result) {
                             if(result.returnValue != null)
                               translate2(obj, result.returnValue);
           break;
-      case "class":
+      case "class":         obj.code += "class " + result.id;
+                            translate2(obj, result.content);
           break;
-      case "classBlock":
+      case "classBlock":    obj.code += "{\n     ";
+                            for(let i = 0; i < result.classStatement.length; i++){
+                              translate2(obj, result.classStatement[i]);
+                              obj.code += "\n     ";
+                            }
+                            obj.code += "}";
           break;
-      case "attribute":
+      case "attribute":     obj.code += result.visibility + " ";
+                            translate2(obj, result.assign);
           break;
-      case "method":
+      case "method":        obj.code += result.visibility + " ";
+                            translate2(obj, result.method);
           break;
-      case "condition":   translate2(obj, result.left);
-                          obj.code += " " + result.op + " ";
-                          translate2(obj, result.right);
+      case "condition":     translate2(obj, result.left);
+                            obj.code += " " + result.op + " ";
+                            translate2(obj, result.right);
           break;
-      case "expression":  translate2(obj, result.left);
-                          obj.code += " " + result.op + " ";
-                          translate2(obj, result.right);
+      case "expression":    translate2(obj, result.left);
+                            obj.code += " " + result.op + " ";
+                            translate2(obj, result.right);
           break;
-      case "term":
+      case "term":          translate2(obj, result.left);
+                            obj.code += " " + result.op + " ";
+                            translate2(obj, result.right);
           break;
-      case "call":
+      case "call":          obj.code += result.id + "(";
+                            translate2(obj, result.args);
+                            obj.code += ");"
           break;
-      case "idAccess":
+      case "idAccess":      obj.code += result.base + ".";
+                            for (let i = 0; i < result.access.length; i++)
+                              translate2(obj, result.access[i]);
+          break;
+      case "methodAccess":  obj.code += result.id + "(";
+                            translate2(obj, result.arguments);
+                            obj.code += ")";
           break;
       case "arrayAccess":
           break;
       case "id":            obj.code += result.id;
           break;
-      case "arguments":
+      case "arguments":     for (let i = 0; i < result.arguments.length; i++){
+                              translate2(obj, result.arguments[i]);
+                              if(result.arguments.length > 1 && i < result.arguments.length - 1)
+                                obj.code += ", ";
+                            }
           break;
       case "numeric":       obj.code += result.value;
           break;
