@@ -32,7 +32,7 @@ let genCode = function(tree) {
 };
 
 let translate2 = function(obj, result) {
-  console.log(result.type);
+  //console.log(result.type);
   switch(result.type) {
       case "block":         obj.code += "{\n     ";
                             for(let i = 0; i < result.contents.length; i++){
@@ -96,7 +96,7 @@ let translate2 = function(obj, result) {
                                     obj.code += ", ";
                                 }
                               }
-                              obj.code += "];";
+                              obj.code += "]";
                             }
                             else{
                               for(let i = 0; i < result.assignations.length; i++){
@@ -123,6 +123,7 @@ let translate2 = function(obj, result) {
       case "return":        obj.code += "return ";
                             if(result.returnValue != null)
                               translate2(obj, result.returnValue);
+                            obj.code += ";";
           break;
       case "class":         obj.code += "class " + result.id;
                             translate2(obj, result.content);
