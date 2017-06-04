@@ -144,9 +144,12 @@ let translate2 = function(obj, result) {
                             obj.code += ");"
           break;
       case "idAccess":      obj.code += result.base + ".";
-                            for (let i = 0; i < result.access.length; i++){
-                              //translate2(obj, result.access[i]);
-                            }
+                            for (let i = 0; i < result.access.length; i++)
+                              translate2(obj, result.access[i]);
+          break;
+      case "methodAccess":  obj.code += result.id + "(";
+                            translate2(obj, result.arguments);
+                            obj.code += ")";
           break;
       case "arrayAccess":
           break;
