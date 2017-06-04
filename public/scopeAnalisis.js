@@ -56,18 +56,18 @@ var symbolTableClass = function(father) {
     }
 
     /* Añade un id de función y devuelve el puntero a la nueva tabla */
-    this.addFuncId = function(id, funcParams) {
+    this.addFuncId = function(id, funcParams, isMethod) {
         var object = {id: id, type: "function", local: new symbolTableClass(this)};
         this.array.push(object);
         for (var i in funcParams) {
-            object.local.array.push({id: funcParams[i].id, type: funcParams[i].vartype, param: true, constant: false});
+            object.local.array.push({id: funcParams[i].id, type: funcParams[i].vartype, param: true, constant: false, belongsToClass: !!isMethod});
         }
         return object.local;
     }
 
     /* Añade un id que no sea de una función ni de una clase */
-    this.addCustomId = function(id, type, constant) {
-        this.array.push({id: id, type: type, param: false, constant: constant});
+    this.addCustomId = function(id, type, constant, isAttribute) {
+        this.array.push({id: id, type: type, param: false, constant: constant, belongsToClass: !!isAttribute});
     }
 
     /* Añade un id que sea de una clase */
@@ -134,9 +134,21 @@ let process = function(key, value) {
             case "class":
                 checkClass(value);
                 break;
+            case "attribute":
+                checkAttributes(value);
+                break;
             default: break;
         }
     }
+}
+
+let checkAttributes = function(attribute) {
+    var id = attribute.id;
+
+    if (scope.containsClassId(id)) {
+        throw "Redeclaration of class " + id;
+    }
+    scope = scope.addClassId(id);
 }
 
 let checkClass = function(class_) {
