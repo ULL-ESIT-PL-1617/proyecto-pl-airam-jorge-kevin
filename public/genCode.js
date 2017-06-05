@@ -60,44 +60,22 @@ let translate2 = function(obj, result) {
 
           break;
       case "while":         if(result.else != null){
-                              obj.code += "if (";
-                              translate2(obj, result.check);
-                              obj.code += ") {\n     ";
+                              startLoopIf(obj, result);
                               while_(obj, result);
-                              obj.code += "\n     }";
-                              obj.code += " else "
+                              endLoopIf(obj, result);
                               translate2(obj, result.else);
                             }
-                            else{
+                            else
                               while_(obj, result);
-                            }
           break;
       case "for":           if(result.else != null){
-                              obj.code += "if (";
-                              translate2(obj, result.check);
-                              obj.code += ") {\n     ";
-                              obj.code += "for (";
-                              translate2(obj, result.start);
-                              obj.code += "; ";
-                              translate2(obj, result.check);
-                              obj.code += "; ";
-                              translate2(obj, result.iterate);
-                              obj.code += ")";
-                              translate2(obj, result.contents);
-                              obj.code += "\n     }";
-                              obj.code += " else "
+                              startLoopIf(obj, result);
+                              for_(obj, result);
+                              endLoopIf(obj, result);
                               translate2(obj, result.else);
                             }
-                            else{
-                              obj.code += "for (";
-                              translate2(obj, result.start);
-                              obj.code += "; ";
-                              translate2(obj, result.check);
-                              obj.code += "; ";
-                              translate2(obj, result.iterate);
-                              obj.code += ")";
-                              translate2(obj, result.contents);
-                            }
+                            else
+                              for_(obj, result);
           break;
       case "assign":        for(let i = 0; i < result.assignations.length; i++){
                               obj.code += "_" + result.assignations[i].id + " = ";
@@ -210,6 +188,27 @@ let while_ = function(obj, result){
   translate2(obj, result.check);
   obj.code += ")";
   translate2(obj, result.contents);
+}
+
+let for_ = function(obj, result){
+  obj.code += "for (";
+  translate2(obj, result.start);
+  obj.code += "; ";
+  translate2(obj, result.check);
+  obj.code += "; ";
+  translate2(obj, result.iterate);
+  obj.code += ")";
+  translate2(obj, result.contents);
+}
+
+let startLoopIf = function(obj, result){
+  obj.code += "if (";
+  translate2(obj, result.check);
+  obj.code += ") {\n     ";
+}
+let endLoopIf = function(obj, result){
+  obj.code += "\n     }";
+  obj.code += " else "
 }
 
 let translate = function(tree) {
