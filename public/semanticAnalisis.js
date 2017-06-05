@@ -78,9 +78,9 @@ let semanticAnalisis = function(tree, symbolTable) {
           break;
         case "term":
         case "expression":
-          if(!validOp(getType(x.left), x.op, getType(x.right)))
+          if(!validOp(getType(x.left, symbolTable), x.op, getType(x.right, symbolTable)))
             throw "ERROR";
-          return getType(x.left);
+          return getType(x.left, symbolTable);
         case "assign":
 
           break;
@@ -88,7 +88,7 @@ let semanticAnalisis = function(tree, symbolTable) {
 
           break;
         case "return":
-          return getType(x.returnVlue);
+          return getType(x.returnValue, symbolTable);
           break;
       }
     };
@@ -97,7 +97,7 @@ let semanticAnalisis = function(tree, symbolTable) {
       switch(rule.type) {
         case "term":
         case "expression":
-          if(!validOp(getType(x.left), x.op, getType(x.right)))
+          if(!validOp(getType(x.left, symbolTable), x.op, getType(x.right, symbolTable)))
             throw "ERROR validando";
           break;
         case "for":
@@ -115,7 +115,7 @@ let semanticAnalisis = function(tree, symbolTable) {
           validRule(rule.else, symbolTable);
           break;
         case "term":
-          if(!validOp(getType(rule.left), rule.op, getType(rule.right)))
+          if(!validOp(getType(rule.left, symbolTable), rule.op, getType(rule.right, symbolTable)))
             throw "ERROR term";
           break;
         case "block":
