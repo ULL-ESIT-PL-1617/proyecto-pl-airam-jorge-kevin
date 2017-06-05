@@ -3,6 +3,20 @@
     - Detectar asignaciones a variables constantes
 */
 
+
+let scope;
+let reservedWords;
+let builtInTypes;
+
+let scopeAnalisis = function(tree) {
+    let baseTable = scope = new SymbolTableClass();
+    reservedWords = tree.reservedWords;
+    builtInTypes  = tree.builtInTypes;
+    traverse(tree.result, process);
+    baseTable.printToDiv("symbolTable");
+    return baseTable;
+};
+
 var __symbolTableId = 0;
 var SymbolTableClass = function(father) {
     this.array  = [];
@@ -36,7 +50,7 @@ var SymbolTableClass = function(father) {
     this.addFunc = function(func) {
         var table = new SymbolTableClass(this);
 
-        if (!!this.search(func.functionName, ["function", "method"])) {
+        if (!!this.searchLocal(func.functionName, ["function", "method"])) {
             throw "Redeclartion of funtion " + func.functionName;
         } else this.array.push({
             id:         func.functionName,
@@ -55,7 +69,7 @@ var SymbolTableClass = function(father) {
     }
 
     this.addParameter = function(param) {
-        if (!!this.search(param.id, ["variable", "parameter", "attribute"])) {
+        if (!!this.searchLocal(param.id, ["variable", "parameter", "attribute"])) {
             throw "Redeclartion of variable " + param.id;
         } else this.array.push({
             id:         param.id,
@@ -71,7 +85,7 @@ var SymbolTableClass = function(father) {
         for (var i in declarations.assignations) {
             var id = declarations.assignations[i].id;
 
-            if (!!this.search(id, ["variable", "parameter", "attribute"])) {
+            if (!!this.searchLocal(id, ["variable", "parameter", "attribute"])) {
                 throw "Redeclartion of variable " + id;
             } else this.array.push({
                 id:         id,
@@ -87,8 +101,8 @@ var SymbolTableClass = function(father) {
     this.addClass = function(class_) {
         var table = new SymbolTableClass(this);
 
-        if (!!this.search(id, ["variable", "parameter", "attribute"])) {
-            throw "Redeclartion of variable " + id;
+        if (!!this.searchLocal(class_.id, ["class"])) {
+            throw "Redeclartion of class " + class_.id;
         } this.array.push({
             id:         class_.id,
             kind:       "class",
@@ -105,7 +119,7 @@ var SymbolTableClass = function(father) {
         for (var i in declarations.assignations) {
             var id = declarations.assignations[i].id;
 
-            if (!!this.search(id, ["variable", "parameter", "attribute"])) {
+            if (!!this.searchLocal(id, ["variable", "parameter", "attribute"])) {
                 throw "Redeclartion of variable " + id;
             } else this.array.push({
                 id:         id,
@@ -121,7 +135,7 @@ var SymbolTableClass = function(father) {
     this.addMethod = function(method) {
         var table = new SymbolTableClass(this);
 
-        if (!!this.search(method.functionName, ["function", "method"])) {
+        if (!!this.searchLocal(method.functionName, ["function", "method"])) {
             throw "Redeclartion of method " + method.functionName;
         } else this.array.push({
             id:         method.functionName,
@@ -212,19 +226,6 @@ var SymbolTableClass = function(father) {
        return html;
     }
 }
-
-let scope;
-let reservedWords;
-let builtInTypes;
-
-let scopeAnalisis = function(tree) {
-    let baseTable = scope = new SymbolTableClass();
-    reservedWords = tree.reservedWords;
-    builtInTypes  = tree.builtInTypes;
-    traverse(tree.result, process);
-    baseTable.printToDiv("symbolTable");
-    return baseTable;
-};
 
 // Called with every property and its value
 let process = function(key, value) {
