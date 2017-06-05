@@ -1,5 +1,5 @@
 
-let semanticAnalisis = function(tree) {
+let semanticAnalisis = function(tree, symbolTable) {
     console.log("semanticAnalisis");
     var variables = {};
     var getType, validOp, validRule;
@@ -65,7 +65,7 @@ let semanticAnalisis = function(tree) {
       return false;
     }
 
-    getType = function(x) {
+    getType = function(x, symbolTable) {
       if(!x)
         return x;
       switch(x.type) {
@@ -93,7 +93,7 @@ let semanticAnalisis = function(tree) {
       }
     };
 
-    validRule = function(rule) {
+    validRule = function(rule, symbolTable) {
       switch(rule.type) {
         case "term":
         case "expression":
@@ -101,18 +101,18 @@ let semanticAnalisis = function(tree) {
             throw "ERROR validando";
           break;
         case "for":
-          validRule(rule.start);
-          validRule(rule.check);
-          validRule(rule.iterate);
+          validRule(rule.start, symbolTable);
+          validRule(rule.check, symbolTable);
+          validRule(rule.iterate, symbolTable);
           for(var line in rule.contents)
-            validRule(rule.contents[line]);
-          validRule(rule.else);
+            validRule(rule.contents[line], symbolTable);
+          validRule(rule.else, symbolTable);
           break;
         case "while":
-          validRule(rule.check);
+          validRule(rule.check, symbolTable);
           for(var line in rule.contents)
-            validRule(rule.contents[line]);
-          validRule(rule.else);
+            validRule(rule.contents[line], symbolTable);
+          validRule(rule.else, symbolTable);
           break;
         case "term":
           if(!validOp(getType(rule.left), rule.op, getType(rule.right)))
@@ -120,17 +120,17 @@ let semanticAnalisis = function(tree) {
           break;
         case "block":
           for(var line in rule.contents)
-            validRule(rule.contents[line]);
+            validRule(rule.contents[line], symbolTable);
           break;
         case "condition":
-        if(!validOp(getType(rule.left), rule.op, getType(rule.right)))
+        if(!validOp(getType(rule.left, symbolTable), rule.op, getType(rule.right, symbolTable)))
           throw "ERROR term";
           break;
         case "declaration":
           //tabla
 
           for(var a in rule.assignations) {
-            if(rule.varType !== getType(rule.assignations[a].to))
+            if(rule.varType !== getType(rule.assignations[a].to, symbolTable))
               throw "ERROR assignando";
             //validOp(getType(rule.assignations[a]), );
           }
@@ -138,7 +138,7 @@ let semanticAnalisis = function(tree) {
         case "assign":
           for(var a in rule.assignations) {
             console.log(rule.assignations[a].id)
-            console.log(getType(rule.assignations[a].to))
+            console.log(getType(rule.assignations[a].to, symbolTable))
 /*
             if(rule.varType !== getType(rule.assignations[a].to))
               throw "ERROR assignando";
@@ -149,16 +149,16 @@ let semanticAnalisis = function(tree) {
           break;
         case "IF":
         case "if":
-          validRule(rule.ifCode.check);
-          validRule(rule.ifCode.contents);
+          validRule(rule.ifCode.check, symbolTable);
+          validRule(rule.ifCode.contents, symbolTable);
           if(rule.elseIfCode.length !== 0) {
             for(var x in rule.elseIfCode) {
-              validRule(rule.elseIfCode[x].check);
-              validRule(rule.elseIfCode[x].contents);
+              validRule(rule.elseIfCode[x].check, symbolTable);
+              validRule(rule.elseIfCode[x].contents, symbolTable);
             }
           }
           if(rule.elseCode) {
-            validRule(rule.elseCode);
+            validRule(rule.elseCode, symbolTable);
           }
           break;
         case "string":
@@ -202,37 +202,10 @@ let semanticAnalisis = function(tree) {
 
     //arguments ?
 
-    //comprobar palabras reservadas
-
 try {
   for(var line in tree.result)
   {
-    validRule(tree.result[line]);
-    //console.log(tree["result"][line]);
-    /*
-    switch(tree.result[line].type)
-    {
-      case "declaration":
-        console.log("declaration");
-        // id no es una palabra reservadas
-        // id no existe aun
-        // varType == assignations[0]
-
-        /*
-        for(var x in tree.result[line].assignations)
-        {
-          if(tree.result[line].varType == tree.result[line].assignations[x].to)
-        }
-        */
-  /*
-        break;
-      case "function":
-        console.log("function");
-
-        break;
-      case
-    }
-    */
+    validRule(tree.result[line], symbolTable);
   }
 } catch (e) {
   console.log(e)
