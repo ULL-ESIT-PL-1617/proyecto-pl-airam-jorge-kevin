@@ -3,6 +3,12 @@ numeric k = 0;
 
 numeric function(string a, custom d) {
     custom2 l = 0;
+    for (numeric i = 0; i < 10; i = i + 1) {
+
+    }
+
+    if (TRUE) { numeric a = 1; }
+    if (TRUE) { numeric a = 1; }
 
 }
 

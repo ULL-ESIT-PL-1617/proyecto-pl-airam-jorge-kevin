@@ -99,6 +99,21 @@ var SymbolTableClass = function(father) {
         return table;
     }
 
+    this.addFlowControl = function(controlType) {
+        var table = new SymbolTableClass(this);
+
+        this.array.push({
+            id:         null,
+            kind:       controlType,
+            type:       null,
+            constant:   false,
+            visibility: "public",
+            local:      table
+        });
+
+        return table;
+    }
+
     this.typeToText = function(type) {
         if (!type)       return "null";
         if (!type.array) return type;
@@ -178,6 +193,15 @@ let process = function(key, value) {
             /*case "assign":
                 checkAssignations(value);
                 break;*/
+            case "if":
+                scope = scope.addFlowControl("if");
+                break;
+            case "for":
+                scope = scope.addFlowControl("for");
+                break;
+            case "while":
+                scope = scope.addFlowControl("while");
+                break;
             case "declaration":
                 checkDeclarations(value);
                 break;
@@ -279,7 +303,8 @@ let traverse = function(o, func) {
         }
 
         if ((o[i] !== null) && (scope.father !== null) &&
-            ((o[i].type === "function") || (o[i].type === "class") || (o[i].type === "method"))) {
+            ((o[i].type === "function") || (o[i].type === "class") || (o[i].type === "method") ||
+             (o[i].type === "for"     ) || (o[i].type === "while") || (o[i].type === "if"    ))) {
                 scope = scope.father;
         }
     }
