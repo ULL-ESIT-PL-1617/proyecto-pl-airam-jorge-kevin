@@ -63,19 +63,13 @@ let translate2 = function(obj, result) {
                               obj.code += "if (";
                               translate2(obj, result.check);
                               obj.code += ") {\n     ";
-                              obj.code += "while (";
-                              translate2(obj, result.check);
-                              obj.code += ")";
-                              translate2(obj, result.contents);
+                              while_(obj, result);
                               obj.code += "\n     }";
                               obj.code += " else "
                               translate2(obj, result.else);
                             }
                             else{
-                              obj.code += "while (";
-                              translate2(obj, result.check);
-                              obj.code += ")";
-                              translate2(obj, result.contents);
+                              while_(obj, result);
                             }
           break;
       case "for":           if(result.else != null){
@@ -162,10 +156,10 @@ let translate2 = function(obj, result) {
                             obj.code += "}";
           break;
 
-      case "attribute":     obj.code += result.assignations[0].id + ": ";
+      case "attribute":     obj.code += "_" + result.assignations[0].id + ": ";
                             translate2(obj, result.assignations[0].to);
           break
-      case "method":        obj.code += result.functionName + ": function () ";
+      case "method":        obj.code += "_" + result.functionName + ": function () ";
                             translate2(obj, result.contents);
           break;
       case "condition":     translate2(obj, result.left);
@@ -184,15 +178,13 @@ let translate2 = function(obj, result) {
                             translate2(obj, result.args);
                             obj.code += ");"
           break;
-      case "idAccess":      obj.code += result.base + ".";
+      case "idAccess":      obj.code += "_" + result.base + ".";
                             for (let i = 0; i < result.access.length; i++)
                               translate2(obj, result.access[i]);
           break;
       case "methodAccess":  obj.code += "_" + result.id + "(";
                             translate2(obj, result.arguments);
                             obj.code += ")";
-          break;
-      case "arrayAccess":
           break;
       case "id":            obj.code += "_" + result.id;
           break;
@@ -211,6 +203,13 @@ let translate2 = function(obj, result) {
       default:
                             throw "ERROR type not exist or is undefined.";
   }
+}
+
+let while_ = function(obj, result){
+  obj.code += "while (";
+  translate2(obj, result.check);
+  obj.code += ")";
+  translate2(obj, result.contents);
 }
 
 let translate = function(tree) {
