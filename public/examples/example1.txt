@@ -1,8 +1,13 @@
+string[] c = {"a", "b"};
+numeric k = 0;
 
-function add(x, y) {
-  return x + y;
+numeric function(string a, custom d) {
+    custom2 l = 0;
+
 }
 
-z = 1;
-y = 2 * 3;
-add(99 + z, y);
+class x {
+
+ private numeric test = 0;
+ private void test2() {}
+}

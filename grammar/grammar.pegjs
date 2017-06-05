@@ -131,7 +131,7 @@ assign
     };
   }
   / condition
-  
+
 function
   = returnType:type functionName:ID LEFTPAR params:(type ID (COMMA type ID)*)? RIGHTPAR block:block
     {
@@ -182,19 +182,15 @@ classBlock
 classStatement
   = visibility:VISIBLITY assign:assign SEMICOLON
   {
-    return {
-      type:       "attribute",
-      visibility: visibility,
-      assign:     assign
-    }
+    assign.type = "attribute";
+    assign.visibility = visibility;
+    return assign;
   }
   / visibility:VISIBLITY func:function
   {
-    return {
-      type:       "method",
-      visibility: visibility,
-      method:     func
-    }
+    func.type = "method";
+    func.visibility = visibility;
+    return func;
   }
 
 condition

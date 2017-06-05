@@ -264,18 +264,14 @@ function peg$parse(input, options) {
           };
         },
       peg$c15 = function(visibility, assign) {
-          return {
-            type:       "attribute",
-            visibility: visibility,
-            assign:     assign
-          }
+          assign.type = "attribute";
+          assign.visibility = visibility;
+          return assign;
         },
       peg$c16 = function(visibility, func) {
-          return {
-            type:       "method",
-            visibility: visibility,
-            method:     func
-          }
+          func.type = "method";
+          func.visibility = visibility;
+          return func;
         },
       peg$c17 = function(left, op, right) {
           return {

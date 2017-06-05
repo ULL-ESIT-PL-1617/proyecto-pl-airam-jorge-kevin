@@ -161,11 +161,11 @@ let translate2 = function(obj, result) {
                             }
                             obj.code += "}";
           break;
-      case "attribute":     obj.code += result.assign.assignations[0].id + ": ";
-                            translate2(obj, result.assign.assignations[0].to);
-          break;
-      case "method":        obj.code += result.method.functionName + ": function () ";
-                            translate2(obj, result.method.contents);
+      case "attribute":     obj.code += result.assignations[0].id + ": ";
+                            translate2(obj, result.assignations[0].to);
+          break
+      case "method":        obj.code += result.functionName + ": function () ";
+                            translate2(obj, result.contents);
           break;
       case "condition":     translate2(obj, result.left);
                             obj.code += " " + result.op + " ";
