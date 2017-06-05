@@ -106,14 +106,14 @@ let translate2 = function(obj, result) {
                             }
           break;
       case "assign":        for(let i = 0; i < result.assignations.length; i++){
-                              obj.code += result.assignations[i].id + " = ";
+                              obj.code += "_" + result.assignations[i].id + " = ";
                               translate2(obj, result.assignations[i].to);
                             }
           break;
       case "declaration":   obj.code += "var ";
                             if(result.varType.array != undefined){
                               for(let i = 0; i < result.assignations.length; i++){
-                                obj.code += result.assignations[i].id + " = [";
+                                obj.code += "_" + result.assignations[i].id + " = [";
                                 for(let j = 0; j < result.assignations[i].to.length; j++){
                                   translate2(obj, result.assignations[i].to[j]);
                                   if(result.assignations[i].to.length > 1 && j < result.assignations[i].to.length - 1)
@@ -124,14 +124,14 @@ let translate2 = function(obj, result) {
                             }
                             else{
                               for(let i = 0; i < result.assignations.length; i++){
-                                obj.code += result.assignations[i].id + " = ";
+                                obj.code += "_" + result.assignations[i].id + " = ";
                                 translate2(obj, result.assignations[i].to);
                                 if(result.assignations.length > 1 && i < result.assignations.length - 1)
                                   obj.code += ", ";
                               }
                             }
           break;
-      case "function":      obj.code += "function " + result.functionName;
+      case "function":      obj.code += "function " + "_" + result.functionName;
                             obj.code += "(";
                             if(result.params.length > 0)
                               for(let i = 0; i < result.params.length; i++){
@@ -142,14 +142,14 @@ let translate2 = function(obj, result) {
                             obj.code += ")";
                             translate2(obj, result.contents);
           break;
-      case "parameter":     obj.code += result.vartype + " " + result.id;
+      case "parameter":     obj.code += result.vartype + " " + "_" + result.id;
           break;
       case "return":        obj.code += "return ";
                             if(result.returnValue != null)
                               translate2(obj, result.returnValue);
                             obj.code += ";";
           break;
-      case "class":         obj.code += "var " + result.id + " = ";
+      case "class":         obj.code += "var " + "_" + result.id + " = ";
                             translate2(obj, result.content);
           break;
       case "classBlock":    obj.code += "{\n     ";
@@ -161,10 +161,10 @@ let translate2 = function(obj, result) {
                             }
                             obj.code += "}";
           break;
-      case "attribute":     obj.code += result.assign.assignations[0].id + ": ";
+      case "attribute":     obj.code += "_" + result.assign.assignations[0].id + ": ";
                             translate2(obj, result.assign.assignations[0].to);
           break;
-      case "method":        obj.code += result.method.functionName + ": function () ";
+      case "method":        obj.code += "_" + result.method.functionName + ": function () ";
                             translate2(obj, result.method.contents);
           break;
       case "condition":     translate2(obj, result.left);
@@ -179,7 +179,7 @@ let translate2 = function(obj, result) {
                             obj.code += " " + result.op + " ";
                             translate2(obj, result.right);
           break;
-      case "call":          obj.code += result.id + "(";
+      case "call":          obj.code += "_" + result.id + "(";
                             translate2(obj, result.args);
                             obj.code += ");"
           break;
@@ -187,13 +187,13 @@ let translate2 = function(obj, result) {
                             for (let i = 0; i < result.access.length; i++)
                               translate2(obj, result.access[i]);
           break;
-      case "methodAccess":  obj.code += result.id + "(";
+      case "methodAccess":  obj.code += "_" + result.id + "(";
                             translate2(obj, result.arguments);
                             obj.code += ")";
           break;
       case "arrayAccess":
           break;
-      case "id":            obj.code += result.id;
+      case "id":            obj.code += "_" + result.id;
           break;
       case "arguments":     for (let i = 0; i < result.arguments.length; i++){
                               translate2(obj, result.arguments[i]);
@@ -207,8 +207,8 @@ let translate2 = function(obj, result) {
           break;
       case "bool":          obj.code += result.value;
           break;
-      //TODO  array por hacer
       default:
+                            throw "ERROR type not exist or is undefined.";
   }
 }
 
