@@ -176,10 +176,10 @@ let process = function(key, value) {
             case "class":
                 checkClass(value);
                 break;
-            /*case "attribute":
+            case "attribute":
                 checkAttributes(value);
                 break;
-            default: break;*/
+            default: break;
         }
     }
 }
