@@ -12,7 +12,7 @@ var SymbolTableClass = function(father) {
     /* Busca en la tabla actual (No en sus hijos ni en su padre)
     un fila que contenga un id y que sea de alguno de los tipos kinds.
     Por ejemplo: search(id, ["variable", "parameter"]) */
-    this.search = function(id, kinds) {
+    this.searchLocal = function(id, kinds) {
         for (var i in this.array) {
             if ((this.array[i].id === id) && (kinds.indexOf(this.array[i].kind) !== -1)) {
                 return this.array[i];
@@ -21,10 +21,24 @@ var SymbolTableClass = function(father) {
         return null;
     }
 
+    /* Busca en la tabla actual (No en sus hijos) y en su padre si no lo encontrara
+    un fila que contenga un id y que sea de alguno de los tipos kinds.
+    Por ejemplo: search(id, ["variable", "parameter"]) */
+    this.search = function(id, kinds) {
+        for (var i in this.array) {
+            if ((this.array[i].id === id) && (kinds.indexOf(this.array[i].kind) !== -1)) {
+                return this.array[i];
+            }
+        }
+        return (!!this.father ? this.father.search(id, kinds) : null);
+    }
+
     this.addFunc = function(func) {
         var table = new SymbolTableClass(this);
 
-        this.array.push({
+        if (!!this.search(func.functionName, ["function", "method"])) {
+            throw "Redeclartion of funtion " + func.functionName;
+        } else this.array.push({
             id:         func.functionName,
             kind:       "function",
             type:       func.returnType,
@@ -41,7 +55,9 @@ var SymbolTableClass = function(father) {
     }
 
     this.addParameter = function(param) {
-        this.array.push({
+        if (!!this.search(param.id, ["variable", "parameter", "attribute"])) {
+            throw "Redeclartion of variable " + param.id;
+        } else this.array.push({
             id:         param.id,
             kind:       "parameter",
             type:       param.vartype,
@@ -71,7 +87,9 @@ var SymbolTableClass = function(father) {
     this.addClass = function(class_) {
         var table = new SymbolTableClass(this);
 
-        this.array.push({
+        if (!!this.search(id, ["variable", "parameter", "attribute"])) {
+            throw "Redeclartion of variable " + id;
+        } this.array.push({
             id:         class_.id,
             kind:       "class",
             type:       null,
@@ -85,8 +103,12 @@ var SymbolTableClass = function(father) {
 
     this.addAttributeDeclarations = function(declarations) {
         for (var i in declarations.assignations) {
-            this.array.push({
-                id:         declarations.assignations[i].id,
+            var id = declarations.assignations[i].id;
+
+            if (!!this.search(id, ["variable", "parameter", "attribute"])) {
+                throw "Redeclartion of variable " + id;
+            } else this.array.push({
+                id:         id,
                 kind:       "attribute",
                 type:       declarations.varType,
                 constant:   declarations.constant,
@@ -99,7 +121,9 @@ var SymbolTableClass = function(father) {
     this.addMethod = function(method) {
         var table = new SymbolTableClass(this);
 
-        this.array.push({
+        if (!!this.search(method.functionName, ["function", "method"])) {
+            throw "Redeclartion of method " + method.functionName;
+        } else this.array.push({
             id:         method.functionName,
             kind:       "method",
             type:       method.returnType,
