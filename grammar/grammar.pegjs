@@ -13,6 +13,8 @@
     TRUE:   true,
     FALSE:  false
   };
+
+  var grammarControlFlowID = 0;
 }
 
 start
@@ -69,6 +71,7 @@ if
     }));
 
     return {
+      id:         grammarControlFlowID++,
       type:       "if",
       ifCode:     ifCode,
       elseIfCode: elseIfCode,
@@ -80,6 +83,7 @@ while
   = WHILE check:parcondition? block:block elseBlock:(ELSE block)?
   {
     return {
+      id:         grammarControlFlowID++,
       type:     "while",
       check:    check,
       contents: block,
@@ -91,6 +95,7 @@ for
   = FOR LEFTPAR start:assign? SEMICOLON check:condition? SEMICOLON iterate:assign? RIGHTPAR block:block elseBlock:(ELSE block)?
   {
     return {
+      id:       grammarControlFlowID++,
       type:     "for",
       start:    start,
       check:    check,

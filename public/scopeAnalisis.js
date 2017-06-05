@@ -47,6 +47,11 @@ var SymbolTableClass = function(father) {
         return (!!this.father ? this.father.search(id, kinds) : null);
     }
 
+    /* Comprueba is un id no es una palabra reservada */
+    this.isValidID = function(id) {
+
+    }
+
     this.addFunc = function(func) {
         var table = new SymbolTableClass(this);
 
@@ -153,12 +158,12 @@ var SymbolTableClass = function(father) {
         return table;
     }
 
-    this.addFlowControl = function(controlType) {
+    this.addControlFlow = function(controlFlow) {
         var table = new SymbolTableClass(this);
 
         this.array.push({
-            id:         null,
-            kind:       controlType,
+            id:         controlFlow.id,
+            kind:       controlFlow.type,
             type:       null,
             constant:   false,
             visibility: "public",
@@ -235,59 +240,32 @@ let process = function(key, value) {
                 checkAssignations(value);
                 break;*/
             case "if":
-                scope = scope.addFlowControl("if");
+                scope = scope.addControlFlow(value);
                 break;
             case "for":
-                scope = scope.addFlowControl("for");
+                scope = scope.addControlFlow(value);
                 break;
             case "while":
-                scope = scope.addFlowControl("while");
+                scope = scope.addControlFlow(value);
                 break;
             case "declaration":
                 scope.addDeclarations(value);
                 break;
             case "function":
-                checkFunctions(value);
+                scope = scope.addFunc(value);
                 break;
             case "class":
-                checkClass(value);
+                scope = scope.addClass(value);
                 break;
             case "attribute":
-                checkAttributesDeclarations(value);
+                scope.addAttributeDeclarations(value);
                 break;
             case "method":
-                checkMethods(value);
+                scope = scope.addMethod(value);
                 break;
             default: break;
         }
     }
-}
-
-let checkMethods = function(method) {
-    scope = scope.addMethod(method);
-}
-
-let checkAttributesDeclarations = function(declarations) {
-
-    /*if (scope.containsClassId(id)) {
-        throw "Redeclaration of class " + id;
-    }*/
-    scope.addAttributeDeclarations(declarations);
-}
-
-let checkClass = function(class_) {
-
-    /*if (scope.containsClassId(id)) {
-        throw "Redeclaration of class " + id;
-    }*/
-    scope = scope.addClass(class_);
-}
-
-let checkFunctions = function(func) {
-    /*if (scope.containsFuncId(func.functionName)) {
-        throw "Redeclaration of function " + id;
-    }*/
-    scope = scope.addFunc(func);
 }
 
 /* Comprueba que las asignaciones se hacen a variables que ya han sido declaradas

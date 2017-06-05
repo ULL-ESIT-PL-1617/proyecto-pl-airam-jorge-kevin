@@ -177,6 +177,7 @@ function peg$parse(input, options) {
           }));
 
           return {
+            id:         grammarControlFlowID++,
             type:       "if",
             ifCode:     ifCode,
             elseIfCode: elseIfCode,
@@ -185,6 +186,7 @@ function peg$parse(input, options) {
         },
       peg$c6 = function(check, block, elseBlock) {
           return {
+            id:         grammarControlFlowID++,
             type:     "while",
             check:    check,
             contents: block,
@@ -193,6 +195,7 @@ function peg$parse(input, options) {
         },
       peg$c7 = function(start, check, iterate, block, elseBlock) {
           return {
+            id:       grammarControlFlowID++,
             type:     "for",
             start:    start,
             check:    check,
@@ -3469,6 +3472,8 @@ function peg$parse(input, options) {
       TRUE:   true,
       FALSE:  false
     };
+
+    var grammarControlFlowID = 0;
 
 
   peg$result = peg$startRuleFunction();
