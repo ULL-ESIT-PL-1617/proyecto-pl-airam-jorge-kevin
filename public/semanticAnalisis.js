@@ -74,7 +74,8 @@ let semanticAnalisis = function(tree, symbolTable) {
         case "numeric":
           return x.type;
         case "id":
-          throw "ERROR tabla id";
+          symbolTable.search(x.id);
+          //throw "ERROR tabla id";
           break;
         case "term":
         case "expression":
