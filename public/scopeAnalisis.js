@@ -67,14 +67,14 @@ var SymbolTableClass = function(father) {
         return table;
     }
 
-    this.addAttributeDeclarations = function(declaration) {
-        for (var i in declarations.assign.assignations) {
+    this.addAttributeDeclarations = function(declarations) {
+        for (var i in declarations.assignations) {
             this.array.push({
-                id:         declarations.assign.assignations[i].id,
+                id:         declarations.assignations[i].id,
                 kind:       "attribute",
-                type:       declarations.assign.varType,
-                constant:   declarations.assign.constant,
-                visibility: declaration.visibility,
+                type:       declarations.varType,
+                constant:   declarations.constant,
+                visibility: declarations.visibility,
                 local:      null
             });
         }
@@ -84,19 +84,29 @@ var SymbolTableClass = function(father) {
         var table = new SymbolTableClass(this);
 
         this.array.push({
-            id:         method.method.functionName,
+            id:         method.functionName,
             kind:       "method",
-            type:       method.method.returnType,
+            type:       method.returnType,
             constant:   false,
             visibility: method.visibility,
             local:      table
         });
 
-        for (var i in method.method.params) {
+        for (var i in method.params) {
             table.addparameter(func.params[i]);
         }
 
         return table;
+    }
+
+    this.typeToText = function(type) {
+        if (!type)       return "null";
+        if (!type.array) return type;
+
+        var text = "";
+        for (var i = 0; i < type.arrayCount; ++i) { text += "array of "; }
+
+        return text + type.type;
     }
 
     this.toHTMLrow = function(item, subtables) {
@@ -104,7 +114,7 @@ var SymbolTableClass = function(father) {
         html += "<tr>";
         html += "<td>" + item.id         + "</td>";
         html += "<td>" + item.kind       + "</td>";
-        html += "<td>" + item.type       + "</td>";
+        html += "<td>" + this.typeToText(item.type) + "</td>";
         html += "<td>" + item.constant   + "</td>";
         html += "<td>" + item.visibility + "</td>";
         html += "<td>" + (!!item.local ? item.local.id : null)  + "</td>";
@@ -153,11 +163,12 @@ let reservedWords;
 let builtInTypes;
 
 let scopeAnalisis = function(tree) {
-    let log = scope = new SymbolTableClass();
+    let baseTable = scope = new SymbolTableClass();
     reservedWords = tree.reservedWords;
     builtInTypes  = tree.builtInTypes;
     traverse(tree.result, process);
-    log.printToDiv("symbolTable");
+    baseTable.printToDiv("symbolTable");
+    return baseTable;
 };
 
 // Called with every property and its value
@@ -176,21 +187,27 @@ let process = function(key, value) {
             case "class":
                 checkClass(value);
                 break;
-            /*case "attribute":
-                checkAttributes(value);
-                break;*/
+            case "attribute":
+                checkAttributesDeclarations(value);
+                break;
+            case "method":
+                checkMethods(value);
+                break;
             default: break;
         }
     }
 }
 
-let checkAttributes = function(attribute) {
-    var id = attribute.id;
+let checkMethods = function(method) {
+    scope = scope.addMethod(method);
+}
+
+let checkAttributesDeclarations = function(declarations) {
 
     /*if (scope.containsClassId(id)) {
         throw "Redeclaration of class " + id;
     }*/
-    scope = scope.addClassId(id);
+    scope.addAttributeDeclarations(declarations);
 }
 
 let checkClass = function(class_) {
@@ -212,7 +229,7 @@ let checkFunctions = function(func) {
 let checkDeclarations = function(declaration) {
     scope.addDeclarations(declaration);
     return;
-    for (var assign in declaration.assignations) {
+    /*for (var assign in declaration.assignations) {
         var id   = declaration.assignations[assign].id;
         var type = declaration.varType;
         var cnst = declaration.constant;
@@ -234,9 +251,9 @@ let checkDeclarations = function(declaration) {
 
         if (scope.containsCustomId(id)) {
             throw "Redeclaration of variable " + id;
-        }*/
+        }
         scope.addCustomId(id, type, cnst);
-    }
+    }*/
 }
 
 /* Comprueba que las asignaciones se hacen a variables que ya han sido declaradas

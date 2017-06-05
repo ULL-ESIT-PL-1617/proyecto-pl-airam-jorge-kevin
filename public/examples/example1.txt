@@ -1,4 +1,4 @@
-string[] c = {"a", "b"};
+string[][] c = {"a", "b"};
 numeric k = 0;
 
 numeric function(string a, custom d) {

@@ -8,8 +8,8 @@
     source = original.value;
     //try {
       tree = peg$parse(source);
-      scopeAnalisis(tree);
-      semanticAnalisis(tree);
+      symbolTable = scopeAnalisis(tree);
+      semanticAnalisis(tree, symbolTable);
       code = genCode(tree);
       result = code + "\n" + JSON.stringify(tree, null, 2)
     //} catch (error) {
