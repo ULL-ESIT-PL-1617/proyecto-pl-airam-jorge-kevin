@@ -9,6 +9,18 @@ var SymbolTableClass = function(father) {
     this.id     = __symbolTableId++;
     this.father = (!!father) ? father : null;
 
+    /* Busca en la tabla actual (No en sus hijos ni en su padre)
+    un fila que contenga un id y que sea de alguno de los tipos kinds.
+    Por ejemplo: search(id, ["variable", "parameter"]) */
+    this.search = function(id, kinds) {
+        for (var i in this.array) {
+            if ((this.array[i].id === id) && (kinds.indexOf(this.array[i].kind) !== -1)) {
+                return this.array[i];
+            }
+        }
+        return null;
+    }
+
     this.addFunc = function(func) {
         var table = new SymbolTableClass(this);
 
@@ -41,8 +53,12 @@ var SymbolTableClass = function(father) {
 
     this.addDeclarations = function(declarations) {
         for (var i in declarations.assignations) {
-            this.array.push({
-                id:         declarations.assignations[i].id,
+            var id = declarations.assignations[i].id;
+
+            if (!!this.search(id, ["variable", "parameter", "attribute"])) {
+                throw "Redeclartion of variable " + id;
+            } else this.array.push({
+                id:         id,
                 kind:       "variable",
                 type:       declarations.varType,
                 constant:   declarations.constant,
@@ -203,7 +219,7 @@ let process = function(key, value) {
                 scope = scope.addFlowControl("while");
                 break;
             case "declaration":
-                checkDeclarations(value);
+                scope.addDeclarations(value);
                 break;
             case "function":
                 checkFunctions(value);
@@ -247,37 +263,6 @@ let checkFunctions = function(func) {
         throw "Redeclaration of function " + id;
     }*/
     scope = scope.addFunc(func);
-}
-
-/* Si la variable ya está declarada en el scope, throw. Si no, añádela a la tabla */
-let checkDeclarations = function(declaration) {
-    scope.addDeclarations(declaration);
-    return;
-    /*for (var assign in declaration.assignations) {
-        var id   = declaration.assignations[assign].id;
-        var type = declaration.varType;
-        var cnst = declaration.constant;
-
-        /*if (reservedWords.indexOf(id.toLowerCase()) !== -1) {
-            throw "Cant use " + id + " as an id";
-        }
-
-        if ((typeof(type) === "string") &&
-            (reservedWords.indexOf(type.toLowerCase()) !== -1) && (builtInTypes.indexOf(type.toLowerCase()) === -1)) {
-            throw "Cant use " + type + " as a type";
-        }*/
-
-        // Arrays
-        /*if ((typeof(type) === "object") &&
-            (reservedWords.indexOf(type.type.toLowerCase()) !== -1) && (builtInTypes.indexOf(type.type.toLowerCase()) === -1)) {
-            throw "Cant use " + type.type + " as a type";
-        }
-
-        if (scope.containsCustomId(id)) {
-            throw "Redeclaration of variable " + id;
-        }
-        scope.addCustomId(id, type, cnst);
-    }*/
 }
 
 /* Comprueba que las asignaciones se hacen a variables que ya han sido declaradas
