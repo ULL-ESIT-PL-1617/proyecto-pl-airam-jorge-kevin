@@ -126,7 +126,7 @@ assign
       assignations: assignations
     };
   }
-  / constant:CONST? type:type? id:ID ASSIGN assign:assign other:(COMMA ID ASSIGN assign)*
+  / constant:CONST? type:type? id:ID ASSIGN assign:assign other:(COLON ID ASSIGN assign)*
   {
     var assignations = [];
 
@@ -261,7 +261,6 @@ factor
       id:   id
     };
   }
-  / arguments
   / LEFTPAR assign:assign RIGHTPAR { return assign; }
 
 access
@@ -283,7 +282,7 @@ access
  }
 
 arrayAccess
- = id:ID index:(LEFTBRACKET INTEGER RIGHTBRACKET)+
+ = id:ID index:(LEFTBRACKET assign RIGHTBRACKET)+
  {
    var indexAccess = [];
    index.forEach(x => indexAccess.push(x[1]));
@@ -347,7 +346,7 @@ bool
   {
     return {
       type:  "bool",
-      value: bool
+      value: bool.toLowerCase()
     }
   }
 
@@ -367,6 +366,7 @@ ASSIGN       = _ "=" _
 LEFTPAR      = _ "(" _
 RIGHTPAR     = _ ")" _
 SEMICOLON    = _ ";" _
+COLON        = _ ":" _
 LEFTBRACE    = _ "{" _
 RIGHTBRACE   = _ "}" _
 LEFTBRACKET  = _ "[" _

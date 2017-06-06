@@ -446,13 +446,13 @@ let checkAssignations = function(assignation) {
 
         var id = null;
         if (typeof(element) == "string") {
-            id  = element;
+            id = element;
         } else if (element.type === "idAccess") {
             id = element.base;
         } else { // type === "arrayAccess"
             id = element.id;
         }
-        
+
         var row = scope.search(id, ["variable", "parameter", "attribute"]);
 
         if (row === null)

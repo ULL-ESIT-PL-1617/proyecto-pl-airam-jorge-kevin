@@ -7,7 +7,8 @@ let prefixTemplate = function() {
 };
 
 let suffixTemplate  = function() {
-   return `return sym;
+   return `
+            return sym;
         }
         catch(e) {
             let err = e.message.replace(/sym\\.(\\w+)/g, '$1');
@@ -20,274 +21,183 @@ let suffixTemplate  = function() {
 
 let genCode = function(tree) {
 
-   var prefix = prefixTemplate();
-   var suffix = suffixTemplate();
+   let prefix = prefixTemplate();
+   let suffix = suffixTemplate();
    let js = prefix+translate(tree)+suffix;
-   //return beautify(js, { indent_size: 2 });
    return js;
 };
 
-/* Traduccion */
+
+let __insideClass = false;
 let translate = function(tree) {
-    var obj = { code: "   " };
-    for(let i = 0; i < tree.result.length; i++){
-      translate2(obj, tree.result[i]);
-      obj.code += "\n     ";
+    let text = "";
+    for (let i in tree.result) {
+        text += translateStep(tree.result[i]);
     }
-    return obj.code;
+    return text;
 }
 
-let translate2 = function(obj, result) {
-  switch(result.type) {
-      case "block":         block_(obj, result);
-          break;
-      case "if":            if_(obj, result);
-          break;
-      case "while":         while_(obj, result);
-          break;
-      case "for":           for_(obj, result);
-          break;
-      case "assign":        assign_(obj, result);
-          break;
-      case "declaration":   declaration_(obj, result);
-          break;
-      case "function":      function_(obj, result);
-          break;
-      case "parameter":     obj.code += "_" + result.id;
-          break;
-      case "return":        return_(obj, result);
-          break;
-      case "class":         obj.code += "function " + "_" + result.id;
-                            translate2(obj, result.content);
-          break;
-      case "classBlock":    classBlock_(obj, result);
-          break;
-
-      case "attribute":     obj.code += "this._" + result.assignations[0].id + " = ";
-                            translate2(obj, result.assignations[0].to);
-          break
-      case "method":        method_(obj, result);
-          break;
-      case "condition":     expCondTerm_(obj, result);
-          break;
-      case "expression":    expCondTerm_(obj, result);
-          break;
-      case "term":          expCondTerm_(obj, result);
-          break;
-      case "call":          call_(obj, result);
-          break;
-      case "idAccess":      idAccess_(obj, result);
-          break;
-      case "methodAccess":  methodAccess_(obj, result);
-          break;
-      case "id":            obj.code += "_" + result.id;
-          break;
-      case "arguments":     arguments_(obj, result);
-          break;
-      case "numeric":       obj.code += result.value;
-          break;
-      case "string":        obj.code += "\"" + result.value + "\"";
-          break;
-      case "bool":          obj.code += result.value.toLowerCase();
-          break;
-      default:              throw "ERROR type not exist or is undefined.";
-  }
-}
-
-let block_ = function(obj, result){
-  obj.code += "{\n     ";
-  for(let i = 0; i < result.contents.length; i++){
-    obj.code += "     ";
-    translate2(obj, result.contents[i]);
-  }
-  obj.code += "\n     }";
-}
-
-let if_ = function(obj, result){
-  obj.code += "if (";
-  translate2(obj, result.ifCode.check);
-  obj.code += ")";
-  translate2(obj, result.ifCode.contents);
-  if(result.elseIfCode != null){
-    for (let i = 0; i < result.elseIfCode.length; i++) {
-      obj.code += " else if (";
-      translate2(obj, result.elseIfCode[i].check);
-      obj.code += ")";
-      translate2(obj, result.ifCode.contents);
+let translateStep = function(tree) {
+    switch (tree.type) {
+        case "declaration": return declaration(tree);
+        case "assign": return assignation(tree);
+        case "return": return return_(tree);
+        case "if": break;
+        case "for": break;
+        case "while": break;
+        case "function": return function_(tree);
+        case "class": break;
+        default: return assignation(tree) + ";\n";
     }
-  }
-  if(result.elseCode != null){
-    obj.code += " else ";
-    translate2(obj, result.elseCode);
-  }
+    return "";
 }
 
-let while_ = function(obj, result){
-  if(result.else != null){
-    startLoopIf_(obj, result);
-    whileLoop_(obj, result);
-    endLoopIf_(obj, result);
-    translate2(obj, result.else);
-  }
-  else
-    whileLoop_(obj, result);
+let return_ = function(tree) {
+    return "return" + (!!tree.returnValue ? (assignation(tree.returnValue) + " ") : "") + ";";
 }
 
-let for_ = function(obj, result){
-  if(result.else != null){
-    startLoopIf_(obj, result);
-    forLoop_(obj, result);
-    endLoopIf_(obj, result);
-    translate2(obj, result.else);
-  }
-  else
-    forLoop_(obj, result);
-}
+let function_ = function(tree) {
+    let text = "let " + id(tree.functionName) + " = function(";
 
-let whileLoop_ = function(obj, result){
-  obj.code += "while (";
-  translate2(obj, result.check);
-  obj.code += ")";
-  translate2(obj, result.contents);
-}
-
-let forLoop_ = function(obj, result){
-  obj.code += "for (";
-  translate2(obj, result.start);
-  obj.code += "; ";
-  translate2(obj, result.check);
-  obj.code += "; ";
-  translate2(obj, result.iterate);
-  obj.code += ")";
-  translate2(obj, result.contents);
-}
-
-let startLoopIf_ = function(obj, result){
-  obj.code += "if (";
-  translate2(obj, result.check);
-  obj.code += ") {\n     ";
-}
-
-let endLoopIf_ = function(obj, result){
-  obj.code += "\n     }";
-  obj.code += " else "
-}
-
-let assign_ = function(obj, result){
-  for(let i = 0; i < result.assignations.length; i++){
-    obj.code += "_" + result.assignations[i].id + " = ";
-    translate2(obj, result.assignations[i].to);
-  }
-}
-
-let declaration_ = function(obj, result){
-  obj.code += "var ";
-  if(result.varType.array != undefined){
-    for(let i = 0; i < result.assignations.length; i++){
-      obj.code += "_" + result.assignations[i].id + " = [";
-      for(let j = 0; j < result.assignations[i].to.length; j++){
-        translate2(obj, result.assignations[i].to[j]);
-        if(result.assignations[i].to.length > 1 && j < result.assignations[i].to.length - 1)
-          obj.code += ", ";
-      }
+    for (let i = 0; i < tree.params.length; ++i) {
+        text += id(tree.params[i]);
+        text += (i < (tree.params.length - 1)) ? ", " : "";
     }
-    obj.code += "]";
-  }
-  else{
-    for(let i = 0; i < result.assignations.length; i++){
-      obj.code += "_" + result.assignations[i].id + " = ";
-      translate2(obj, result.assignations[i].to);
-      if(result.assignations.length > 1 && i < result.assignations.length - 1)
-        obj.code += ", ";
+    text += ")" + block(tree.contents);
+    return text;
+}
+
+let block = function(tree) {
+    let text = "{\n";
+    for (let i in tree.contents) {
+        text += translateStep(tree.contents[i]);
     }
-  }
+    text += "}\n";
+    return text;
 }
 
-let function_ = function(obj, result){
-  obj.code += "function " + "_" + result.functionName;
-  obj.code += "(";
-  if(result.params.length > 0)
-    for(let i = 0; i < result.params.length; i++){
-      translate2(obj, result.params[i]);
-      if(result.params.length > 1 && i < result.params.length - 1)
-        obj.code += ", ";
+let declaration = function(tree) {
+    let text = tree.constant ? "const " : "let ";
+    for (let i = 0; i < tree.assignations.length; ++i) {
+        let assg = tree.assignations[i];
+        text += id(assg) + " = ";
+        text += assignation(assg.to);
+        text += (i < (tree.assignations.length - 1)) ? ", " : ";";
     }
-  obj.code += ")";
-  translate2(obj, result.contents);
+    return text + "\n";
 }
 
-let return_ = function(obj, result){
-  obj.code += "return ";
-  if(result.returnValue != null)
-    translate2(obj, result.returnValue);
-  obj.code += ";";
+let assignation = function(tree) {
+    if (tree.type !== "assign") return condition(tree);
+
+    let text = "";
+    for (let i = 0; i < tree.assignations.length; ++i) {
+        let assg = tree.assignations[i];
+        text += element(assg.element) + " = ";
+        text += assignation(assg.to);
+        text += (i < (tree.assignations.length - 1)) ? ", " : ";";
+    }
+    return text + "\n";
 }
 
-let classBlock_ = function(obj, result){
-  obj.code += "{\n     ";
-  for(let i = 0; i < result.classStatement.length; i++)
-    if(result.classStatement[i].functionName == "init")
-      for(let j = 0; j < result.classStatement[i].contents.contents.length; j++){
-        obj.code += "this.";
-        translate2(obj, result.classStatement[i].contents.contents[j]);
-        if(result.classStatement.length > 0)
-          obj.code += ",";
-        obj.code += "\n     ";
-      }
-  for(let i = 0; i < result.classStatement.length; i++){
-    translate2(obj, result.classStatement[i]);
-    if(result.classStatement.length > 1 && i < result.classStatement.length - 1)
-      obj.code += ",";
-    obj.code += "\n     ";
-  }
-  obj.code += "}";
+let element = function(tree) {
+    if (typeof(tree) === "string") return id(tree);
+    if (tree.type    === "idAccess") return idAccess(tree);
+    if (tree.type    === "arrayAccess") return arrayAccess(tree);
 }
 
-let method_ = function(obj, result){
-  obj.code += "this._" + result.functionName + " = function (";
-  for (var i = 0; i < result.params.length; i++)
-    translate2(obj, result.params[i]);
-  obj.code += ")";
-  translate2(obj, result.contents);
+let condition = function(tree) {
+    if (tree.type !== "condition") return expression(tree);
+
+    let text = "(";
+    text += expression(tree.left);
+    text += " " + tree.op + " ";
+    text += (tree.right.type === "condition") ? condition(tree.right) : expression(tree.right);
+    text += ")";
+    return text;
 }
 
-let arguments_ = function(obj, result){
-  for (let i = 0; i < result.arguments.length; i++){
-    translate2(obj, result.arguments[i]);
-    if(result.arguments.length > 1 && i < result.arguments.length - 1)
-      obj.code += ", ";
-  }
+let expression = function(tree) {
+    if (tree.type !== "expression") return term(tree);
+
+    let text = "(";
+    text += term(tree.left);
+    text += " " + tree.op + " ";
+    text += (tree.right.type === "expression") ? expression(tree.right) : term(tree.right);
+    text += ")";
+    return text;
 }
 
-let call_ = function(obj, result){
-  obj.code += "_" + result.id + "(";
-  translate2(obj, result.args);
-  obj.code += ");"
+let term = function(tree) {
+    if (tree.type !== "term") return factor(tree);
+
+    let text = "(";
+    text += factor(tree.left);
+    text += " " + tree.op + " ";
+    text += (tree.right.type === "term") ? term(tree.right) : factor(tree.right);
+    text += ")";
+    return text;
 }
 
-let idAccess_ = function(obj, result){
-  if(!!result.access[0] && result.access[0].id == "init"){
-    obj.code += "new _" + result.base;
-    obj.code += "(";
-    translate2(obj, result.access[0].arguments);
-    obj.code += ")";
-  }
-  else{
-    obj.code += "_" + result.base + ".";
-    for (let i = 0; i < result.access.length; i++)
-      translate2(obj, result.access[i]);
-  }
+let factor = function(tree) {
+    if (tree.type === "string"  ) return "\"" + tree.value + "\"";
+    if (tree.type === "numeric" ) return tree.value;
+    if (tree.type === "bool"    ) return tree.value;
+    if (tree instanceof Array   ) return array(tree);
+    if (tree.type === "call"    ) return call(tree);
+    if (tree.type === "idAccess") return idAccess(tree);
+    if (tree.type === "id"      ) return id(tree);
+    if (tree.type === "arrayAccess") return arrayAccess(tree);
+    return tree;
 }
 
-let methodAccess_ = function(obj, result){
-  obj.code += "_" + result.id + "(";
-  translate2(obj, result.arguments);
-  obj.code += ")";
+let arrayAccess = function(tree) {
+    let text = id(tree.id);
+    for (let i in tree.index) {
+        text += "[" + assignation(tree.index[i]) + "]";
+    }
+    return text;
 }
 
+let id = function(tree) {
+    let id = "_";
+    id += (typeof(tree) === "string") ? tree : tree.id;
+    return id;
+}
 
-let expCondTerm_ = function(obj, result){
-  translate2(obj, result.left);
-  obj.code += " " + result.op + " ";
-  translate2(obj, result.right);
+let idAccess = function(tree) {
+    let text = id(tree.base);
+
+    for (let i in tree.access) {
+        text += ".";
+        text += id(tree.access[i]);
+        if (tree.access[i].type === "methodAccess") {
+            text += arguments_(tree.access[i].arguments);
+        }
+    }
+    return text;
+}
+
+let call = function(tree) {
+    return tree.id + arguments_(tree.args);
+}
+
+let arguments_ = function(tree) {
+    let text = "(";
+    for (let i = 0; i < tree.arguments.length; ++i) {
+        text += assignation(tree.arguments[i]);
+        text += (i < (tree.arguments.length - 1)) ? ", " : "";
+    }
+    text += ")";
+    return text;
+}
+
+let array = function(tree) {
+    let text = "[";
+    for (let i = 0; i < tree.length; ++i) {
+        text += factor(tree[i]);
+        text += (i < (tree.length - 1)) ? ", " : "";
+    }
+    text += "]";
+    return text;
 }
