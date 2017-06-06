@@ -50,7 +50,11 @@ var SymbolTableClass = function(father) {
     /* Comprueba is un id no es una palabra reservada */
     this.isValidID = function(id) {
         for (var i in reservedWords) {
+            if (reservedWords[i] === id.toLowerCase()) {
+                throw id + " id cant be similar to the reserved word " + reservedWords[i];
+            }
         }
+        return id;
     }
 
     this.addFunc = function(func) {
@@ -59,7 +63,7 @@ var SymbolTableClass = function(father) {
         if (!!this.searchLocal(func.functionName, ["function", "method"])) {
             throw "Redeclartion of funtion " + func.functionName;
         } else this.array.push({
-            id:         func.functionName,
+            id:         this.isValidID(func.functionName),
             kind:       "function",
             type:       func.returnType,
             constant:   false,
@@ -78,7 +82,7 @@ var SymbolTableClass = function(father) {
         if (!!this.searchLocal(param.id, ["variable", "parameter", "attribute"])) {
             throw "Redeclartion of variable " + param.id;
         } else this.array.push({
-            id:         param.id,
+            id:         this.isValidID(param.id),
             kind:       "parameter",
             type:       param.vartype,
             constant:   false,
@@ -94,7 +98,7 @@ var SymbolTableClass = function(father) {
             if (!!this.searchLocal(id, ["variable", "parameter", "attribute"])) {
                 throw "Redeclartion of variable " + id;
             } else this.array.push({
-                id:         id,
+                id:         this.isValidID(id),
                 kind:       "variable",
                 type:       declarations.varType,
                 constant:   declarations.constant,
@@ -110,7 +114,7 @@ var SymbolTableClass = function(father) {
         if (!!this.searchLocal(class_.id, ["class"])) {
             throw "Redeclartion of class " + class_.id;
         } this.array.push({
-            id:         class_.id,
+            id:         this.isValidID(class_.id),
             kind:       "class",
             type:       null,
             constant:   false,
@@ -128,7 +132,7 @@ var SymbolTableClass = function(father) {
             if (!!this.searchLocal(id, ["variable", "parameter", "attribute"])) {
                 throw "Redeclartion of variable " + id;
             } else this.array.push({
-                id:         id,
+                id:         this.isValidID(id),
                 kind:       "attribute",
                 type:       declarations.varType,
                 constant:   declarations.constant,
@@ -144,7 +148,7 @@ var SymbolTableClass = function(father) {
         if (!!this.searchLocal(method.functionName, ["function", "method"])) {
             throw "Redeclartion of method " + method.functionName;
         } else this.array.push({
-            id:         method.functionName,
+            id:         this.isValidID(method.functionName),
             kind:       "method",
             type:       method.returnType,
             constant:   false,
@@ -153,7 +157,7 @@ var SymbolTableClass = function(father) {
         });
 
         for (var i in method.params) {
-            table.addparameter(func.params[i]);
+            table.addParameter(method.params[i]);
         }
 
         return table;
