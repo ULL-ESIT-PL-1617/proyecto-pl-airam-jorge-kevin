@@ -224,7 +224,7 @@ let semanticAnalisis = function(tree, symbolTable) {
 
           break;
         case "IF":
-        case "if":ç
+        case "if":
           validRule(rule.ifCode.check, symbolTable);
           validRule(rule.ifCode.contents, symbolTable);
           if(rule.elseIfCode.length !== 0) {
