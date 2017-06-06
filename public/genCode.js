@@ -98,7 +98,14 @@ let while_ = function(tree) {
 
 let class_ = function(tree) {
     let init = getInitMethod(tree);
-    let text = "function _" + id(tree);
+    let text = "function " + id(tree) + "(";
+    for (let i = 0; i < init.params.length; ++i) {
+        text += id(init.params[i]);
+        text += (i < (init.params.length - 1)) ? ", " : "";
+    }
+    text += ") {}";
+
+    return text;
 }
 
 let getInitMethod = function(tree) {
