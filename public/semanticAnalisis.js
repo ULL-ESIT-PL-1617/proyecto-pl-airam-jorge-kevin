@@ -131,6 +131,7 @@ let semanticAnalisis = function(tree, symbolTable) {
           //tabla
 
           for(var a in rule.assignations) {
+            console.log(rule.assignations[a].to)
             if(rule.varType !== getType(rule.assignations[a].to, symbolTable))
               throw "ERROR assignando";
             //validOp(getType(rule.assignations[a]), );

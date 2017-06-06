@@ -31,6 +31,16 @@ let genCode = function(tree) {
    return js;
 };
 
+/* Traduccion */
+let translate = function(tree) {
+    var obj = { code: "   " };
+    for(let i = 0; i < tree.result.length; i++){
+      translate2(obj, tree.result[i]);
+      obj.code += "\n     ";
+    }
+    return obj.code;
+}
+
 let translate2 = function(obj, result) {
   //console.log(result.type);
   switch(result.type) {
@@ -261,14 +271,4 @@ let expCondTerm_ = function(obj, result){
   translate2(obj, result.left);
   obj.code += " " + result.op + " ";
   translate2(obj, result.right);
-}
-
-/* Traduccion */
-let translate = function(tree) {
-    var obj = { code: "   " };
-    for(let i = 0; i < tree.result.length; i++){
-      translate2(obj, tree.result[i]);
-      obj.code += "\n     ";
-    }
-    return obj.code;
 }
