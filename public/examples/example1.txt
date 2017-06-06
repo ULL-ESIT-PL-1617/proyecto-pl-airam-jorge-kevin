@@ -10,7 +10,7 @@ numeric function(string a, custom d) {
     while (TRUE) { numeric xx = 1; } else { numeric ll = 11; }
 
     if (TRUE) { numeric a = 1; } else { numeric d = 1; }
-    if (TRUE) { numeric a = 1; } else if (TRUE) { numeric x = 0; }
+    if (TRUE) { numeric a = 1; } else if (TRUE) { numeric x = 0; a = 9; }
 
 }
 

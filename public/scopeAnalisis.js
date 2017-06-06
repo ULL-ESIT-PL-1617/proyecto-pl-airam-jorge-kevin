@@ -47,7 +47,7 @@ var SymbolTableClass = function(father) {
         return (!!this.father ? this.father.search(id, kinds) : null);
     }
 
-    /* Comprueba is un id no es una palabra reservada */
+    /* Comprueba si un id no es una palabra reservada */
     this.isValidID = function(id) {
         for (var i in reservedWords) {
             if (reservedWords[i] === id.toLowerCase()) {
@@ -55,6 +55,38 @@ var SymbolTableClass = function(father) {
             }
         }
         return id;
+    }
+
+    /* Comprueba si un tipo no es una palabra reservada, exluyendo aquellas que indican builtInTypes.
+       Si la comprobación se completa satisfactoriamente, comprueba que el tipo o bien es builtInTypes
+       o bien es de una clase ya definida. */
+    this.isValidType = function(type) {
+        if (typeof(type) == "object") return type;
+        if (!type                   ) return null;
+        if (this.isBuiltInType(type)) return type;
+
+        for (var i in reservedWords) {
+            if (reservedWords[i] === type.toLowerCase()) {
+                throw type + " type cant be similar to the reserved word " + reservedWords[i];
+            }
+        }
+
+        if ((typeof(type) == "object") && (scope.search(type.type, ["class"]) === null))
+            throw "Unkown class " + type.type;
+        else if (scope.search(type, ["class"]) === null)
+            throw "Unkown class " + type;
+
+        return type;
+    }
+
+    /* Comprueba si un typo es uno de los builtInTypes */
+    this.isBuiltInType = function(type) {
+        for (var i in builtInTypes) {
+            if (builtInTypes[i] === type) {
+                return true;
+            }
+        }
+        return false;
     }
 
     this.addFunc = function(func) {
@@ -65,7 +97,7 @@ var SymbolTableClass = function(father) {
         } else this.array.push({
             id:         this.isValidID(func.functionName),
             kind:       "function",
-            type:       func.returnType,
+            type:       this.isValidType(func.returnType),
             constant:   false,
             visibility: "public",
             local:      table
@@ -84,7 +116,7 @@ var SymbolTableClass = function(father) {
         } else this.array.push({
             id:         this.isValidID(param.id),
             kind:       "parameter",
-            type:       param.vartype,
+            type:       this.isValidType(param.vartype),
             constant:   false,
             visibility: "public",
             local:      null
@@ -100,7 +132,7 @@ var SymbolTableClass = function(father) {
             } else this.array.push({
                 id:         this.isValidID(id),
                 kind:       "variable",
-                type:       declarations.varType,
+                type:       this.isValidType(declarations.varType),
                 constant:   declarations.constant,
                 visibility: "public",
                 local:      null
@@ -134,7 +166,7 @@ var SymbolTableClass = function(father) {
             } else this.array.push({
                 id:         this.isValidID(id),
                 kind:       "attribute",
-                type:       declarations.varType,
+                type:       this.isValidType(declarations.varType),
                 constant:   declarations.constant,
                 visibility: declarations.visibility,
                 local:      null
@@ -150,7 +182,7 @@ var SymbolTableClass = function(father) {
         } else this.array.push({
             id:         this.isValidID(method.functionName),
             kind:       "method",
-            type:       method.returnType,
+            type:       this.isValidType(method.returnType),
             constant:   false,
             visibility: method.visibility,
             local:      table
@@ -301,9 +333,12 @@ var SymbolTableClass = function(father) {
 let process = function(key, value) {
     if ((value !== null) && (typeof(value) == "object")) {
         switch (value.type) {
-            /*case "assign":
+            case "call":
+                checkCall(value);
+                break;
+            case "assign":
                 checkAssignations(value);
-                break;*/
+                break;
             case "if":
                 scopeQueue = scope.addControlFlowIf(value);
                 scope = scopeQueue.shift();
@@ -337,14 +372,21 @@ let process = function(key, value) {
 y no son constantes */
 let checkAssignations = function(assignation) {
     for (var assign in assignation.assignations) {
-        var id       = assignation.assignations[assign].id;
-        var constant = scope.searchUpCustomId(id);
+        var id  = assignation.assignations[assign].id;
+        var row = scope.search(id, ["variable", "parameter", "attribute"]);
 
-        if (constant === null)
+        console.log(row);
+        if (row === null)
             throw "Variable " + id + " not declared";
-        else if (constant === true) {
+        else if (row.constant) {
             throw "Variable " + id + " is constant";
         }
+    }
+}
+
+let checkCall = function(call) {
+    if (!scope.search(call.id, ["function"])) {
+        throw "Unkown function to call " + call.id;
     }
 }
 

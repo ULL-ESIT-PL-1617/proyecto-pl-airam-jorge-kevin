@@ -1,12 +1,6 @@
 
-a = 1;
+class MyClass {
 
-if a < 10 {
-  x = 1;
-} else if a < 100 {
-  x = 2;
-} else if a < 200 {
-  x = 3;
-} else {
-  x = 8;
+    
+
 }
