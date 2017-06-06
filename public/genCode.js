@@ -65,19 +65,19 @@ let if_ = function(tree) {
 }
 
 let for_ = function(tree) {
-    let text  = "";
-
-    if (tree.else !== null) {
-        text = "if "
-    }
+    let text  = "var $$executed#" + tree.id + " = false;\n";
 
     text += "for (";
     if (tree.start !== null) text += declaration(tree.start);
     text += "; ";
     if (tree.check !== null) text += condition(tree.check);
     text += "; ";
-    if (tree.iterate !== null) text += declaration(tree.iterate);
-    text += ")" + block(tree.contents);
+    if (tree.iterate !== null) text += declaration(tree.iterate) + ",";
+    text += " $$executed#" + tree.id + " = true)" + block(tree.contents);
+
+    if (tree.else !== null) {
+        text += "if (!$$executed#" + tree.id + ")" + block(tree.else.contents);
+    }
 
     return text;
 }
