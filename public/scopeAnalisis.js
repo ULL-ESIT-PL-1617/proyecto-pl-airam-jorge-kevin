@@ -3,8 +3,8 @@
     - Detectar asignaciones a variables constantes
 */
 
-
 let scope;
+let scopeQueue = [];
 let reservedWords;
 let builtInTypes;
 
@@ -159,45 +159,79 @@ var SymbolTableClass = function(father) {
         return table;
     }
 
-    this.addControlFlow = function(controlFlow) {
-        var table = new SymbolTableClass(this);
+    this.addControlFlowLoop = function(controlFlow) {
+        var tables = [];
 
-        if (controlFlow.type === "if" ) {
-            this.array.push({
-                id:         controlFlow.id,
-                kind:       controlFlow.type,
-                type:       null,
-                constant:   false,
-                visibility: "public",
-                local:      table
-            });
-            this.array.push({
-                id:         controlFlow.id,
-                kind:       controlFlow.type,
-                type:       null,
-                constant:   false,
-                visibility: "public",
-                local:      table
-            });
-            this.array.push({
-                id:         controlFlow.id,
-                kind:       controlFlow.type,
-                type:       null,
-                constant:   false,
-                visibility: "public",
-                local:      table
-            });
-        }
+        tables.push(new SymbolTableClass(this));
         this.array.push({
             id:         controlFlow.id,
             kind:       controlFlow.type,
             type:       null,
             constant:   false,
             visibility: "public",
-            local:      table
+            local:      tables[0]
         });
 
-        return table;
+        if (controlFlow.else !== null) {
+            var table = new SymbolTableClass(this);
+            this.array.push({
+                id:         controlFlow.id,
+                kind:       "else",
+                type:       null,
+                constant:   false,
+                visibility: "public",
+                local:      table
+            });
+            tables.push(table);
+        }
+
+        return tables;
+    }
+
+    this.addControlFlowIf = function(controlFlow) {
+        var tables = [];
+
+        if (controlFlow.type === "if") {
+            var table = new SymbolTableClass(this);
+            this.array.push({
+                id:         controlFlow.id,
+                kind:       "if",
+                type:       null,
+                constant:   false,
+                visibility: "public",
+                local:      table
+            });
+            tables.push(table);
+        }
+        if ((controlFlow.type === "if") && (controlFlow.elseCode !== null)) {
+            var table = new SymbolTableClass(this);
+            this.array.push({
+                id:         controlFlow.id,
+                kind:       "else",
+                type:       null,
+                constant:   false,
+                visibility: "public",
+                local:      table
+            });
+            tables.push(table);
+        }
+        if ((controlFlow.type === "if") && (controlFlow.elseIfCode.length > 0)) {
+            var table = new SymbolTableClass(this);
+            var k = 0;
+            controlFlow.elseIfCode.forEach( x => {
+                this.array.push({
+                    id:         controlFlow.id,
+                    kind:       "elseif-" + (k++),
+                    type:       null,
+                    constant:   false,
+                    visibility: "public",
+                    local:      table
+                });
+            });
+            tables.push(table);
+        }
+
+        return tables;
     }
 
     this.typeToText = function(type) {
@@ -267,13 +301,13 @@ let process = function(key, value) {
                 checkAssignations(value);
                 break;*/
             case "if":
-                scope = scope.addControlFlow(value);
-                break;
-            case "for":
-                scope = scope.addControlFlow(value);
+                scopeQueue = scope.addControlFlowIf(value);
+                scope = scopeQueue.shift();
                 break;
             case "while":
-                scope = scope.addControlFlow(value);
+            case "for":
+                scopeQueue = scope.addControlFlowLoop(value);
+                scope = scopeQueue.shift();
                 break;
             case "declaration":
                 scope.addDeclarations(value);
@@ -317,10 +351,14 @@ let traverse = function(o, func) {
             traverse(o[i], func);
         }
 
-        if ((o[i] !== null) && (scope.father !== null) &&
-            ((o[i].type === "function") || (o[i].type === "class") || (o[i].type === "method") ||
-             (o[i].type === "for"     ) || (o[i].type === "while") || (o[i].type === "if"    ))) {
-                scope = scope.father;
+        if ((o[i] !== null) && (scope.father !== null)) {
+            if ((o[i].type === "block") && (scopeQueue.length > 0)) {
+                scope = scopeQueue.shift();
+            }
+            else if ((o[i].type === "function") || (o[i].type === "class") || (o[i].type === "method") ||
+                     (o[i].type === "for"     ) || (o[i].type === "while") || (o[i].type === "if"    )) {
+                    scope = scope.father;
+            }
         }
     }
 }
