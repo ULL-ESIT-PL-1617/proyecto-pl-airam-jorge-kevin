@@ -1,2 +1,2 @@
-const x = 0;
-x = 1;
+numeric b = 0;
+numeric b = 1;

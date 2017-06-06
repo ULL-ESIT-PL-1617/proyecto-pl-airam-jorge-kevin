@@ -92,8 +92,9 @@ nav a.current {
   border: #999 2px dotted;
   background-color: #fff;
   padding: 10px;
+  width: 100%;
   font-size: 15px;
-  height: lin; }
+  height: 200px; }
 
 #header p {
   color: #2dc234;
@@ -134,17 +135,22 @@ nav a.current {
   margin: 10px 0 20px 0; }
 
 .symbolTableDiv {
-    background-color: white;
+    background-color: #ddd;
+}
+
+span {
+  height: 30px;
 }
 
 table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
+    font-size: 12;
     width: 100%;
 }
 
 td, th {
-    border: 1px solid #dddddd;
+    border: 1px solid #999;
     text-align: left;
     padding: 8px;
 }

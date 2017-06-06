@@ -1,6 +1,6 @@
 
-function add(x, y) {
+numeric add(numeric x, numeric y) {
   return x + y;
 }
 
-add(1, 2, 3);
+numeric z = add(1, 2, 3);
