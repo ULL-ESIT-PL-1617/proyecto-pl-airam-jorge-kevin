@@ -11,6 +11,8 @@ let semanticAnalisis = function(tree, symbolTable) {
         if(symbolTable.search(rule.base, ["class"]).local.array[i].kind === "method" && symbolTable.search(rule.base, ["class"]).local.array[i].id === rule.access[0].id)
           params.push(symbolTable.search(rule.base, ["class"]).local.array[i].local.array)
         }
+      if(!params[0])
+        return true;
       if(rule.access[0].arguments.arguments.length !== params[0].length)
         return false;
       for(var i in params[0]) {
@@ -142,6 +144,23 @@ let semanticAnalisis = function(tree, symbolTable) {
         case "arrayAccess":
           return symbolTable.search(x.id, ["variable", "parameter", "attribute"]).type;
           break;
+        case "idAccess":
+        console.log(x)
+          let symbolTableAux = symbolTable.search(symbolTable.search(x.base, ["variable", "parameter", "attribute"]).type, ["class"]).local;
+          console.log(symbolTableAux)
+          let indice = 0;
+          while(indice < x.access.length) {
+
+
+            symbolTableAux = symbolTableAux.search(symbolTableAux.search(x.access[indice].id, ["variable", "parameter", "attribute"]).type, ["class"]).local;
+            console.log(symbolTableAux);
+            indice += 1;
+          }
+          indice -= 1;
+          console.log(symbolTable)
+          console.log(symbolTable.search(x, ["class"]))
+          return symbolTable.search(x.id, ["function"]).type
+          break;
         default:
           if(symbolTable.search(x, ["variable", "parameter", "attribute"]))
             return symbolTable.search(x, ["variable", "parameter", "attribute"]).type;
@@ -199,9 +218,12 @@ let semanticAnalisis = function(tree, symbolTable) {
               }
               else
               {
-              if(rule.varType !== getType(rule.assignations[a].to, symbolTable))
-                if(!validAccess(rule.assignations[0].to, symbolTable))
-                  throw "ERROR declarando3";
+                if(["string", "bool", "numeric"].indexOf(rule.varType) === -1) {
+                  if(!validAccess(rule.assignations[0].to, symbolTable))
+                    throw "ERROR declarando2";
+                } else
+                    if(rule.varType !== getType(rule.assignations[a].to, symbolTable))
+                      throw "ERROR declarando3";
               }
 
             }
@@ -212,6 +234,7 @@ let semanticAnalisis = function(tree, symbolTable) {
             var from, to;
             from = getType(rule.assignations[a].element, symbolTable).type ? getType(rule.assignations[a].element, symbolTable).type : getType(rule.assignations[a].element, symbolTable);
             to = getType(rule.assignations[a].to, symbolTable).type ? getType(rule.assignations[a].to, symbolTable).type : getType(rule.assignations[a].to, symbolTable);
+            console.log(rule.assignations[a])
             if(from !== to)
               throw "ERROR assignando1";
             if(getType(rule.assignations[a].element, symbolTable).type)
@@ -284,12 +307,12 @@ let semanticAnalisis = function(tree, symbolTable) {
       }
     };
 
-    try {
+//    try {
       for(var line in tree.result)
         validRule(tree.result[line], symbolTable);
-    } catch (e) {
+  /*  } catch (e) {
       console.log(e)
     } finally {
 
-    }
+    }*/
 };
