@@ -96,6 +96,7 @@ var SymbolTableClass = function(father, fatherRow) {
         if (!!this.searchLocal(func.functionName, ["function", "method"])) {
             throw "Redeclartion of funtion " + func.functionName;
         } else this.array.push({
+            table:      this,
             id:         this.isValidID(func.functionName),
             kind:       "function",
             type:       this.isValidType(func.returnType),
@@ -116,6 +117,7 @@ var SymbolTableClass = function(father, fatherRow) {
         if (!!this.searchLocal(param.id, ["variable", "parameter", "attribute"])) {
             throw "Redeclartion of variable " + param.id;
         } else this.array.push({
+            table:      this,
             id:         this.isValidID(param.id),
             kind:       "parameter",
             type:       this.isValidType(param.vartype),
@@ -132,6 +134,7 @@ var SymbolTableClass = function(father, fatherRow) {
             if (!!this.searchLocal(id, ["variable", "parameter", "attribute"])) {
                 throw "Redeclartion of variable " + id;
             } else this.array.push({
+                table:      this,
                 id:         this.isValidID(id),
                 kind:       "variable",
                 type:       this.isValidType(declarations.varType),
@@ -148,6 +151,7 @@ var SymbolTableClass = function(father, fatherRow) {
         if (!!this.searchLocal(class_.id, ["class"])) {
             throw "Redeclartion of class " + class_.id;
         } this.array.push({
+            table:      this,
             id:         this.isValidID(class_.id),
             kind:       "class",
             type:       null,
@@ -167,6 +171,7 @@ var SymbolTableClass = function(father, fatherRow) {
             if (!!this.searchLocal(id, ["variable", "parameter", "attribute"])) {
                 throw "Redeclartion of variable " + id;
             } else this.array.push({
+                table:      this,
                 id:         this.isValidID(id),
                 kind:       "attribute",
                 type:       this.isValidType(declarations.varType),
@@ -183,6 +188,7 @@ var SymbolTableClass = function(father, fatherRow) {
         if (!!this.searchLocal(method.functionName, ["function", "method"])) {
             throw "Redeclartion of method " + method.functionName;
         } else this.array.push({
+            table:      this,
             id:         this.isValidID(method.functionName),
             kind:       "method",
             type:       this.isValidType(method.returnType),
@@ -190,6 +196,13 @@ var SymbolTableClass = function(father, fatherRow) {
             visibility: method.visibility,
             local:      table
         });
+
+        if ((method.functionName === "init") && (method.visibility === "private")) {
+            throw "init method for class " + this.fatherRow.id + " can only be public";
+        }
+        if ((method.functionName === "init") && (method.returnType !== "void")) {
+            throw "init method for class " + this.fatherRow.id + " can only return void";
+        }
 
         for (var i in method.params) {
             table.addParameter(method.params[i]);
@@ -204,6 +217,7 @@ var SymbolTableClass = function(father, fatherRow) {
 
         tables.push(new SymbolTableClass(this));
         this.array.push({
+            table:      this,
             id:         controlFlow.id,
             kind:       controlFlow.type,
             type:       null,
@@ -216,6 +230,7 @@ var SymbolTableClass = function(father, fatherRow) {
         if (controlFlow.else !== null) {
             var table = new SymbolTableClass(this);
             this.array.push({
+                table:      this,
                 id:         controlFlow.id,
                 kind:       "else",
                 type:       null,
@@ -236,6 +251,7 @@ var SymbolTableClass = function(father, fatherRow) {
         if (controlFlow.type === "if") {
             var table = new SymbolTableClass(this);
             this.array.push({
+                table:      this,
                 id:         controlFlow.id,
                 kind:       "if",
                 type:       null,
@@ -249,6 +265,7 @@ var SymbolTableClass = function(father, fatherRow) {
         if ((controlFlow.type === "if") && (controlFlow.elseCode !== null)) {
             var table = new SymbolTableClass(this);
             this.array.push({
+                table:      this,
                 id:         controlFlow.id,
                 kind:       "else",
                 type:       null,
@@ -264,6 +281,7 @@ var SymbolTableClass = function(father, fatherRow) {
             var k = 0;
             controlFlow.elseIfCode.forEach( x => {
                 this.array.push({
+                    table:      this,
                     id:         controlFlow.id,
                     kind:       "elseif-" + (k++),
                     type:       null,
@@ -379,8 +397,23 @@ let process = function(key, value) {
     }
 }
 
+let isAConstructor = function(idAccess) {
+    var classRow = scope.search(idAccess.base, ["class"]);
+
+    if (classRow === null) return false;
+    if (idAccess.access.length !== 1) return false;
+    if (idAccess.access[0].id !== "init") return false;
+    return true;
+}
+
 let checkIdAccess = function(idAccess) {
-    var currentType = scope.search(idAccess.base, ["variable", "parameter", "attribute"]).type;
+    if (isAConstructor(idAccess)) return;
+
+    var row = scope.search(idAccess.base, ["variable", "parameter", "attribute"]);
+    if (row === null) {
+        throw idAccess.base + " is not a valid object";
+    }
+    var currentType = row.type;
 
     for (var i in idAccess.access) {
 
@@ -388,7 +421,6 @@ let checkIdAccess = function(idAccess) {
             throw "Cant access method or attribute of built in type";
         }
 
-        console.log(currentType);
         var typeClass = scope.search(currentType, ["class"]);
         var atype     = idAccess.access[i].type;
         var find      = (atype === "methodAccess") ? "method" : "attribute";
@@ -397,6 +429,11 @@ let checkIdAccess = function(idAccess) {
         if (row === null)  {
             throw "Cant find " + find + " " + idAccess.access[i].id + " for type " + currentType;
         }
+
+        if (row.visibility == "private" && ((scope.father === null) || (row.table.fatherRow.local.id != scope.father.id))) {
+            throw "Cant access private " + find + " " + idAccess.access[i].id;
+        }
+
         currentType = typeClass.local.searchLocal(idAccess.access[i].id, [find]).type;
     }
 }
@@ -417,9 +454,9 @@ let checkAssignations = function(assignation) {
 }
 
 let checkCall = function(call) {
-    /*if (!scope.search(call.id, ["function"])) {
-        throw "Unkown function to call " + call.id;
-    }*/
+    if (!scope.search(call.id, ["function"])) {
+        //throw "Unkown function to call " + call.id;
+    }
 }
 
 let traverse = function(o, func) {
