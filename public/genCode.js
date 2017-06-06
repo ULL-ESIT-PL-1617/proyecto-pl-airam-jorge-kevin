@@ -39,10 +39,10 @@ let translate = function(tree) {
 
 let translateStep = function(tree) {
     switch (tree.type) {
-        case "declaration": return declaration(tree);
+        case "declaration": return declaration(tree) + ";\n";
         case "function": return function_(tree);
-        case "assign": return assignation(tree);
-        case "return": return return_(tree);
+        case "assign": return assignation(tree) + ";\n";
+        case "return": return return_(tree) + ";\n";
         case "class": return class_(tree);
         case "while": return while_(tree);
         case "for": return for_(tree);
@@ -65,7 +65,21 @@ let if_ = function(tree) {
 }
 
 let for_ = function(tree) {
+    let text  = "";
 
+    if (tree.else !== null) {
+        text = "if "
+    }
+
+    text += "for (";
+    if (tree.start !== null) text += declaration(tree.start);
+    text += "; ";
+    if (tree.check !== null) text += condition(tree.check);
+    text += "; ";
+    if (tree.iterate !== null) text += declaration(tree.iterate);
+    text += ")" + block(tree.contents);
+
+    return text;
 }
 
 let while_ = function(tree) {
@@ -101,14 +115,16 @@ let block = function(tree) {
 }
 
 let declaration = function(tree) {
+    if (tree.type !== "declaration") return assignation(tree);
+
     let text = tree.constant ? "const " : "let ";
     for (let i = 0; i < tree.assignations.length; ++i) {
         let assg = tree.assignations[i];
         text += id(assg) + " = ";
         text += assignation(assg.to);
-        text += (i < (tree.assignations.length - 1)) ? ", " : ";";
+        text += (i < (tree.assignations.length - 1)) ? ", " : "";
     }
-    return text + "\n";
+    return text;
 }
 
 let assignation = function(tree) {
@@ -119,9 +135,9 @@ let assignation = function(tree) {
         let assg = tree.assignations[i];
         text += element(assg.element) + " = ";
         text += assignation(assg.to);
-        text += (i < (tree.assignations.length - 1)) ? ", " : ";";
+        text += (i < (tree.assignations.length - 1)) ? ", " : "";
     }
-    return text + "\n";
+    return text;
 }
 
 let element = function(tree) {
