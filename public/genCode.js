@@ -58,21 +58,20 @@ let translate2 = function(obj, result) {
           break;
       case "function":      function_(obj, result);
           break;
-      case "parameter":     obj.code += result.vartype + " " + "_" + result.id;
+      case "parameter":     obj.code += "_" + result.id;
           break;
       case "return":        return_(obj, result);
           break;
-      case "class":         obj.code += "var " + "_" + result.id + " = ";
+      case "class":         obj.code += "function " + "_" + result.id;
                             translate2(obj, result.content);
           break;
       case "classBlock":    classBlock_(obj, result);
           break;
 
-      case "attribute":     obj.code += "_" + result.assignations[0].id + ": ";
+      case "attribute":     obj.code += "this._" + result.assignations[0].id + " = ";
                             translate2(obj, result.assignations[0].to);
           break
-      case "method":        obj.code += "_" + result.functionName + ": function () ";
-                            translate2(obj, result.contents);
+      case "method":        method_(obj, result);
           break;
       case "condition":     expCondTerm_(obj, result);
           break;
@@ -231,6 +230,15 @@ let return_ = function(obj, result){
 
 let classBlock_ = function(obj, result){
   obj.code += "{\n     ";
+  for(let i = 0; i < result.classStatement.length; i++)
+    if(result.classStatement[i].functionName == "init")
+      for(let j = 0; j < result.classStatement[i].contents.contents.length; j++){
+        obj.code += "this.";
+        translate2(obj, result.classStatement[i].contents.contents[j]);
+        if(result.classStatement.length > 0)
+          obj.code += ",";
+        obj.code += "\n     ";
+      }
   for(let i = 0; i < result.classStatement.length; i++){
     translate2(obj, result.classStatement[i]);
     if(result.classStatement.length > 1 && i < result.classStatement.length - 1)
@@ -238,6 +246,14 @@ let classBlock_ = function(obj, result){
     obj.code += "\n     ";
   }
   obj.code += "}";
+}
+
+let method_ = function(obj, result){
+  obj.code += "this._" + result.functionName + " = function (";
+  for (var i = 0; i < result.params.length; i++)
+    translate2(obj, result.params[i]);
+  obj.code += ")";
+  translate2(obj, result.contents);
 }
 
 let arguments_ = function(obj, result){
