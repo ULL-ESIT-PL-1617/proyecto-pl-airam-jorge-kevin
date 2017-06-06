@@ -2,7 +2,25 @@
 let semanticAnalisis = function(tree, symbolTable) {
     console.log("semanticAnalisis");
     var variables = {};
-    var getType, validOp, validRule;
+    var getType, validOp, validRule, validCall, validArray;
+
+    validCall = function(call, functionCall, symbolTable) {
+      let params = [];
+      for(var i in functionCall.local.array)
+        if(functionCall.local.array[i].kind === "parameter")
+          params.push(functionCall.local.array[i])
+      if(call.args.arguments.length !== params.length)
+        return false;
+
+      for(var i in params)
+        if(params[i].type !== getType(call.args.arguments[i], symbolTable))
+          return false;
+      return true;
+    };
+
+    validArray = function(array, arrayAccess, symbolTable) {
+      return symbolTable.search(array, ["variable", "parameter", "attribute"]).type.arrayCount === arrayAccess.index.length
+    };
 
     validOp = function(left, op, right) {
       if(left === "numeric") {
@@ -62,9 +80,11 @@ let semanticAnalisis = function(tree, symbolTable) {
         }
       }
       return false;
-    }
+    };
 
     getType = function(x, symbolTable) {
+      if(!x)
+        return "void";
       switch(x.type) {
         case "string":
         case "bool":
@@ -81,6 +101,11 @@ let semanticAnalisis = function(tree, symbolTable) {
           return getType(x.left, symbolTable);
         case "return":
           return getType(x.returnValue, symbolTable);
+          break;
+        case "call":
+          if(!validCall(x, symbolTable.search(x.id, ["function"]), symbolTable))
+            throw "ERROR call";
+          return symbolTable.search(x.id, ["function"]).type;
           break;
         default:
           return symbolTable.search(x, ["variable", "parameter", "attribute"]).type;
@@ -143,13 +168,9 @@ let semanticAnalisis = function(tree, symbolTable) {
           }
           break;
         case "assign":
-
-          for(var a in rule.assignations) {
+          for(var a in rule.assignations)
             if(getType(rule.assignations[a].id, symbolTable) !== getType(rule.assignations[a].to, symbolTable))
               throw "ERROR assignando";
-
-          }
-
           break;
         case "IF":
         case "if":
@@ -185,9 +206,16 @@ let semanticAnalisis = function(tree, symbolTable) {
           validRule(rule.assignations, symbolTable);
           break;
         case "return":
-          console.log(symbolTable.type)
-          if(getType(rule.returnValue, symbolTable) !== symbolTable.type)
+          if(getType(rule.returnValue, symbolTable) !== symbolTable.fatherRow.type)
             throw "ERROR return";
+          break;
+        case "call":
+          if(!validCall(rule, symbolTable.search(rule.id, ["function"]), symbolTable))
+            throw "ERROR call";
+          break;
+        case "arrayAccess":
+          if(!validArray(rule.id, rule, symbolTable))
+            throw "ERROR array access"
           break;
         case "string":
         case "bool":
@@ -204,9 +232,9 @@ let semanticAnalisis = function(tree, symbolTable) {
 
     //term **
     //expression **
-    //assign
+    //assign **
     //declaration **
-    //return
+    //return **
 
 
     //block **
@@ -219,7 +247,7 @@ let semanticAnalisis = function(tree, symbolTable) {
     //attribute **
     //method **
     //condition **
-    //call
+    //call **
     //idAccess
     //arrayAccess
 
