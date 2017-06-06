@@ -65,7 +65,7 @@ let if_ = function(tree) {
 }
 
 let for_ = function(tree) {
-    let text  = "var $$executed#" + tree.id + " = false;\n";
+    let text  = "var $$executed_" + tree.id + " = false;\n";
 
     text += "for (";
     if (tree.start !== null) text += declaration(tree.start);
@@ -73,17 +73,27 @@ let for_ = function(tree) {
     if (tree.check !== null) text += condition(tree.check);
     text += "; ";
     if (tree.iterate !== null) text += declaration(tree.iterate) + ",";
-    text += " $$executed#" + tree.id + " = true)" + block(tree.contents);
+    text += " $$executed_" + tree.id + " = true)" + block(tree.contents);
 
     if (tree.else !== null) {
-        text += "if (!$$executed#" + tree.id + ")" + block(tree.else.contents);
+        text += "if (!$$executed_" + tree.id + ")" + block(tree.else.contents);
     }
 
     return text;
 }
 
 let while_ = function(tree) {
+    let text  = "var $$executed_" + tree.id + " = false;\n";
 
+    text += "while (";
+    if (tree.check !== null) text += condition(tree.check);
+    text += "&& ($$executed_" + tree.id + " = true))" + block(tree.contents);
+
+    if (tree.else !== null) {
+        text += "if (!$$executed_" + tree.id + ")" + block(tree.else.contents);
+    }
+
+    return text;
 }
 
 let class_ = function(tree) {
