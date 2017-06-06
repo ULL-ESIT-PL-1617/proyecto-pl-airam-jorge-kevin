@@ -378,7 +378,7 @@ VISIBLITY    = _ k:$("public" / "private") _            { return k; }
 STRING       = _ k:$("\""[^"\\]*("\\".[^"\\]*)*"\"") _  { return k; }
 NUMBER       = _ k:$([0-9]+"."?[0-9]*) _                { return k; }
 INTEGER      = _ k:$([0-9]) _                           { return k; }
-BOOL         = _ k:$("true" / "false") _                { return k; }
+BOOL         = _ k:$("true"i / "false"i) _              { return k; }
 COMPARASION  = _ k:$([<>!=]"="/[<>]/"&&"/"||") _        { return k; }
 ID           = _ k:$([a-z_]i$([a-z0-9_]i*)) _           { return k; }
 CLASS        = _ k:$("class") _                         { return k; }

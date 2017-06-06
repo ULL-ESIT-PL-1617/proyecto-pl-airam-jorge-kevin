@@ -449,9 +449,9 @@ function peg$parse(input, options) {
       peg$c91 = /^[0-9]/,
       peg$c92 = peg$classExpectation([["0", "9"]], false, false),
       peg$c93 = "true",
-      peg$c94 = peg$literalExpectation("true", false),
+      peg$c94 = peg$literalExpectation("true", true),
       peg$c95 = "false",
-      peg$c96 = peg$literalExpectation("false", false),
+      peg$c96 = peg$literalExpectation("false", true),
       peg$c97 = /^[<>!=]/,
       peg$c98 = peg$classExpectation(["<", ">", "!", "="], false, false),
       peg$c99 = /^[<>]/,
@@ -3207,16 +3207,16 @@ function peg$parse(input, options) {
     s1 = peg$parse_();
     if (s1 !== peg$FAILED) {
       s2 = peg$currPos;
-      if (input.substr(peg$currPos, 4) === peg$c93) {
-        s3 = peg$c93;
+      if (input.substr(peg$currPos, 4).toLowerCase() === peg$c93) {
+        s3 = input.substr(peg$currPos, 4);
         peg$currPos += 4;
       } else {
         s3 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c94); }
       }
       if (s3 === peg$FAILED) {
-        if (input.substr(peg$currPos, 5) === peg$c95) {
-          s3 = peg$c95;
+        if (input.substr(peg$currPos, 5).toLowerCase() === peg$c95) {
+          s3 = input.substr(peg$currPos, 5);
           peg$currPos += 5;
         } else {
           s3 = peg$FAILED;

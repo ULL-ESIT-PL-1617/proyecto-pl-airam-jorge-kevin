@@ -49,7 +49,8 @@ var SymbolTableClass = function(father) {
 
     /* Comprueba is un id no es una palabra reservada */
     this.isValidID = function(id) {
-
+        for (var i in reservedWords) {
+        }
     }
 
     this.addFunc = function(func) {
@@ -161,6 +162,32 @@ var SymbolTableClass = function(father) {
     this.addControlFlow = function(controlFlow) {
         var table = new SymbolTableClass(this);
 
+        if (controlFlow.type === "if" ) {
+            this.array.push({
+                id:         controlFlow.id,
+                kind:       controlFlow.type,
+                type:       null,
+                constant:   false,
+                visibility: "public",
+                local:      table
+            });
+            this.array.push({
+                id:         controlFlow.id,
+                kind:       controlFlow.type,
+                type:       null,
+                constant:   false,
+                visibility: "public",
+                local:      table
+            });
+            this.array.push({
+                id:         controlFlow.id,
+                kind:       controlFlow.type,
+                type:       null,
+                constant:   false,
+                visibility: "public",
+                local:      table
+            });
+        }
         this.array.push({
             id:         controlFlow.id,
             kind:       controlFlow.type,
