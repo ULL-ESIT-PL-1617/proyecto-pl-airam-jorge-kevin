@@ -11,5 +11,5 @@ class MyClass {
 }
 
 
-MyClass c = 0;
+MyClass c = MyClass.init();
 c.test1(32);
