@@ -271,9 +271,17 @@ let call_ = function(obj, result){
 }
 
 let idAccess_ = function(obj, result){
-  obj.code += "_" + result.base + ".";
-  for (let i = 0; i < result.access.length; i++)
-    translate2(obj, result.access[i]);
+  if(!!result.access[0] && result.access[0].id == "init"){
+    obj.code += "new _" + result.base;
+    obj.code += "(";
+    translate2(obj, result.access[0].arguments);
+    obj.code += ")";
+  }
+  else{
+    obj.code += "_" + result.base + ".";
+    for (let i = 0; i < result.access.length; i++)
+      translate2(obj, result.access[i]);
+  }
 }
 
 let methodAccess_ = function(obj, result){
