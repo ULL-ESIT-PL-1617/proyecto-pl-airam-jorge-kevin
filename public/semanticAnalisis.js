@@ -74,7 +74,7 @@ let semanticAnalisis = function(tree, symbolTable) {
         case "numeric":
           return x.type;
         case "id":
-          symbolTable.search(x.id);
+          symbolTable.search(x.id, ["variable", "parameter", "attribute"]);
           //throw "ERROR tabla id";
           break;
         case "term":
@@ -129,12 +129,19 @@ let semanticAnalisis = function(tree, symbolTable) {
           break;
         case "declaration":
           //tabla
-
           for(var a in rule.assignations) {
-            console.log(rule.assignations[a].to)
-            if(rule.varType !== getType(rule.assignations[a].to, symbolTable))
-              throw "ERROR assignando";
-            //validOp(getType(rule.assignations[a]), );
+
+            for(var b in rule.assignations[a].to) {
+              if(rule.varType.type)
+              {
+
+                if(rule.varType.type !== getType(rule.assignations[a].to[b], symbolTable))
+                  throw "ERROR declarando1";
+              }
+              else
+                if(rule.varType !== getType(rule.assignations[a].to, symbolTable))
+                  throw "ERROR declarando2";
+            }
           }
           break;
         case "assign":
@@ -162,6 +169,12 @@ let semanticAnalisis = function(tree, symbolTable) {
           if(rule.elseCode) {
             validRule(rule.elseCode, symbolTable);
           }
+          break;
+        case "function":
+
+            symbolTable = symbolTable.search(rule.functionName, ["funtion", "method"]);
+            validRule(rule.contents, symbolTable);
+            symbolTable = symbolTable.father;
           break;
         case "string":
         case "bool":
