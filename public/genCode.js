@@ -97,6 +97,36 @@ let while_ = function(tree) {
 }
 
 let class_ = function(tree) {
+    let init = getInitMethod(tree);
+    let text = "function _" + id(tree);
+}
+
+let getInitMethod = function(tree) {
+    let init = null;
+    tree.content.classStatement.forEach(x => {
+        if ((x.type === "method") && (x.functionName === "init")) {
+            init = x;
+        }
+    });
+
+    if (init === null) {
+        return { // Default init
+            type: "method",
+            returnType: "void",
+            functionName: "init",
+            params: [],
+            contents: {
+                type: "block",
+                contents: []
+            },
+            visibility: "public"
+        };
+    } else {
+        return init;
+    }
+}
+
+let method = function(tree) {
 
 }
 
