@@ -1,8 +1,8 @@
 string[][] c = {"a", "b"};
 numeric k = 0;
 
-numeric function(string a, custom d) {
-    custom2 l = 0;
+numeric function(string a, numeric d) {
+    numeric l = 0;
     for (numeric i = 0; i < 10; i = i + 1) {
 
     } else { numeric x = 0; }

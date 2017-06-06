@@ -442,7 +442,17 @@ let checkIdAccess = function(idAccess) {
 y no son constantes */
 let checkAssignations = function(assignation) {
     for (var assign in assignation.assignations) {
-        var id  = assignation.assignations[assign].id;
+        var element  = assignation.assignations[assign].element;
+
+        var id = null;
+        if (typeof(element) == "string") {
+            id  = element;
+        } else if (element.type === "idAccess") {
+            id = element.base;
+        } else { // type === "arrayAccess"
+            id = element.id;
+        }
+        
         var row = scope.search(id, ["variable", "parameter", "attribute"]);
 
         if (row === null)

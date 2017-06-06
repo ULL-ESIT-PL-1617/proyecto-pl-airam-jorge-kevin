@@ -108,13 +108,18 @@ for
 parcondition
   = LEFTPAR exp:condition RIGHTPAR { return exp; }
 
+element
+  =   access
+    / arrayAccess
+    / id:ID
+
 assign
-  = id:ID ASSIGN assign:assign other:(COMMA ID ASSIGN assign)*
+  = element:element ASSIGN assign:assign other:(COMMA element ASSIGN assign)*
   {
     var assignations = [];
 
-    assignations.push({id: id, to: assign});
-    other.forEach(x => assignations.push({id: x[1], to: x[3]}));
+    assignations.push({element: element, to: assign});
+    other.forEach(x => assignations.push({element: x[1], to: x[3]}));
 
     return {
       type:         "assign",
@@ -247,33 +252,8 @@ factor
       id:   id
     };
   }
-  / id:ID access:(DOT ID arguments?)+
-  {
-    var accessId = [];
-    access.forEach(x => {
-      if (x[2] === null)
-        accessId.push({type: "attributeAccess", id: x[1]});
-      else
-        accessId.push({type: "methodAccess", id: x[1], arguments: x[2]});
-    });
-
-    return {
-      type:   "idAccess",
-      base:   id,
-      access: accessId
-    };
-  }
-  / id:ID index:(LEFTBRACKET INTEGER RIGHTBRACKET)+
-  {
-    var indexAccess = [];
-    index.forEach(x => indexAccess.push(x[1]));
-
-    return {
-      type:  "arrayAccess",
-      id:    id,
-      index: indexAccess
-    };
-  }
+  / access
+  / arrayAccess
   / id:ID
   {
     return {
@@ -283,6 +263,37 @@ factor
   }
   / arguments
   / LEFTPAR assign:assign RIGHTPAR { return assign; }
+
+access
+ = id:ID access:(DOT ID arguments?)+
+ {
+   var accessId = [];
+   access.forEach(x => {
+     if (x[2] === null)
+       accessId.push({type: "attributeAccess", id: x[1]});
+     else
+       accessId.push({type: "methodAccess", id: x[1], arguments: x[2]});
+   });
+
+   return {
+     type:   "idAccess",
+     base:   id,
+     access: accessId
+   };
+ }
+
+arrayAccess
+ = id:ID index:(LEFTBRACKET INTEGER RIGHTBRACKET)+
+ {
+   var indexAccess = [];
+   index.forEach(x => indexAccess.push(x[1]));
+
+   return {
+     type:  "arrayAccess",
+     id:    id,
+     index: indexAccess
+   };
+ }
 
 arguments
   = LEFTPAR args:(assign (COMMA assign)*)? RIGHTPAR
