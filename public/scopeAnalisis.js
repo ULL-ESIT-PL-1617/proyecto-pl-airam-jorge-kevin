@@ -18,10 +18,11 @@ let scopeAnalisis = function(tree) {
 };
 
 var __symbolTableId = 0;
-var SymbolTableClass = function(father) {
-    this.array  = [];
-    this.id     = __symbolTableId++;
-    this.father = (!!father) ? father : null;
+var SymbolTableClass = function(father, fatherRow) {
+    this.array     = [];
+    this.id        = __symbolTableId++;
+    this.father    = (!!father) ? father : null;
+    this.fatherRow = (!!fatherRow) ? fatherRow : null;
 
     /* Busca en la tabla actual (No en sus hijos ni en su padre)
     un fila que contenga un id y que sea de alguno de los tipos kinds.
@@ -107,6 +108,7 @@ var SymbolTableClass = function(father) {
             table.addParameter(func.params[i]);
         }
 
+        table.fatherRow = this.array.slice(-1)[0];
         return table;
     }
 
@@ -154,6 +156,7 @@ var SymbolTableClass = function(father) {
             local:      table
         });
 
+        table.fatherRow = this.array.slice(-1)[0];
         return table;
     }
 
@@ -192,6 +195,7 @@ var SymbolTableClass = function(father) {
             table.addParameter(method.params[i]);
         }
 
+        table.fatherRow = this.array.slice(-1)[0];
         return table;
     }
 
@@ -207,6 +211,7 @@ var SymbolTableClass = function(father) {
             visibility: "public",
             local:      tables[0]
         });
+        tables.slice(-1)[0].fatherRow = this.array.slice(-1)[0];
 
         if (controlFlow.else !== null) {
             var table = new SymbolTableClass(this);
@@ -220,6 +225,7 @@ var SymbolTableClass = function(father) {
             });
             tables.push(table);
         }
+        tables.slice(-1)[0].fatherRow = this.array.slice(-1)[0];
 
         return tables;
     }
@@ -238,6 +244,7 @@ var SymbolTableClass = function(father) {
                 local:      table
             });
             tables.push(table);
+            table.fatherRow = this.array.slice(-1)[0];
         }
         if ((controlFlow.type === "if") && (controlFlow.elseCode !== null)) {
             var table = new SymbolTableClass(this);
@@ -250,6 +257,7 @@ var SymbolTableClass = function(father) {
                 local:      table
             });
             tables.push(table);
+            table.fatherRow = this.array.slice(-1)[0];
         }
         if ((controlFlow.type === "if") && (controlFlow.elseIfCode.length > 0)) {
             var table = new SymbolTableClass(this);
@@ -265,6 +273,7 @@ var SymbolTableClass = function(father) {
                 });
             });
             tables.push(table);
+            table.fatherRow = this.array.slice(-1)[0];
         }
 
         return tables;
@@ -333,6 +342,8 @@ var SymbolTableClass = function(father) {
 let process = function(key, value) {
     if ((value !== null) && (typeof(value) == "object")) {
         switch (value.type) {
+            case "idAccess":
+                checkIdAccess(value);
             case "call":
                 checkCall(value);
                 break;
@@ -368,6 +379,28 @@ let process = function(key, value) {
     }
 }
 
+let checkIdAccess = function(idAccess) {
+    var currentType = scope.search(idAccess.base, ["variable", "parameter", "attribute"]).type;
+
+    for (var i in idAccess.access) {
+
+        if (scope.isBuiltInType(currentType)) {
+            throw "Cant access method or attribute of built in type";
+        }
+
+        console.log(currentType);
+        var typeClass = scope.search(currentType, ["class"]);
+        var atype     = idAccess.access[i].type;
+        var find      = (atype === "methodAccess") ? "method" : "attribute";
+        var row       = typeClass.local.searchLocal(idAccess.access[i].id, [find]);
+
+        if (row === null)  {
+            throw "Cant find " + find + " " + idAccess.access[i].id + " for type " + currentType;
+        }
+        currentType = typeClass.local.searchLocal(idAccess.access[i].id, [find]).type;
+    }
+}
+
 /* Comprueba que las asignaciones se hacen a variables que ya han sido declaradas
 y no son constantes */
 let checkAssignations = function(assignation) {
@@ -375,7 +408,6 @@ let checkAssignations = function(assignation) {
         var id  = assignation.assignations[assign].id;
         var row = scope.search(id, ["variable", "parameter", "attribute"]);
 
-        console.log(row);
         if (row === null)
             throw "Variable " + id + " not declared";
         else if (row.constant) {
@@ -385,9 +417,9 @@ let checkAssignations = function(assignation) {
 }
 
 let checkCall = function(call) {
-    if (!scope.search(call.id, ["function"])) {
+    /*if (!scope.search(call.id, ["function"])) {
         throw "Unkown function to call " + call.id;
-    }
+    }*/
 }
 
 let traverse = function(o, func) {

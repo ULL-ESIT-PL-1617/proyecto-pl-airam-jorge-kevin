@@ -1,6 +1,15 @@
 
+class x {}
+
 class MyClass {
 
-    
+    private numeric n = 0;
 
+    public void init() {}
+    public void test1(numeric n) {}
+    private string test2() { return "asd"; }
 }
+
+
+MyClass c = 0;
+c.test1(32);
