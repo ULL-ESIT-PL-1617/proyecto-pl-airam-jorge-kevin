@@ -40,16 +40,40 @@ let translate = function(tree) {
 let translateStep = function(tree) {
     switch (tree.type) {
         case "declaration": return declaration(tree);
+        case "function": return function_(tree);
         case "assign": return assignation(tree);
         case "return": return return_(tree);
-        case "if": break;
-        case "for": break;
-        case "while": break;
-        case "function": return function_(tree);
-        case "class": break;
+        case "class": return class_(tree);
+        case "while": return while_(tree);
+        case "for": return for_(tree);
+        case "if": return if_(tree);
         default: return assignation(tree) + ";\n";
     }
     return "";
+}
+
+let if_ = function(tree) {
+    let text = "if " + condition(tree.ifCode.check) + " " + block(tree.ifCode.contents);
+    tree.elseIfCode.forEach(x => {
+        text += " else if " + condition(x.check) + " " + block(x.contents);
+    });
+    if (tree.elseCode !== null) {
+        text += " else " + block(tree.elseCode.contents);
+    }
+
+    return text;
+}
+
+let for_ = function(tree) {
+
+}
+
+let while_ = function(tree) {
+
+}
+
+let class_ = function(tree) {
+
 }
 
 let return_ = function(tree) {
@@ -107,7 +131,7 @@ let element = function(tree) {
 }
 
 let condition = function(tree) {
-    if (tree.type !== "condition") return expression(tree);
+    if (tree.type !== "condition") return "(" + expression(tree) + ")";
 
     let text = "(";
     text += expression(tree.left);
