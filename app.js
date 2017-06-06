@@ -4,20 +4,20 @@ var app = express();
 var path = require('path');
 var favicon = require('serve-favicon');
 
-var sassMiddleware = require('node-sass-middleware');    
+var sassMiddleware = require('node-sass-middleware');
 
 app.set('port', (process.env.PORT || 5000));
 
 app.use(express.static(__dirname + '/public'));
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
-app.set('views', __dirname + '/views')
-app.set('view engine', 'pug')
+//app.set('views', __dirname + '/views')
+//app.set('view engine', 'pug')
 
 //SASS
 app.use(
     sassMiddleware({
-        src: __dirname + '/public/stylesheets', 
+        src: __dirname + '/public/stylesheets',
         dest: __dirname + '/public/stylesheets',
         prefix:  '/stylesheets',
         debug: true // obvious

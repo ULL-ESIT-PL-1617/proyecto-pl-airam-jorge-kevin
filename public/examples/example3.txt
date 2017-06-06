@@ -38,6 +38,12 @@ while (true) { } else {}
 class C {
 
    private numeric x = 1;
-   public void init(numeric a){}
-   private string t(){}
+   public void init(numeric a){
+      x = a;
+   }
+   private string t(numeric p){
+    x = p;
+   }
 }
+
+C ccc = C.init(1);

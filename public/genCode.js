@@ -28,7 +28,7 @@ let genCode = function(tree) {
 };
 
 
-let __insideClass = false;
+let __currentClassAttributesStack = [];
 let translate = function(tree) {
     let text = "";
     for (let i in tree.result) {
@@ -98,13 +98,45 @@ let while_ = function(tree) {
 
 let class_ = function(tree) {
     let init = getInitMethod(tree);
-    let text = "function " + id(tree) + "(";
+    let text = "function _class" + id(tree) + "(";
     for (let i = 0; i < init.params.length; ++i) {
         text += id(init.params[i]);
         text += (i < (init.params.length - 1)) ? ", " : "";
     }
-    text += ") {}";
+    text += ") {\n";
 
+    // Inicializar variables
+    let parameters = [];
+    tree.content.classStatement.forEach(x => {
+        if (x.type === "attribute") {
+            x.assignations.forEach(y => {
+              parameters.push(y.id);
+            });
+        }
+    });
+    __currentClassAttributesStack.push(parameters);
+    tree.content.classStatement.forEach(x => {
+        if (x.type === "attribute") {
+            x.type = "declaration";
+            text += declaration(x) + ";\n";
+        }
+    });
+
+    // Init
+    let block = init.contents;
+    for (let i in block.contents) {
+        text += translateStep(block.contents[i]);
+    }
+
+    // Methods
+    tree.content.classStatement.forEach(x => {
+        if (x.type === "method") {
+            text += method(x);
+        }
+    });
+
+    text += "}\n";
+    __currentClassAttributesStack.pop();
     return text;
 }
 
@@ -134,11 +166,20 @@ let getInitMethod = function(tree) {
 }
 
 let method = function(tree) {
+  if (tree.functionName == "init") return "";
 
+  let text = "this." + id(tree.functionName) + " = function(";
+
+  for (let i = 0; i < tree.params.length; ++i) {
+      text += id(tree.params[i]);
+      text += (i < (tree.params.length - 1)) ? ", " : "";
+  }
+  text += ")" + block(tree.contents);
+  return text;
 }
 
 let return_ = function(tree) {
-    return "return" + (!!tree.returnValue ? (assignation(tree.returnValue) + " ") : "") + ";";
+    return "return" + (!!tree.returnValue ? (" " + assignation(tree.returnValue)) : "");
 }
 
 let function_ = function(tree) {
@@ -161,15 +202,37 @@ let block = function(tree) {
     return text;
 }
 
+let isBuiltInType = function(type) {
+    for (var i in builtInTypes) {
+        if (builtInTypes[i] === type) {
+            return true;
+        }
+    }
+
+    if ((typeof(type) == "object") && isBuiltInType(type.type)) {
+      return true;
+    }
+    return false;
+}
+
 let declaration = function(tree) {
     if (tree.type !== "declaration") return assignation(tree);
 
-    let text = tree.constant ? "const " : "let ";
+    let text = "";
+
     for (let i = 0; i < tree.assignations.length; ++i) {
         let assg = tree.assignations[i];
+        if (assg.id) {
+          text += tree.constant ? "const " : "let ";
+        }
         text += id(assg) + " = ";
-        text += assignation(assg.to);
-        text += (i < (tree.assignations.length - 1)) ? ", " : "";
+
+        if (!isBuiltInType(tree.varType)) { // Custom class
+          text += "new " + assg.to.base + arguments_(assg.to.access[0].arguments);
+        } else { // builtInTypes
+          text += assignation(assg.to);
+        }
+        text += (i < (tree.assignations.length - 1)) ? ";\n" : "";
     }
     return text;
 }
@@ -246,10 +309,17 @@ let arrayAccess = function(tree) {
     return text;
 }
 
+let idIsAttribute = function(id) {
+  return (__currentClassAttributesStack.length > 0)
+          && (__currentClassAttributesStack.slice(-1)[0].indexOf(id) !== -1);
+}
+
 let id = function(tree) {
-    let id = "_";
-    id += (typeof(tree) === "string") ? tree : tree.id;
-    return id;
+    let id = (typeof(tree) === "string") ? tree : tree.id;
+    let text = "";
+    text += idIsAttribute(id) ? "this._" : "_";
+    text += id;
+    return text;
 }
 
 let idAccess = function(tree) {

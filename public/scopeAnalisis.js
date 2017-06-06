@@ -87,6 +87,10 @@ var SymbolTableClass = function(father, fatherRow) {
                 return true;
             }
         }
+
+        if ((typeof(type) == "object") && this.isBuiltInType(type.type)) {
+          return true;
+        }
         return false;
     }
 
