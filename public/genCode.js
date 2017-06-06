@@ -94,7 +94,7 @@ let translate2 = function(obj, result) {
           break;
       case "string":        obj.code += "\"" + result.value + "\"";
           break;
-      case "bool":          obj.code += result.value;
+      case "bool":          obj.code += result.value.toLowerCase();
           break;
       default:              throw "ERROR type not exist or is undefined.";
   }
