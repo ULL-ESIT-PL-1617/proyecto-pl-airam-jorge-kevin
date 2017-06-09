@@ -1,6 +1,6 @@
 
 let semanticAnalisis = function(tree, symbolTable) {
-    console.log("semanticAnalisis");
+
     var variables = {};
     var getType, validOp, validRule, validCall, validArray, validAccess, validAccess2;
 
@@ -26,9 +26,10 @@ let semanticAnalisis = function(tree, symbolTable) {
       let params = [];
       let ruleAux = symbolTable.search(symbolTable.search(rule.base, ["class", "variable"]).type, ["class"]).local.array
       for(var i in ruleAux) {
-        if(ruleAux[i].kind === "method")
+        if(ruleAux[i].kind === "method" && ruleAux[i].local.array.length > 0)
           params.push(ruleAux[i].local.array)
       }
+      console.log(params, rule.access[0].arguments.arguments.length)
       if(params.length !== rule.access[0].arguments.arguments.length)
         return false;
       for(var i in params) {
@@ -145,20 +146,20 @@ let semanticAnalisis = function(tree, symbolTable) {
           return symbolTable.search(x.id, ["variable", "parameter", "attribute"]).type;
           break;
         case "idAccess":
-        console.log(x)
+
           let symbolTableAux = symbolTable.search(symbolTable.search(x.base, ["variable", "parameter", "attribute"]).type, ["class"]).local;
-          console.log(symbolTableAux)
+
           let indice = 0;
           while(indice < x.access.length) {
 
 
             symbolTableAux = symbolTableAux.search(symbolTableAux.search(x.access[indice].id, ["variable", "parameter", "attribute"]).type, ["class"]).local;
-            console.log(symbolTableAux);
+
             indice += 1;
           }
           indice -= 1;
-          console.log(symbolTable)
-          console.log(symbolTable.search(x, ["class"]))
+
+
           return symbolTable.search(x.id, ["function"]).type
           break;
         default:
@@ -211,6 +212,7 @@ let semanticAnalisis = function(tree, symbolTable) {
           //tabla
           for(var a in rule.assignations) {
             for(var b in rule.assignations[a].to) {
+              console.log(rule);
               if(rule.varType.type)
               {
                 if(rule.varType.type !== getType(rule.assignations[a].to[b], symbolTable))
@@ -234,15 +236,16 @@ let semanticAnalisis = function(tree, symbolTable) {
             var from, to;
             from = getType(rule.assignations[a].element, symbolTable).type ? getType(rule.assignations[a].element, symbolTable).type : getType(rule.assignations[a].element, symbolTable);
             to = getType(rule.assignations[a].to, symbolTable).type ? getType(rule.assignations[a].to, symbolTable).type : getType(rule.assignations[a].to, symbolTable);
-            console.log(rule.assignations[a])
+
+            console.log(rule);
             if(from !== to)
-              throw "ERROR assignando1";
+              throw "ERROR asignación de elementos incompatibles 1 ";
             if(getType(rule.assignations[a].element, symbolTable).type)
               if(getType(rule.assignations[a].element, symbolTable).arrayCount !== rule.assignations[a].element.index.length)
-                throw "ERROR assignando2"
+                throw "ERROR asignación de elementos incompatibles 2 ";
             if(getType(rule.assignations[a].to, symbolTable).type)
               if(getType(rule.assignations[a].to, symbolTable).arrayCount !== rule.assignations[a].to.index.length)
-                throw "ERROR assignando3";
+                throw "ERROR asignación de elementos incompatiles 3 ";
         }
 
           break;
@@ -302,17 +305,17 @@ let semanticAnalisis = function(tree, symbolTable) {
 
           break;
         default:
-          console.log("ERROR CON " + rule.type);
+
 
       }
     };
 
-//    try {
+     try {
       for(var line in tree.result)
         validRule(tree.result[line], symbolTable);
-  /*  } catch (e) {
-      console.log(e)
+    } catch (e) {
+
     } finally {
 
-    }*/
+    }
 };

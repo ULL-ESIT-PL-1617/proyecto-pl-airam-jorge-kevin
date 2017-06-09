@@ -1,5 +1,5 @@
 numeric b = 1;
-const numeric a = b = 1: c = 1 + 2 < TRUE< {1,{9,8},3};
+const numeric a = 1;
 l(1, 2);
 
 class y {

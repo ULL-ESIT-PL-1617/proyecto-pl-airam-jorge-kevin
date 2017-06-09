@@ -1,0 +1,15 @@
+
+class A {
+   public numeric n = 0;
+}
+
+class B {
+  public A a = 0;
+}
+
+class C {
+  public B b = 1;
+}
+
+C c = C.init();
+c.b.a.n = 1;

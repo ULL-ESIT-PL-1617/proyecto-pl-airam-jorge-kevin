@@ -1,0 +1,44 @@
+numeric []z = {3, 4};
+numeric a = 8;
+numeric b = 9;
+numeric c = 10;
+numeric f = b;
+b = c;
+c = 9;
+a = 20;
+
+class hola {
+private numeric kevin = 3;
+public void diHola(){ kevin = 2; }
+}
+
+class hola1{
+public void funcion(){}
+}
+hola1 test = hola1.init();
+test.funcion();
+
+if (a == 4) {} else {}
+
+
+numeric ab () { return 5; }
+
+while (a == 3) {} else {}
+for ( numeric i = 0; i < 50; i = i + 1) {} else {}
+
+class custom1 {
+
+    private numeric n = 0;
+
+    public void init(numeric n) {
+         n = 1;
+    }
+
+    public numeric test(numeric k) {
+        n = k;
+        return n;
+    }
+}
+
+custom1 prueba = custom1.init(1);
+prueba.test(2);
