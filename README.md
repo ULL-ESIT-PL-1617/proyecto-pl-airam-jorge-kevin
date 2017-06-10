@@ -30,7 +30,7 @@
 
 ### Descripción del Lenguaje
 
-    - La descripción del lenguaje se encuentra en `./Rules.md`.
+ - La descripción del lenguaje se encuentra en `./Rules.md`.
 
 ### Descripción de uso del Lenguaje
 
