@@ -278,6 +278,8 @@ let semanticAnalisis = function(tree, symbolTable) {
           validRule(rule.assignations, symbolTable);
           break;
         case "return":
+          if (symbolTable.father === null) // Si es la tabla base, el return puede ser de cualquier tipo.
+            break;
           if(getType(rule.returnValue, symbolTable) !== symbolTable.fatherRow.type)
             throw "ERROR return";
           break;
