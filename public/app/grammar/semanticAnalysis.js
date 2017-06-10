@@ -126,19 +126,18 @@ let semanticAnalisis = function(tree, symbolTable) {
           return x.type;
         case "id":
           return symbolTable.search(x.id, ["variable", "parameter", "attribute"]).type;
-          throw "ERROR tabla id";
           break;
         case "term":
         case "expression":
           if(!validOp(getType(x.left, symbolTable), x.op, getType(x.right, symbolTable)))
-            throw "ERROR";
+            throw "expresión inválida";
           return getType(x.left, symbolTable);
         case "return":
           return getType(x.returnValue, symbolTable);
           break;
         case "call":
           if(!validCall(x, symbolTable.search(x.id, ["function"]), symbolTable))
-            throw "ERROR call";
+            throw "error llamando a función";
           return symbolTable.search(x.id, ["function"]).type;
           break;
         case "arrayAccess":
@@ -179,7 +178,7 @@ let semanticAnalisis = function(tree, symbolTable) {
         case "term":
         case "expression":
           if(!validOp(getType(x.left, symbolTable), x.op, getType(x.right, symbolTable)))
-            throw "ERROR validando";
+            throw "expresión inválida";
           break;
         case "for":
           symbolTable = symbolTable.search(rule.id, ["for"]).local;
@@ -202,7 +201,7 @@ let semanticAnalisis = function(tree, symbolTable) {
           break;
         case "term":
           if(!validOp(getType(rule.left, symbolTable), rule.op, getType(rule.right, symbolTable)))
-            throw "ERROR term";
+            throw "expresión inválida";
           break;
         case "block":
           for(var line in rule.contents)
@@ -210,7 +209,7 @@ let semanticAnalisis = function(tree, symbolTable) {
           break;
         case "condition":
           if(!validOp(getType(rule.left, symbolTable), rule.op, getType(rule.right, symbolTable)))
-            throw "ERROR condition";
+            throw "condición inválida";
           break;
         case "declaration":
           //tabla
@@ -219,16 +218,16 @@ let semanticAnalisis = function(tree, symbolTable) {
               if(rule.varType.type)
               {
                 if(rule.varType.type !== getType(rule.assignations[a].to[b], symbolTable))
-                  throw "ERROR declarando1";
+                  throw "declaración inválida";
               }
               else
               {
                 if(["string", "bool", "numeric"].indexOf(rule.varType) === -1) {
                   if(!validAccess(rule.assignations[0].to, symbolTable))
-                    throw "ERROR declarando2";
+                    throw "declaración inválida";
                 } else
                     if(rule.varType !== getType(rule.assignations[a].to, symbolTable))
-                      throw "ERROR declarando3";
+                      throw "declaración inválida";
               }
 
             }
@@ -286,19 +285,19 @@ let semanticAnalisis = function(tree, symbolTable) {
           if (symbolTable.father === null) // Si es la tabla base, el return puede ser de cualquier tipo.
             break;
           if(getType(rule.returnValue, symbolTable) !== symbolTable.fatherRow.type)
-            throw "ERROR return";
+            throw "retorno inválido";
           break;
         case "call":
           if(!validCall(rule, symbolTable.search(rule.id, ["function"]), symbolTable))
-            throw "ERROR call";
+            throw "llamada a función inválida";
           break;
         case "arrayAccess":
           if(!validArray(rule.id, rule, symbolTable))
-            throw "ERROR array access"
+            throw "acceso a array inválido"
           break;
         case "idAccess":
           if(!validAccess2(rule, symbolTable))
-            throw  "ERROR id access"
+            throw  "acceso a objeto inválido"
           break;
         case "string":
         case "bool":
