@@ -366,6 +366,7 @@ let process = function(key, value) {
         switch (value.type) {
             case "idAccess":
                 checkIdAccess(value);
+                break;
             case "call":
                 checkCall(value);
                 break;
@@ -477,7 +478,7 @@ let checkAssignations = function(assignation) {
 
 let checkCall = function(call) {
     if (!scope.search(call.id, ["function"])) {
-        //throw "Unkown function to call " + call.id;
+        throw "Unknown function to call " + call.id;
     }
 }
 

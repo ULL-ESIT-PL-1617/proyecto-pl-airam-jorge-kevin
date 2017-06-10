@@ -42,6 +42,7 @@ let translateInputCode = function() {
     return;
 
   try {
+    console.log(input);
     tree = peg$parse(input);
     setTree(JSON.stringify(tree, null, 2));
     try {
@@ -101,6 +102,7 @@ let getCodeInput = function() {
   return inputCode.innerHTML.replace(/<\/p>/g, "\n")
                             .replace(/<.*?>/g, "")
                             .replace(/&amp;/g, "&")
+                            .replace(/&nbsp;/g, " ")
                             .replace(/&lt;/g,  "<")
                             .replace(/&gt;/g,  ">")
                             .replace(/<br>/g, "");
@@ -115,6 +117,7 @@ let evalCodeOutput = function() {
     result = "Output: " + eval(code.replace(/<\/p>/g, "\n")
                                    .replace(/<.*?>/g, "")
                                    .replace(/&amp;/g, "&")
+                                   .replace(/&nbsp;/g, " ")
                                    .replace(/&lt;/g,  "<")
                                    .replace(/&gt;/g,  ">")
                                    .replace(/<br>/g, ""));
