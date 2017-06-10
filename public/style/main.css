@@ -35,6 +35,66 @@
   --color-box4-numbers:    hsl(110,  15%,  37%);*/
 }
 
+/*btn*/
+
+.btn { color: #fff; }
+
+.btn:focus { outline: 0; }
+
+.btn a{
+   text-decoration:none;
+   color:#fff;
+}
+
+.btn a:hover{ color: #2ecc71; }
+
+.btn{
+  text-align: center;
+  font-size: 15px;
+  cursor: pointer;
+  border: none;
+  padding: 10px;
+  width: 120px;
+  transition: all 0.2s;
+}
+
+.btn span {
+  cursor: pointer;
+  position: relative;
+  transition: 0.5s;
+}
+
+.btn span:after {
+  content: '»';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -15px;
+  transition: 0.5s;
+}
+
+.btn:hover span {
+  padding-right: 20px;
+}
+
+.btn:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+
+/*Botón Translate*/
+#Translate{
+  background-color: hsl(200, 50%, 30%);
+}
+
+/*Botón Evaluate*/
+#Evaluate{
+  background-color: hsl(290, 100%, 30%);
+}
+
+/*fin btn*/
+
 table, td, th {
     border: 1px solid #ddd;
     text-align: left;

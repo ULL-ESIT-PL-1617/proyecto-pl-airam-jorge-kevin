@@ -127,7 +127,7 @@
 
 7. Podemos declarar atributos de la clase de la siguiente forma:
     ```javascript
-    <visibility> <type> <name> = [<value> | <constructor>];
+    <visibility> <returnType> <name> = [<value> | <constructor>];
     ```
 
     Por ejemplo:
@@ -137,11 +137,37 @@
     private otraClase y = otraClase.init();
     ```
 
-8. Para declarar funciones de una clase hacemos lo siguiente:
+8. Para declarar métodos de una clase hacemos lo siguiente:
     ```javascript
-    
+    <visibility> <functionDeclare>;
     ```
 
+    ```javascript
+    public void x() {}
+    private numeric y(numeric a) { return a*7; }
+    ```
+
+9. Para declarar una clase seguiremos la siguiente sintáxis:
+
+    ```javascript
+    class <name> {
+      [<atributos> | <metodos> ]*
+    }
+    ```
+
+    Por ejemplo:
+
+    ```javascript
+    class A {
+      public numeric n = 0;
+    }
+    class B {
+      public A a = A.init();
+    }
+    class C {
+      public B b = B.init();
+    }
+    ```
 
 ### Árbol sintáctico
 
