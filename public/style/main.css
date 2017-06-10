@@ -83,7 +83,7 @@
 
 /*Botón Evaluate*/
 #Evaluate{
-  background-color: hsl(290, 100%, 30%);
+  background-color: hsl(290, 100%, 25%);
 }
 
 /*fin btn*/
@@ -291,4 +291,33 @@ th {
 }
 ::-webkit-scrollbar-corner {
   background-color: rgba(0, 0, 0, 0.0);
+}
+
+#mainMore{
+  background-color: hsl(200,  19%,  18%);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.info{
+  background-color: #fff;
+  width: 800px;
+  border-radius: 20px;
+  box-shadow: 15px 15px 10px black;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 25px;
+  padding: 30px;
+}
+
+.opaco {
+  opcity: 0;
+}
+
+#mainMore{
+  opacity: 0;
+  display: none;
 }

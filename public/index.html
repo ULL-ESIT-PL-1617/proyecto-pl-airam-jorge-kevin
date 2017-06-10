@@ -7,14 +7,14 @@
     <link rel="stylesheet" href="style/mainSizes.css">
   </head>
   <body>
-
+<div id="mainPrincipal">
     <div class="top-bar">
       <div class="dropdown">
         <button  class = "btn-top" id="dropdown-button" onclick="showDropdown()">Examples</button>
         <button class = "btn-top" >Tutorial</button>
         <button class = "btn-top" >Tests</button>
-        <button class = "btn-top" >Github</button>
-        <button class = "btn-top" >More</button>
+        <button class = "btn-top" onclick="location.href = 'https://github.com/ULL-ESIT-PL-1617/proyecto-pl-airam-jorge-kevin';">Github</button>
+        <button class = "btn-top" onclick="showMore()">More</button>
         <div id="dropdown-examples" class="dropdown-content">
           <span onclick="loadExample(0)">Load example 1</span>
           <span onclick="loadExample(1)">Load example 2</span>
@@ -71,6 +71,33 @@
         </div>
       </div>
     </div>
+
+    </div>
+
+
+    <div id="mainMore">
+      <div class="info">
+        <h3>
+          Este lenguaje ha sido creado por 3 alumnos de Ingeniería Informática de la ULL para la asignatura de Procesadores de Lenguajes.
+        </h3>
+        <br />
+        <h4>
+          Autores:
+        </h4>
+        <br />
+        <div><a href="https://github.com/AiramNavas">Airam Manuel Navas Simón</a></div>
+        <div><a href="https://github.com/alu0100880625">Kevin Días Marrero</a></div>
+        <div><a href="https://github.com/Ediolot">Jorge Sierra Acosta</a></div>
+        <div>La gramática se encuentra en grammar/grammar.pegjs</div>
+        <br />
+        <div>
+          Para compilar la gramática, existe una tarea en el Rakefile o directamente pegjs -o ./public/grammar.js ./grammar/grammar.pegjs (El archivo ya se encuentra compilado en ./public/grammar.js)
+          Se puede desplegar un servidor local mediante node app.js o utilizar el despliegue de Heroku.
+          Las pruebas son ejecutas al desplegar la aplicación web. En la pestaña Tests.
+        </div>
+      </div>
+    </div>
+
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.14/beautify.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.14/beautify-css.js"></script>
