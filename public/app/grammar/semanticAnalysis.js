@@ -130,7 +130,7 @@ let semanticAnalisis = function(tree, symbolTable) {
         case "term":
         case "expression":
           if(!validOp(getType(x.left, symbolTable), x.op, getType(x.right, symbolTable)))
-            throw "expresión inválida";
+            throw "Expresión inválida";
           return getType(x.left, symbolTable);
         case "return":
           if (typeof(x.returnValue()) === "Object")
@@ -139,7 +139,7 @@ let semanticAnalisis = function(tree, symbolTable) {
           break;
         case "call":
           if(!validCall(x, symbolTable.search(x.id, ["function"]), symbolTable))
-            throw "error llamando a función";
+            throw "Error llamando a función";
           return symbolTable.search(x.id, ["function"]).type;
           break;
         case "arrayAccess":
@@ -192,7 +192,7 @@ let semanticAnalisis = function(tree, symbolTable) {
         case "term":
         case "expression":
           if(!validOp(getType(x.left, symbolTable), x.op, getType(x.right, symbolTable)))
-            throw "expresión inválida";
+            throw "Expresión inválida";
           break;
         case "for":
           symbolTable = symbolTable.search(rule.id, ["for"]).local;
@@ -215,7 +215,7 @@ let semanticAnalisis = function(tree, symbolTable) {
           break;
         case "term":
           if(!validOp(getType(rule.left, symbolTable), rule.op, getType(rule.right, symbolTable)))
-            throw "expresión inválida";
+            throw "Expresión inválida";
           break;
         case "block":
           for(var line in rule.contents)
@@ -223,7 +223,7 @@ let semanticAnalisis = function(tree, symbolTable) {
           break;
         case "condition":
           if(!validOp(getType(rule.left, symbolTable), rule.op, getType(rule.right, symbolTable)))
-            throw "condición inválida";
+            throw "Condición inválida";
           break;
         case "declaration":
           //tabla
@@ -231,17 +231,20 @@ let semanticAnalisis = function(tree, symbolTable) {
             for(var b in rule.assignations[a].to) {
               if(rule.varType.type)
               {
+                if (rule.varType.arrayCount !== depthArray(rule.assignations[a].to))
+                  throw "Declaración de array inválida";
+
                 if(JSON.stringify(rule.varType.type) !== JSON.stringify(getType(rule.assignations[a].to[b], symbolTable)))
-                  throw "declaración inválida";
+                  throw "Declaración inválida";
               }
               else
               {
                 if(["string", "bool", "numeric"].indexOf(rule.varType) === -1) {
                   if(!validAccess(rule.assignations[0].to, symbolTable))
-                    throw "declaración inválida";
+                    throw "Declaración inválida";
                 } else
                     if(JSON.stringify(rule.varType) !== JSON.stringify(getType(rule.assignations[a].to, symbolTable)))
-                      throw "declaración inválida";
+                      throw "Declaración inválida";
               }
 
             }
@@ -299,15 +302,15 @@ let semanticAnalisis = function(tree, symbolTable) {
           if (symbolTable.father === null) // Si es la tabla base, el return puede ser de cualquier tipo.
             break;
           if(JSON.stringify(getType(rule.returnValue, symbolTable)) !== JSON.stringify(symbolTable.fatherRow.type))
-            throw "retorno inválido";
+            throw "Retorno inválido";
           break;
         case "call":
           if(!validCall(rule, symbolTable.search(rule.id, ["function"]), symbolTable))
-            throw "llamada a función inválida";
+            throw "Llamada a función inválida";
           break;
         case "arrayAccess":
           if(!validArray(rule.id, rule, symbolTable))
-            throw "acceso a array inválido"
+            throw "Acceso a array inválido"
           break;
         case "idAccess":
           if(!validAccess2(rule, symbolTable))
@@ -328,3 +331,15 @@ let semanticAnalisis = function(tree, symbolTable) {
       for(var line in tree.result)
         validRule(tree.result[line], symbolTable);
 };
+
+let depthArray = function(array) {
+  let max = 0;
+  for (let i in array) {
+    if (typeof(array[i]) === "object") {
+      let depth = depthArray(array[i]);
+      if (depth > max) max = depth;
+      if (1 > max) max = 1;
+    }
+  }
+  return max;
+}
