@@ -39,7 +39,7 @@ c.test1(32);`;
 examples[2] =
 `numeric b = 1;
 const numeric a = 1;
-l(1, 2);
+// l(1, 2); // Mostrará un error de que no está definido l
 
 class y {
   public numeric o = 1;
