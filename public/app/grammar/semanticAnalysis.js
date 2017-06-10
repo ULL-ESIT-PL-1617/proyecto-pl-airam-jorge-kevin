@@ -143,7 +143,10 @@ let semanticAnalisis = function(tree, symbolTable) {
           return symbolTable.search(x.id, ["function"]).type;
           break;
         case "arrayAccess":
-          return symbolTable.search(x.id, ["variable", "parameter", "attribute"]).type;
+          let row = symbolTable.search(x.id, ["variable", "parameter", "attribute"]).type;
+          row.arrayCount -= x.index.length;
+          console.log("ROW:", x, row);
+          return row;
           break;
         case "idAccess":
 
@@ -180,6 +183,13 @@ let semanticAnalisis = function(tree, symbolTable) {
           return symbolTableAux.search(x.access[indice].id, ["method", "attribute"], "ITSME").type
           break;
         default:
+          if (x instanceof Array) {
+            return {
+              array: "true",
+              arrayCount: 1,
+              type: getType(x[0], symbolTable)
+            };
+          }
           if(symbolTable.search(x, ["variable", "parameter", "attribute"]))
             return symbolTable.search(x, ["variable", "parameter", "attribute"]).type;
           return x.base;
@@ -253,16 +263,13 @@ let semanticAnalisis = function(tree, symbolTable) {
         case "assign":
           for(var a in rule.assignations) {
             var from, to;
-            from = getType(rule.assignations[a].element, symbolTable).type ? getType(rule.assignations[a].element, symbolTable).type : getType(rule.assignations[a].element, symbolTable);
-            to = getType(rule.assignations[a].to, symbolTable).type ? getType(rule.assignations[a].to, symbolTable).type : getType(rule.assignations[a].to, symbolTable);
-            if(from !== to)
-              throw "ERROR asignación de elementos incompatibles 1 ";
-            if(getType(rule.assignations[a].element, symbolTable).type)
-              if(getType(rule.assignations[a].element, symbolTable).arrayCount !== rule.assignations[a].element.index.length)
-                throw "ERROR asignación de elementos incompatibles 2 ";
-            if(getType(rule.assignations[a].to, symbolTable).type)
-              if(getType(rule.assignations[a].to, symbolTable).arrayCount !== rule.assignations[a].to.index.length)
-                throw "ERROR asignación de elementos incompatiles 3 ";
+            console.log(rule);
+            from = getType(rule.assignations[a].element, symbolTable);
+            to = getType(rule.assignations[a].to, symbolTable);
+            console.log("FROM:", from);
+            console.log("TO:", to);
+            if(JSON.stringify(from) !== JSON.stringify(to))
+              throw "ERROR asignación de elementos incompatibles";
         }
 
           break;
