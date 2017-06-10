@@ -55,9 +55,9 @@ xx.yy.o = 1;
 
 numeric[] num = {9,8};
 numeric p = 2;
-num[1][num[2] * 2 + xx.yy.o + p + (2 * 3)] = 199;
+// num[1][num[2] * 2 + xx.yy.o + p + (2 * 3)] = 199;
 
-return num[1][num[2] * 2 + xx.yy.o + p + (2 * 3)] = 199;
+// return num[1][num[2] * 2 + xx.yy.o + p + (2 * 3)] = 199;
 
 void reset(numeric a, x lol) {
  numeric i1 = 0;

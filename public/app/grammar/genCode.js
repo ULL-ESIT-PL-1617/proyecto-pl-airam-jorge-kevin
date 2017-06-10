@@ -172,7 +172,7 @@ let method = function(tree) {
 }
 
 let return_ = function(tree) {
-    return "return" + (!!tree.returnValue ? (" " + assignation(tree.returnValue)) : "");
+    return "return" + (!!tree.returnValue ? (" (" + declaration(tree.returnValue)) + ")" : "");
 }
 
 let function_ = function(tree) {

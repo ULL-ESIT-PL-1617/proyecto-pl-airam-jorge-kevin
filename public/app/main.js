@@ -113,13 +113,13 @@ let evalCodeOutput = function() {
   let result;
 
   try {
-    result = "Output: " + eval(code.replace(/<\/p>/g, "\n")
-                                   .replace(/<.*?>/g, "")
-                                   .replace(/&amp;/g, "&")
-                                   .replace(/&nbsp;/g, " ")
-                                   .replace(/&lt;/g,  "<")
-                                   .replace(/&gt;/g,  ">")
-                                   .replace(/<br>/g, ""));
+    result = "Output: " + JSON.stringify(eval(code.replace(/<\/p>/g, "\n")
+                                                  .replace(/<.*?>/g, "")
+                                                  .replace(/&amp;/g, "&")
+                                                  .replace(/&nbsp;/g, " ")
+                                                  .replace(/&lt;/g,  "<")
+                                                  .replace(/&gt;/g,  ">")
+                                                  .replace(/<br>/g, "")), null, 2);
   } catch (error) {
     result = "Eval error: " + error;
   }

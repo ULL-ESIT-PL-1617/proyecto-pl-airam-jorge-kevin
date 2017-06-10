@@ -376,6 +376,9 @@ let process = function(key, value) {
             case "id":
                 checkId(value);
                 break;
+            case "return":
+                checkReturn(value);
+                break;
             case "if":
                 scopeQueue = scope.addControlFlowIf(value);
                 scope = scopeQueue.shift();
@@ -449,6 +452,11 @@ let checkIdAccess = function(idAccess) {
 
         currentType = typeClass.local.searchLocal(idAccess.access[i].id, [find]).type;
     }
+}
+
+let checkReturn = function(return_) {
+    if ((return_.returnValue !== null) && (return_.returnValue.type === "declaration"))
+      throw "Declaration of a new id inside a return is not allowed."
 }
 
 /* Comprueba que las asignaciones se hacen a variables que ya han sido declaradas
