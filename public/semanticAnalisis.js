@@ -126,7 +126,7 @@ let semanticAnalisis = function(tree, symbolTable) {
           return x.type;
         case "id":
           return symbolTable.search(x.id, ["variable", "parameter", "attribute"]).type;
-          throw "ERROR tabla id";
+          throw "tabla id";
           break;
         case "term":
         case "expression":
@@ -138,7 +138,7 @@ let semanticAnalisis = function(tree, symbolTable) {
           break;
         case "call":
           if(!validCall(x, symbolTable.search(x.id, ["function"]), symbolTable))
-            throw "ERROR call";
+            throw "call";
           return symbolTable.search(x.id, ["function"]).type;
           break;
         case "arrayAccess":
@@ -174,7 +174,7 @@ let semanticAnalisis = function(tree, symbolTable) {
         case "term":
         case "expression":
           if(!validOp(getType(x.left, symbolTable), x.op, getType(x.right, symbolTable)))
-            throw "ERROR validando";
+            throw "validando la expresión";
           break;
         case "for":
           symbolTable = symbolTable.search(rule.id, ["for"]).local;
@@ -197,7 +197,7 @@ let semanticAnalisis = function(tree, symbolTable) {
           break;
         case "term":
           if(!validOp(getType(rule.left, symbolTable), rule.op, getType(rule.right, symbolTable)))
-            throw "ERROR term";
+            throw "validando el término";
           break;
         case "block":
           for(var line in rule.contents)
@@ -205,7 +205,7 @@ let semanticAnalisis = function(tree, symbolTable) {
           break;
         case "condition":
           if(!validOp(getType(rule.left, symbolTable), rule.op, getType(rule.right, symbolTable)))
-            throw "ERROR condition";
+            throw "condición incorrecta";
           break;
         case "declaration":
           //tabla
@@ -214,16 +214,16 @@ let semanticAnalisis = function(tree, symbolTable) {
               if(rule.varType.type)
               {
                 if(rule.varType.type !== getType(rule.assignations[a].to[b], symbolTable))
-                  throw "ERROR declarando1";
+                  throw "declaración inválida";
               }
               else
               {
                 if(["string", "bool", "numeric"].indexOf(rule.varType) === -1) {
                   if(!validAccess(rule.assignations[0].to, symbolTable))
-                    throw "ERROR declarando2";
+                    throw "declaración inválida";
                 } else
                     if(rule.varType !== getType(rule.assignations[a].to, symbolTable))
-                      throw "ERROR declarando3";
+                      throw "declaración inválida";
               }
 
             }
@@ -235,13 +235,13 @@ let semanticAnalisis = function(tree, symbolTable) {
             from = getType(rule.assignations[a].element, symbolTable).type ? getType(rule.assignations[a].element, symbolTable).type : getType(rule.assignations[a].element, symbolTable);
             to = getType(rule.assignations[a].to, symbolTable).type ? getType(rule.assignations[a].to, symbolTable).type : getType(rule.assignations[a].to, symbolTable);
             if(from !== to)
-              throw "ERROR asignación de elementos incompatibles 1 ";
+              throw "asignación de elementos incompatibles 1 ";
             if(getType(rule.assignations[a].element, symbolTable).type)
               if(getType(rule.assignations[a].element, symbolTable).arrayCount !== rule.assignations[a].element.index.length)
-                throw "ERROR asignación de elementos incompatibles 2 ";
+                throw "asignación de elementos incompatibles 2 ";
             if(getType(rule.assignations[a].to, symbolTable).type)
               if(getType(rule.assignations[a].to, symbolTable).arrayCount !== rule.assignations[a].to.index.length)
-                throw "ERROR asignación de elementos incompatiles 3 ";
+                throw "asignación de elementos incompatiles 3 ";
         }
 
           break;
@@ -279,19 +279,19 @@ let semanticAnalisis = function(tree, symbolTable) {
           break;
         case "return":
           if(getType(rule.returnValue, symbolTable) !== symbolTable.fatherRow.type)
-            throw "ERROR return";
+            throw "retorno de función inválido";
           break;
         case "call":
           if(!validCall(rule, symbolTable.search(rule.id, ["function"]), symbolTable))
-            throw "ERROR call";
+            throw "llamada a función inválida";
           break;
         case "arrayAccess":
           if(!validArray(rule.id, rule, symbolTable))
-            throw "ERROR array access"
+            throw "accediendo al array"
           break;
         case "idAccess":
           if(!validAccess2(rule, symbolTable))
-            throw  "ERROR id access"
+            throw  "acceso a objeto inválido"
           break;
         case "string":
         case "bool":
