@@ -139,12 +139,11 @@ El árbol sintáctico generado contendrá los siguientes atributos.
 
 ## Algunos ejemplos del árbol sintáctico generado:
 
-1. Código simple con tres instrucciones:
+1. Código simple donde declaramos un array y un numeric:
 
     ```javascript
-    x = 1;
-    y = 2;
-    z = (x + 4) * y;
+    string[][] c = {"a", "b"};
+    numeric k = 0;
     ```
 
     Árbol resultado:
@@ -152,355 +151,449 @@ El árbol sintáctico generado contendrá los siguientes atributos.
 
     ```json
     {
+      "builtInTypes": [
+        "numeric",
+        "bool",
+        "string",
+        "void"
+      ],
       "reservedWords": [
         "else",
         "if",
-        "exit",
-        "return",
+        "while",
         "for",
-        "function",
-        "const"
+        "const",
+        "numeric",
+        "bool",
+        "string",
+        "void",
+        "public",
+        "private",
+        "class",
+        "true",
+        "false",
+        "return"
       ],
-      "initialConstantTable": {
-        "PI": 3.141592653589793,
-        "TRUE": 1,
-        "FALSE": 0
-      },
-      "functionTable": {},
       "symbolTable": {
-        "PI": "constant",
-        "TRUE": "constant",
-        "FALSE": "constant",
-        "x": "volatile",
-        "y": "volatile",
-        "z": "volatile"
+        "PI": 3.14159265359,
+        "TRUE": true,
+        "FALSE": false
       },
-      "result": {
-        "sentences": [
-          {
-            "type": "ASSIGN",
-            "id": "x",
-            "right": {
-              "type": "NUM",
-              "value": 1
-            }
+      "result": [
+        {
+          "type": "declaration",
+          "constant": false,
+          "varType": {
+            "array": "true",
+            "arrayCount": 2,
+            "type": "string"
           },
-          {
-            "type": "ASSIGN",
-            "id": "y",
-            "right": {
-              "type": "NUM",
-              "value": 2
-            }
-          },
-          {
-            "type": "ASSIGN",
-            "id": "z",
-            "right": {
-              "type": "MULOP",
-              "op": "*",
-              "left": {
-                "type": "expression",
-                "op": "+",
-                "left": {
-                  "type": "ID",
-                  "id": "x"
-                },
-                "right": {
-                  "type": "NUM",
-                  "value": 4
-                }
-              },
-              "right": {
-                "type": "ID",
-                "id": "y"
-              }
-            }
-          }
-        ]
-      }
-    }
-    ```
-
-2. Utilizando una función
-
-    ```javascript
-    function add(x, y) {
-        return x + y;
-    }
-
-    add(1, 3);
-    ```
-
-    Árbol resultado:
-
-    ```json
-    {
-      "reservedWords": [
-        "else",
-        "if",
-        "exit",
-        "return",
-        "for",
-        "function",
-        "const"
-      ],
-      "initialConstantTable": {
-        "PI": 3.141592653589793,
-        "TRUE": 1,
-        "FALSE": 0
-      },
-      "functionTable": {
-        "add": {
-          "params": [
-            "x",
-            "y"
-          ],
-          "symbolTable": {
-            "x": "volatile",
-            "y": "volatile"
-          }
-        }
-      },
-      "symbolTable": {
-        "PI": "constant",
-        "TRUE": "constant",
-        "FALSE": "constant"
-      },
-      "result": {
-        "sentences": [
-          {
-            "type": "FUNCTION",
-            "id": "add",
-            "params": [
-              "x",
-              "y"
-            ],
-            "code": {
-              "sentences": [
+          "assignations": [
+            {
+              "id": "c",
+              "to": [
                 {
-                  "type": "RETURN",
-                  "assign": {
-                    "type": "expression",
-                    "op": "+",
-                    "left": {
-                      "type": "ID",
-                      "id": "x"
-                    },
-                    "right": {
-                      "type": "ID",
-                      "id": "y"
-                    }
-                  }
+                  "type": "string",
+                  "value": "a"
+                },
+                {
+                  "type": "string",
+                  "value": "b"
                 }
               ]
             }
-          },
-          {
-            "type": "CALL",
-            "args": {
-              "type": "ARGUMENTS",
-              "arguments": {
-                "type": "COMMA",
-                "operations": [
+          ]
+        },
+        {
+          "type": "declaration",
+          "constant": false,
+          "varType": "numeric",
+          "assignations": [
+            {
+              "id": "k",
+              "to": {
+                "type": "numeric",
+                "value": 0
+              }
+            }
+          ]
+        }
+      ]
+    }
+    ```
+
+2. Ejemplo variado donde aparece una funcion en la cual creamos variables, dos bucles de ambos tipos (while y for), y dos condiciones if diferentes.
+
+    ```javascript
+    numeric function(string a, numeric d) {
+        numeric l = 0;
+        for (numeric i = 0; i < 10; i = i + 1) {
+        } else { numeric x = 0; }
+        while (TRUE) { numeric xx = 1; } else { numeric ll = 11; }
+        if (TRUE) { numeric a = 1; } else { numeric d = 1; }
+        if (TRUE) { numeric a = 1; } else if (TRUE) { numeric x = 0; a = "9"; }
+    }
+    ```
+
+    Árbol resultado:
+
+    ```json
+    {
+      "builtInTypes": [
+        "numeric",
+        "bool",
+        "string",
+        "void"
+      ],
+      "reservedWords": [
+        "else",
+        "if",
+        "while",
+        "for",
+        "const",
+        "numeric",
+        "bool",
+        "string",
+        "void",
+        "public",
+        "private",
+        "class",
+        "true",
+        "false",
+        "return"
+      ],
+      "symbolTable": {
+        "PI": 3.14159265359,
+        "TRUE": true,
+        "FALSE": false
+      },
+      "result": [
+        {
+          "type": "function",
+          "returnType": "numeric",
+          "functionName": "function",
+          "params": [
+            {
+              "type": "parameter",
+              "vartype": "string",
+              "id": "a"
+            },
+            {
+              "type": "parameter",
+              "vartype": "numeric",
+              "id": "d"
+            }
+          ],
+          "contents": {
+            "type": "block",
+            "contents": [
+              {
+                "type": "declaration",
+                "constant": false,
+                "varType": "numeric",
+                "assignations": [
                   {
-                    "type": "NUM",
-                    "value": 1
-                  },
-                  {
-                    "type": "NUM",
-                    "value": 3
+                    "id": "l",
+                    "to": {
+                      "type": "numeric",
+                      "value": 0
+                    }
                   }
                 ]
-              }
-            },
-            "id": "add"
-          }
-        ]
-      }
-    }
-    ```
-
-3. Utilizando una sentencia IF
-
-    ```javascript
-    if 2 > 3 {
-      c = 4;
-    }
-    else {
-      c = 5;
-    }
-    ```
-
-    Árbol resultado:
-
-    ```json
-    {
-      "reservedWords": [
-        "else",
-        "if",
-        "exit",
-        "return",
-        "for",
-        "function",
-        "const"
-      ],
-      "initialConstantTable": {
-        "PI": 3.141592653589793,
-        "TRUE": 1,
-        "FALSE": 0
-      },
-      "functionTable": {},
-      "symbolTable": {
-        "PI": "constant",
-        "TRUE": "constant",
-        "FALSE": "constant",
-        "c": "volatile"
-      },
-      "result": {
-        "sentences": [
-          {
-            "type": "IF",
-            "ifCode": {
-              "condition": {
-                "type": "CONDITION",
-                "left": {
-                  "type": "NUM",
-                  "value": 2
+              },
+              {
+                "id": 0,
+                "type": "for",
+                "start": {
+                  "type": "declaration",
+                  "constant": false,
+                  "varType": "numeric",
+                  "assignations": [
+                    {
+                      "id": "i",
+                      "to": {
+                        "type": "numeric",
+                        "value": 0
+                      }
+                    }
+                  ]
                 },
-                "op": ">",
-                "right": {
-                  "type": "NUM",
-                  "value": 3
+                "check": {
+                  "type": "condition",
+                  "op": "<",
+                  "left": {
+                    "type": "id",
+                    "id": "i"
+                  },
+                  "right": {
+                    "type": "numeric",
+                    "value": 10
+                  }
+                },
+                "iterate": {
+                  "type": "assign",
+                  "assignations": [
+                    {
+                      "element": "i",
+                      "to": {
+                        "type": "expression",
+                        "op": "+",
+                        "left": {
+                          "type": "id",
+                          "id": "i"
+                        },
+                        "right": {
+                          "type": "numeric",
+                          "value": 1
+                        }
+                      }
+                    }
+                  ]
+                },
+                "contents": {
+                  "type": "block",
+                  "contents": []
+                },
+                "else": {
+                  "type": "block",
+                  "contents": [
+                    {
+                      "type": "declaration",
+                      "constant": false,
+                      "varType": "numeric",
+                      "assignations": [
+                        {
+                          "id": "x",
+                          "to": {
+                            "type": "numeric",
+                            "value": 0
+                          }
+                        }
+                      ]
+                    }
+                  ]
                 }
               },
-              "sentences": [
-                {
-                  "type": "ASSIGN",
-                  "id": "c",
-                  "right": {
-                    "type": "NUM",
-                    "value": 4
-                  }
+              {
+                "id": 1,
+                "type": "while",
+                "check": {
+                  "type": "bool",
+                  "value": "true"
+                },
+                "contents": {
+                  "type": "block",
+                  "contents": [
+                    {
+                      "type": "declaration",
+                      "constant": false,
+                      "varType": "numeric",
+                      "assignations": [
+                        {
+                          "id": "xx",
+                          "to": {
+                            "type": "numeric",
+                            "value": 1
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "else": {
+                  "type": "block",
+                  "contents": [
+                    {
+                      "type": "declaration",
+                      "constant": false,
+                      "varType": "numeric",
+                      "assignations": [
+                        {
+                          "id": "ll",
+                          "to": {
+                            "type": "numeric",
+                            "value": 11
+                          }
+                        }
+                      ]
+                    }
+                  ]
                 }
-              ]
-            },
-            "elseIfCode": [],
-            "elseCode": {
-              "sentences": [
-                {
-                  "type": "ASSIGN",
-                  "id": "c",
-                  "right": {
-                    "type": "NUM",
-                    "value": 5
-                  }
-                }
-              ]
-            }
-          }
-        ]
-      }
-    }
-    ```
-
-4. Utilizando una sentencia FOR
-
-    ```javascript
-    for ( i = 0; i < 5 ; i = i + 1) {
-      i = 3;
-    }
-    ```
-
-    Árbol resultado:
-
-    ```json
-    {
-      "reservedWords": [
-        "else",
-        "if",
-        "exit",
-        "return",
-        "for",
-        "function",
-        "const"
-      ],
-      "initialConstantTable": {
-        "PI": 3.141592653589793,
-        "TRUE": 1,
-        "FALSE": 0
-      },
-      "functionTable": {},
-      "symbolTable": {
-        "PI": "constant",
-        "TRUE": "constant",
-        "FALSE": "constant",
-        "i": "volatile"
-      },
-      "result": {
-        "sentences": [
-          {
-            "type": "LOOP",
-            "left": {
-              "type": "COMMA",
-              "operations": [
-                {
-                  "type": "ASSIGN",
-                  "id": "i",
-                  "right": {
-                    "type": "NUM",
-                    "value": 0
-                  }
-                }
-              ]
-            },
-            "condition": {
-              "type": "CONDITION",
-              "left": {
-                "type": "ID",
-                "id": "i"
               },
-              "op": "<",
-              "right": {
-                "type": "NUM",
-                "value": 5
-              }
-            },
-            "right": {
-              "type": "COMMA",
-              "operations": [
-                {
-                  "type": "ASSIGN",
-                  "id": "i",
-                  "right": {
-                    "type": "expression",
-                    "op": "+",
-                    "left": {
-                      "type": "ID",
-                      "id": "i"
+              {
+                "id": 2,
+                "type": "if",
+                "ifCode": {
+                  "check": {
+                    "type": "bool",
+                    "value": "true"
+                  },
+                  "contents": {
+                    "type": "block",
+                    "contents": [
+                      {
+                        "type": "declaration",
+                        "constant": false,
+                        "varType": "numeric",
+                        "assignations": [
+                          {
+                            "id": "a",
+                            "to": {
+                              "type": "numeric",
+                              "value": 1
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "elseIfCode": [],
+                "elseCode": {
+                  "type": "block",
+                  "contents": [
+                    {
+                      "type": "declaration",
+                      "constant": false,
+                      "varType": "numeric",
+                      "assignations": [
+                        {
+                          "id": "d",
+                          "to": {
+                            "type": "numeric",
+                            "value": 1
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "id": 3,
+                "type": "if",
+                "ifCode": {
+                  "check": {
+                    "type": "bool",
+                    "value": "true"
+                  },
+                  "contents": {
+                    "type": "block",
+                    "contents": [
+                      {
+                        "type": "declaration",
+                        "constant": false,
+                        "varType": "numeric",
+                        "assignations": [
+                          {
+                            "id": "a",
+                            "to": {
+                              "type": "numeric",
+                              "value": 1
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "elseIfCode": [
+                  {
+                    "check": {
+                      "type": "bool",
+                      "value": "true"
                     },
-                    "right": {
-                      "type": "NUM",
-                      "value": 1
+                    "contents": {
+                      "type": "block",
+                      "contents": [
+                        {
+                          "type": "declaration",
+                          "constant": false,
+                          "varType": "numeric",
+                          "assignations": [
+                            {
+                              "id": "x",
+                              "to": {
+                                "type": "numeric",
+                                "value": 0
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "assign",
+                          "assignations": [
+                            {
+                              "element": "a",
+                              "to": {
+                                "type": "string",
+                                "value": "9"
+                              }
+                            }
+                          ]
+                        }
+                      ]
                     }
                   }
-                }
-              ]
-            },
-            "sentences": [
-              {
-                "type": "ASSIGN",
-                "id": "i",
-                "right": {
-                  "type": "NUM",
-                  "value": 3
-                }
+                ],
+                "elseCode": null
               }
             ]
           }
-        ]
-      }
-    }    
+        }
+      ]
+    }
+    ```
+
+3. Ejemplo de la declaración de una clase.
+
+    ```javascript
+    class A {}
+    ```
+
+    Árbol resultado:
+
+    ```json
+    {
+      "builtInTypes": [
+        "numeric",
+        "bool",
+        "string",
+        "void"
+      ],
+      "reservedWords": [
+        "else",
+        "if",
+        "while",
+        "for",
+        "const",
+        "numeric",
+        "bool",
+        "string",
+        "void",
+        "public",
+        "private",
+        "class",
+        "true",
+        "false",
+        "return"
+      ],
+      "symbolTable": {
+        "PI": 3.14159265359,
+        "TRUE": true,
+        "FALSE": false
+      },
+      "result": [
+        {
+          "type": "class",
+          "id": "A",
+          "content": {
+            "type": "classBlock",
+            "classStatement": []
+          }
+        }
+      ]
+    }
     ```
 
 ### Recursos
