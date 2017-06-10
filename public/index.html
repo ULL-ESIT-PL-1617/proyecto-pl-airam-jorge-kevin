@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="style/main.css">
+    <link rel="stylesheet" href="style/mainSizes.css">
+  </head>
+  <body>
+
+    <div class="top-bar">
+      <div class="dropdown">
+        <button id="dropdown-button" onclick="showDropdown()">Dropdown</button>
+        <div id="dropdown-examples" class="dropdown-content">
+          <span onclick="loadExample(0)">Load example 1</span>
+          <span onclick="loadExample(1)">Load example 2</span>
+          <span onclick="loadExample(2)">Load example 3</span>
+          <span onclick="loadExample(3)">Load example 4</span>
+          <span onclick="loadExample(4)">Load example 5</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex-container">
+      <div id="box1" class="flex-item">
+        <div class="flex-top-bar">
+          <span class="title">CODE</span>
+          <button type="button" name="button" onclick="translateInputCode();">Translate</button>
+        </div>
+        <code id="box1-code" contentEditable="true">
+          <p class="code-paragraph">void add(numeric a, numeric b) {</p>
+          <p class="code-paragraph">  return a + b;</p>
+          <p class="code-paragraph">}</p>
+        </code>
+        <div id="error-area">
+        </div>
+      </div>
+
+      <div id="box2" class="flex-item">
+        <div class="flex-top-bar">
+          <span class="title">JAVSCRIPT</span>
+          <button type="button" name="button" onclick="evalCodeOutput();">Evaluate</button>
+        </div>
+        <code id="box2-code" contentEditable="false">
+        </code>
+        <div id="output-area">
+        </div>
+      </div>
+    </div>
+
+    <div class="flex-container">
+      <div id="box3" class="flex-item">
+        <div class="flex-top-bar">
+          <span class="title">SYNTACTIC TREE</span>
+        </div>
+        <code id="box3-code" contentEditable="true">
+        </code>
+      </div>
+
+      <div id="box4" class="flex-item">
+        <div class="flex-top-bar">
+          <span class="title">SYMBOL TABLE</span>
+        </div>
+        <div id="box4-table">
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.14/beautify.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.14/beautify-css.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.14/beautify-html.js"></script>
+    <script type="text/javascript" src="app/grammar/semanticAnalysis.js"></script>
+    <script type="text/javascript" src="app/grammar/grammar.js"></script>
+    <script type="text/javascript" src="app/grammar/genCode.js"></script>
+    <script type="text/javascript" src="app/grammar/scopeAnalysis.js"></script>
+    <script type="text/javascript" src="app/highlight.js"></script>
+    <script type="text/javascript" src="app/main.js"></script>
+    <script type="text/javascript" src="app/examples.js"></script>
+  </body>
+</html>

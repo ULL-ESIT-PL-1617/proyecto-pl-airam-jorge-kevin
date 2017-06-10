@@ -1,0 +1,9 @@
+@media only screen and (max-width: 800px) {
+  .flex-container {
+    flex-direction: column;
+    height: calc(100vh - var(--top-bar-height) / 2);
+  }
+  #box2-code, #box1-code, #box3-code, #box4-table {
+    max-width: calc(100vw - (var(--flex-padding) + var(--text-padding))* 2 - var(--enumeration-padding));
+  }
+}

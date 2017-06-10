@@ -3,10 +3,10 @@ task :default => :exe
 
 desc "Compile grammar.pegjs"
 task :compile do
-  sh "#{PEGJS} -o ./public/grammar.js ./grammar/grammar.pegjs"
+  sh "#{PEGJS} -o ./public/app/grammar.js ./grammar/grammar.pegjs"
 end
 
-desc "rm ./public/grammar.js"
+desc "rm ./public/app/grammar.js"
 task :clean do
-  sh "rm ./public/grammar.js"
+  sh "rm ./public/app/grammar.js"
 end
