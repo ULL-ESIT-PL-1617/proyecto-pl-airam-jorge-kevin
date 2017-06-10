@@ -38,7 +38,7 @@
 2. Las funciones se declaran de la siguiente forma. Pueden ser declaradas en cualquier momento y accedidas globalmente:
 
     ```javascript
-    function <type> ID(ID, ID, ...) {
+    <type> ID(ID, ID, ...) {
       ...
       return ...;
     }
@@ -56,7 +56,7 @@
     }
     ```
 
-4. Condicionales:
+3. Condicionales:
 
     ```javascript
     if condicion {
@@ -74,7 +74,7 @@
     }
     ```
 
-5. Bucles:
+4. Bucles:
 
     ```javascript
     for (#1; #2; #3) {
@@ -104,11 +104,11 @@
     }
     ```
 
-7. La asignación puede se puede realizar a cualquier tipo de expresión
+5. La asignación puede se puede realizar a cualquier tipo de expresión
    Dichas asignaciones se declaran de la siguiente forma:
 
     ```javascript
-    const y = 5;
+    y = 5;
     x = 3 * 2;
     z = foo( 3 * 4) * 4;
     h = 1 > 2;
@@ -117,13 +117,31 @@
     No es necesario declarar las variables previamente para que la asignación se
     produzca.
 
-8. Las condiciones toman valor true o false.
+6. Las condiciones toman valor true o false.
    Por ejemplo:
 
     ```javascript
     condition1 = TRUE
     condition2 = i < 5
     ```
+
+7. Podemos declarar atributos de la clase de la siguiente forma:
+    ```javascript
+    <visibility> <type> <name> = [<value> | <constructor>];
+    ```
+
+    Por ejemplo:
+
+    ```javascript
+    public numeric x = 7;
+    private otraClase y = otraClase.init();
+    ```
+
+8. Para declarar funciones de una clase hacemos lo siguiente:
+    ```javascript
+    
+    ```
+
 
 ### Árbol sintáctico
 
