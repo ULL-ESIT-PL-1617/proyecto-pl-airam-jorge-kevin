@@ -146,20 +146,25 @@ let semanticAnalisis = function(tree, symbolTable) {
           break;
         case "idAccess":
 
-          let symbolTableAux = symbolTable.search(symbolTable.search(x.base, ["variable", "parameter", "attribute"]).type, ["class"]).local;
+          let rowBase = symbolTable.search(x.base, ["variable", "parameter", "attribute"]);
+          if (rowBase === null)
+            throw "Id " + x.base + " is not declared.";
+          let rowClass = symbolTable.search(rowBase.type, ["class"]);
+          if (rowClass === null)
+            throw "Id " + x.base + " is of type class.";
+          let symbolTableAux = rowClass.local;
 
           let indice = 0;
           while(indice < x.access.length) {
 
-
-            symbolTableAux = symbolTableAux.search(symbolTableAux.search(x.access[indice].id, ["variable", "parameter", "attribute"]).type, ["class"]).local;
+            let newClass = symbolTableAux.search(symbolTableAux.search(x.access[indice].id, ["attribute"]).type, ["class"]);
+            if (!!newClass) symbolTableAux = newClass.local;
 
             indice += 1;
           }
           indice -= 1;
 
-
-          return symbolTable.search(x.id, ["function"]).type
+          return symbolTableAux.search(x.access[indice].id, ["method", "attribute"], "ITSME").type
           break;
         default:
           if(symbolTable.search(x, ["variable", "parameter", "attribute"]))

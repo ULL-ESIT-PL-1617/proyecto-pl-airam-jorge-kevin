@@ -71,7 +71,7 @@ if (TRUE) {} else if (TRUE) {} else if (TRUE) {} else {}
 
 for (numeric a = 1; a < 0; a = a + 1) {} else {}
 
-while (true) { } else {}
+while (false) { } else {}
 
 class C {
  private numeric x = 1;

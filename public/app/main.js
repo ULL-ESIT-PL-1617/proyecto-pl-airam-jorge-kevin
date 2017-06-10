@@ -42,7 +42,6 @@ let translateInputCode = function() {
     return;
 
   try {
-    console.log(input);
     tree = peg$parse(input);
     setTree(JSON.stringify(tree, null, 2));
     try {
