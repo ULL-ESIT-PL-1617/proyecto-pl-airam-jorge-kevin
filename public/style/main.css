@@ -5,7 +5,7 @@
   --text-padding: 10px;
   --flex-padding: 10px;
   /*--flex-min-height: 300px;*/
-  --top-bar-height: 2.3rem;
+  --top-bar-height: 2.4rem;
   --enumeration-padding: 1.75rem;
 
   --color-box1-code:       hsl(180, 100%,  95%);
@@ -88,6 +88,28 @@
 
 /*fin btn*/
 
+/*btn-top*/
+
+.btn-top:focus { outline: 0; }
+
+.btn-top{
+  text-align: center;
+  font-size: 15px;
+  cursor: pointer;
+  border: none;
+  padding: 10px;
+  width: 120px;
+  margin: 0px 0px 0px 20px;
+  background-color: hsl(300, 0%, 10%);
+  color: white;
+}
+
+.top-bar button:hover{
+  box-shadow: inset 0px -5px 0px hsl(290, 100%, 30%);
+}
+
+/*fin btn-top*/
+
 table, td, th {
     border: 1px solid #ddd;
     text-align: left;
@@ -163,7 +185,7 @@ th {
 }
 
 .top-bar {
-  background-color: red;
+  background-color: hsl(300, 0%, 10%);
   height: var(--top-bar-height);
 }
 
