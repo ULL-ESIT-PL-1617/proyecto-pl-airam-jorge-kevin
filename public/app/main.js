@@ -231,4 +231,11 @@ let showMore = function(){
   document.getElementById("mainMore").style.display = "flex";
 }
 
+let showMore2 = function(){
+  document.getElementById("mainPrincipal").style.opacity = "1";
+  document.getElementById("mainPrincipal").style.display = "block";
+  document.getElementById("mainMore").style.opacity = "0";
+  document.getElementById("mainMore").style.display = "none";
+}
+
 main();
