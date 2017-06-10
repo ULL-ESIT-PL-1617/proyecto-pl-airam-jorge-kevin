@@ -112,17 +112,21 @@ let evalCodeOutput = function() {
   let result;
 
   try {
-    result = eval(code.replace(/<\/p>/g, "\n")
-                      .replace(/<.*?>/g, "")
-                      .replace(/&amp;/g, "&")
-                      .replace(/&lt;/g,  "<")
-                      .replace(/&gt;/g,  ">")
-                      .replace(/<br>/g, ""));
+    result = "Output: " + eval(code.replace(/<\/p>/g, "\n")
+                                   .replace(/<.*?>/g, "")
+                                   .replace(/&amp;/g, "&")
+                                   .replace(/&lt;/g,  "<")
+                                   .replace(/&gt;/g,  ">")
+                                   .replace(/<br>/g, ""));
   } catch (error) {
     result = "Eval error: " + error;
   }
 
-  outputArea.innerHTML = result;
+  if (result === "Output: undefined") {
+    outputArea.innerHTML = "Your output is 'undefined'. Try to add a return at the end of your code";
+  } else {
+    outputArea.innerHTML = result;
+  }
 }
 
 let addTabEvents = function() {

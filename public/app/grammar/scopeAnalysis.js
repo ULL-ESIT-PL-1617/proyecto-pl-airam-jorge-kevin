@@ -319,7 +319,7 @@ var SymbolTableClass = function(father, fatherRow) {
         html += "<td>" + this.typeToText(item.type) + "</td>";
         html += "<td>" + item.constant   + "</td>";
         html += "<td>" + item.visibility + "</td>";
-        html += "<td>ID:" + (!!item.local ? item.local.id : null)  + "</td>";
+        html += "<td>Table ID: " + (!!item.local ? item.local.id : "none")  + "</td>";
         html += "</tr>";
 
         if (!!item.local) {

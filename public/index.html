@@ -32,9 +32,11 @@
           <button class = "btn" id="Translate" type="button" name="button" onclick="translateInputCode();"><span>Translate</span></button>
         </div>
         <code id="box1-code" contentEditable="true">
+          <p class="code-paragraph">/* Multiline comment */</p>
           <p class="code-paragraph">numeric add(numeric a, numeric b) {</p>
-          <p class="code-paragraph">  return a + b;</p>
+          <p class="code-paragraph">  return a + b; // Singleline comment</p>
           <p class="code-paragraph">}</p>
+          <p class="code-paragraph">return add(1, 2);</p>
         </code>
         <div id="error-area">
         </div>

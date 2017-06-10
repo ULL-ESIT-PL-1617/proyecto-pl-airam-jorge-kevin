@@ -325,7 +325,6 @@ let idIsLocal = function(id) {
 let id = function(tree) {
     let id = (typeof(tree) === "string") ? tree : tree.id;
     let text = "";
-    console.log(id, "attr:", idIsAttribute(id), "local:", idIsLocal(id));
     text += (idIsAttribute(id) && !idIsLocal(id)) ? "this._" : "_";
     text += id;
     return text;
