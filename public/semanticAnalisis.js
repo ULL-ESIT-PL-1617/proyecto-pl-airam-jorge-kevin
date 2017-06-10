@@ -29,7 +29,6 @@ let semanticAnalisis = function(tree, symbolTable) {
         if(ruleAux[i].kind === "method" && ruleAux[i].local.array.length > 0)
           params.push(ruleAux[i].local.array)
       }
-      console.log(params, rule.access[0].arguments.arguments.length)
       if(params.length !== rule.access[0].arguments.arguments.length)
         return false;
       for(var i in params) {
@@ -212,7 +211,6 @@ let semanticAnalisis = function(tree, symbolTable) {
           //tabla
           for(var a in rule.assignations) {
             for(var b in rule.assignations[a].to) {
-              console.log(rule);
               if(rule.varType.type)
               {
                 if(rule.varType.type !== getType(rule.assignations[a].to[b], symbolTable))
@@ -236,8 +234,6 @@ let semanticAnalisis = function(tree, symbolTable) {
             var from, to;
             from = getType(rule.assignations[a].element, symbolTable).type ? getType(rule.assignations[a].element, symbolTable).type : getType(rule.assignations[a].element, symbolTable);
             to = getType(rule.assignations[a].to, symbolTable).type ? getType(rule.assignations[a].to, symbolTable).type : getType(rule.assignations[a].to, symbolTable);
-
-            console.log(rule);
             if(from !== to)
               throw "ERROR asignación de elementos incompatibles 1 ";
             if(getType(rule.assignations[a].element, symbolTable).type)
