@@ -124,9 +124,22 @@ let class_ = function(tree) {
         }
     });
 
+    if (!hasInitMethod(tree)) {
+      text += "this._init = function(){}";
+    }
     text += "}\n";
     __currentClassAttributesStack.pop();
     return text;
+}
+
+let hasInitMethod = function(tree) {
+    let init = null;
+    tree.content.classStatement.forEach(x => {
+        if ((x.type === "method") && (x.functionName === "init")) {
+            init = x;
+        }
+    });
+    return !!init;
 }
 
 let getInitMethod = function(tree) {
@@ -226,7 +239,7 @@ let declaration = function(tree) {
         }
         text += id(assg) + " = ";
 
-        if (!isBuiltInType(tree.varType)) { // Custom class
+        if (!isBuiltInType(tree.varType) && !(assg.to instanceof Array)) { // Custom class
           text += "new _class_" + assg.to.base + arguments_(assg.to.access[0].arguments);
         } else { // builtInTypes
           text += assignation(assg.to);
@@ -333,8 +346,13 @@ let id = function(tree) {
 let idAccess = function(tree) {
     let text = id(tree.base);
 
+    if ((tree.access.length === 1) && (tree.access[0].id === "init")) {
+      return "(new _class" + id(tree.base) + arguments_(tree.access[0].arguments) + ")";
+    }
+
     for (let i in tree.access) {
         text += ".";
+
         text += id(tree.access[i]);
         if (tree.access[i].type === "methodAccess") {
             text += arguments_(tree.access[i].arguments);

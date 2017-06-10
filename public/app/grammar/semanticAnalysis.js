@@ -133,6 +133,8 @@ let semanticAnalisis = function(tree, symbolTable) {
             throw "expresión inválida";
           return getType(x.left, symbolTable);
         case "return":
+          if (typeof(x.returnValue()) === "Object")
+            throw "Return is not allowed to use arrays";
           return getType(x.returnValue, symbolTable);
           break;
         case "call":
@@ -144,6 +146,18 @@ let semanticAnalisis = function(tree, symbolTable) {
           return symbolTable.search(x.id, ["variable", "parameter", "attribute"]).type;
           break;
         case "idAccess":
+
+          if ((!!x.access) && (x.access[0].id === "init")) {
+            let text = x.base + ".init(";
+            for (let i = 0; i < x.access[0].arguments.arguments.length; ++i) {
+                text += x.access[0].arguments.arguments[i];
+                text += (i < (x.access[0].arguments.arguments.length - 1)) ? ", " : "";
+            }
+            text += ")";
+
+            if (text.match(/.*?\.init(.*?)/) && (x.access.length < 2))
+              return x.base;
+          }
 
           let rowBase = symbolTable.search(x.base, ["variable", "parameter", "attribute"]);
           if (rowBase === null)
@@ -217,7 +231,7 @@ let semanticAnalisis = function(tree, symbolTable) {
             for(var b in rule.assignations[a].to) {
               if(rule.varType.type)
               {
-                if(rule.varType.type !== getType(rule.assignations[a].to[b], symbolTable))
+                if(JSON.stringify(rule.varType.type) !== JSON.stringify(getType(rule.assignations[a].to[b], symbolTable)))
                   throw "declaración inválida";
               }
               else
@@ -226,7 +240,7 @@ let semanticAnalisis = function(tree, symbolTable) {
                   if(!validAccess(rule.assignations[0].to, symbolTable))
                     throw "declaración inválida";
                 } else
-                    if(rule.varType !== getType(rule.assignations[a].to, symbolTable))
+                    if(JSON.stringify(rule.varType) !== JSON.stringify(getType(rule.assignations[a].to, symbolTable)))
                       throw "declaración inválida";
               }
 
@@ -284,7 +298,7 @@ let semanticAnalisis = function(tree, symbolTable) {
         case "return":
           if (symbolTable.father === null) // Si es la tabla base, el return puede ser de cualquier tipo.
             break;
-          if(getType(rule.returnValue, symbolTable) !== symbolTable.fatherRow.type)
+          if(JSON.stringify(getType(rule.returnValue, symbolTable)) !== JSON.stringify(symbolTable.fatherRow.type))
             throw "retorno inválido";
           break;
         case "call":
