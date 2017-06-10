@@ -264,7 +264,7 @@ factor
   / LEFTPAR assign:assign RIGHTPAR { return assign; }
 
 access
- = id:ID access:(DOT ID arguments?)+
+ = id:(arrayAccess / ID) access:(DOT ID arguments?)+
  {
    var accessId = [];
    access.forEach(x => {

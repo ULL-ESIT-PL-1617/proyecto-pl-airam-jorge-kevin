@@ -344,7 +344,7 @@ let id = function(tree) {
 }
 
 let idAccess = function(tree) {
-    let text = id(tree.base);
+    let text = (tree.base.type === "arrayAccess") ? arrayAccess(tree.base) : id(tree.base);
 
     if ((tree.access.length === 1) && (tree.access[0].id === "init")) {
       return "(new _class" + id(tree.base) + arguments_(tree.access[0].arguments) + ")";

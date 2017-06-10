@@ -425,11 +425,12 @@ let isAConstructor = function(idAccess) {
 let checkIdAccess = function(idAccess) {
     if (isAConstructor(idAccess)) return;
 
-    var row = scope.search(idAccess.base, ["variable", "parameter", "attribute"]);
+    let base = (idAccess.base.type === "arrayAccess") ? idAccess.base.id : idAccess.base;
+    var row  = scope.search(base, ["variable", "parameter", "attribute"]);
     if (row === null) {
-        throw idAccess.base + " is not a valid object";
+        throw base + " is not a valid object";
     }
-    var currentType = row.type;
+    var currentType = row.type.array ? row.type.type : row.type;
 
     for (var i in idAccess.access) {
 
@@ -473,6 +474,9 @@ let checkAssignations = function(assignation) {
         } else { // type === "arrayAccess"
             id = element.id;
         }
+
+        if (id.type === "arrayAccess")
+          id = id.id;
 
         var row = scope.search(id, ["variable", "parameter", "attribute"]);
 
