@@ -222,7 +222,7 @@ El árbol sintáctico generado contendrá los siguientes atributos.
     }
     ```
 
-2. Ejemplo variado donde aparece una funcion en la cual creamos variables, dos bucles de ambos tipos (while y for), y dos condiciones if diferentes.
+2. Ejemplo variado donde aparece una funcion en la cual creamos variables, dos bucles de ambos tipos (while y for), y dos condiciones if diferentes:
 
     ```javascript
     numeric function(string a, numeric d) {
@@ -545,7 +545,7 @@ El árbol sintáctico generado contendrá los siguientes atributos.
     }
     ```
 
-3. Ejemplo de la declaración de una clase.
+3. Ejemplo de la declaración de una clase:
 
     ```javascript
     class A {}
