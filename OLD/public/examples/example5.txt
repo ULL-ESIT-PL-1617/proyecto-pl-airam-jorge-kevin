@@ -12,4 +12,3 @@ class C {
 }
 
 C c = C.init();
-c.b.a.n = 1;

@@ -41,4 +41,3 @@ class custom1 {
 }
 
 custom1 prueba = custom1.init(1);
-prueba.test(2);

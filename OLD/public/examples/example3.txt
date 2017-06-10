@@ -1,49 +1,35 @@
 numeric b = 1;
 const numeric a = 1;
-l(1, 2);
-
 class y {
-public numeric o = 1;
+  public numeric o = 1;
 }
-
 class x {
-public y yy = y.init();
-public void test(){}
+  public y yy = y.init();
+  public void test(){}
 }
-
 x xx = x.init();
-xx.yy.o = 1;
 
 numeric[] num = {9,8};
-numeric p = 2;
-num[1][num[2] * 2 + xx.yy.o + p + (2 * 3)] = 199;
+numeric p = 7;
+num[1] = p;
 
-return num[1][num[2] * 2 + xx.yy.o + p + (2 * 3)] = 199;
 
 void reset(numeric a, x lol) {
-   numeric i1 = 0;
-   numeric i2 = 0;
-   numeric i3 = 0;
-   numeric i4 = 0;
-   return 0;
-return;
+ numeric i1 = 0;
+ numeric i2 = 0;
+ numeric i3 = 0;
+ numeric i4 = 0;
+ return;
 }
-
 if (TRUE) {} else if (TRUE) {} else if (TRUE) {} else {}
-
 for (numeric a = 1; a < 0; a = a + 1) {} else {}
-
 while (true) { } else {}
-
 class C {
-
-   private numeric x = 1;
-   public void init(numeric a){
-      x = a;
-   }
-   private string t(numeric p){
-    x = p;
-   }
+ private numeric x = 1;
+ public void init(numeric a){
+    x = a;
+ }
+ private string t(numeric p){
+  x = p;
+ }
 }
-
-C ccc = C.init(1);
