@@ -16,6 +16,8 @@ let genCode = function(tree) {
 
 
 let __currentClassAttributesStack = [];
+let __currentFuncParametersStack  = [];
+let __currentLocalVariablesStack  = [[]];
 let translate = function(tree) {
     let text = "";
     for (let i in tree.result) {
@@ -41,6 +43,7 @@ let translateStep = function(tree) {
 
 let if_ = function(tree) {
     let text = "if " + condition(tree.ifCode.check) + " " + block(tree.ifCode.contents);
+
     tree.elseIfCode.forEach(x => {
         text += " else if " + condition(x.check) + " " + block(x.contents);
     });
@@ -104,7 +107,6 @@ let class_ = function(tree) {
     __currentClassAttributesStack.push(parameters);
     tree.content.classStatement.forEach(x => {
         if (x.type === "attribute") {
-            x.type = "declaration";
             text += declaration(x) + ";\n";
         }
     });
@@ -156,12 +158,16 @@ let method = function(tree) {
   if (tree.functionName == "init") return "";
 
   let text = "this." + id(tree.functionName) + " = function(";
+  let params = [];
 
+  tree.params.forEach(x => params.push(x.id));
+  __currentFuncParametersStack.push(params);
   for (let i = 0; i < tree.params.length; ++i) {
-      text += id(tree.params[i]);
-      text += (i < (tree.params.length - 1)) ? ", " : "";
+    text += "_" + tree.params[i].id;
+    text += (i < (tree.params.length - 1)) ? ", " : "";
   }
   text += ")" + block(tree.contents);
+  __currentFuncParametersStack.pop();
   return text;
 }
 
@@ -171,21 +177,27 @@ let return_ = function(tree) {
 
 let function_ = function(tree) {
     let text = "let " + id(tree.functionName) + " = function(";
+    let params = [];
 
+    tree.params.forEach(x => params.push(x.id));
+    __currentFuncParametersStack.push(params);
     for (let i = 0; i < tree.params.length; ++i) {
-        text += id(tree.params[i]);
+        text += "_" + tree.params[i].id;
         text += (i < (tree.params.length - 1)) ? ", " : "";
     }
     text += ")" + block(tree.contents);
+    __currentFuncParametersStack.pop();
     return text;
 }
 
 let block = function(tree) {
     let text = "{\n";
+    __currentLocalVariablesStack.push([]);
     for (let i in tree.contents) {
         text += translateStep(tree.contents[i]);
     }
-    text += "};\n";
+    text += "}\n";
+    __currentLocalVariablesStack.pop();
     return text;
 }
 
@@ -195,7 +207,6 @@ let isBuiltInType = function(type) {
             return true;
         }
     }
-
     if ((typeof(type) == "object") && isBuiltInType(type.type)) {
       return true;
     }
@@ -203,23 +214,24 @@ let isBuiltInType = function(type) {
 }
 
 let declaration = function(tree) {
-    if (tree.type !== "declaration") return assignation(tree);
+    if ((tree.type !== "declaration") && (tree.type !== "attribute")) return assignation(tree);
 
     let text = "";
 
     for (let i = 0; i < tree.assignations.length; ++i) {
         let assg = tree.assignations[i];
-        if (assg.id) {
+        if (assg.id && (tree.type !== "attribute")) {
           text += tree.constant ? "const " : "let ";
+          __currentLocalVariablesStack.slice(-1)[0].push(assg.id);
         }
         text += id(assg) + " = ";
 
         if (!isBuiltInType(tree.varType)) { // Custom class
-          text += "new " + assg.to.base + arguments_(assg.to.access[0].arguments);
+          text += "new _class_" + assg.to.base + arguments_(assg.to.access[0].arguments);
         } else { // builtInTypes
           text += assignation(assg.to);
         }
-        text += (i < (tree.assignations.length - 1)) ? ";\n" : "";
+        text += (i < (tree.assignations.length - 1)) ? ";" : "";
     }
     return text;
 }
@@ -301,10 +313,20 @@ let idIsAttribute = function(id) {
           && (__currentClassAttributesStack.slice(-1)[0].indexOf(id) !== -1);
 }
 
+// Check if is local variable of parameter
+let idIsLocal = function(id) {
+  let isParameter = (__currentFuncParametersStack.length > 0)
+                        && (__currentFuncParametersStack.slice(-1)[0].indexOf(id) !== -1);
+  let isVariable  = (__currentLocalVariablesStack.length > 0)
+                        && (__currentLocalVariablesStack.slice(-1)[0].indexOf(id) !== -1);
+  return isParameter || isVariable;
+}
+
 let id = function(tree) {
     let id = (typeof(tree) === "string") ? tree : tree.id;
     let text = "";
-    text += idIsAttribute(id) ? "this._" : "_";
+    console.log(id, "attr:", idIsAttribute(id), "local:", idIsLocal(id));
+    text += (idIsAttribute(id) && !idIsLocal(id)) ? "this._" : "_";
     text += id;
     return text;
 }

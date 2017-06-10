@@ -32,7 +32,8 @@ let translateInputCode = function() {
   let input, tree, symbolTable, code = getCodeInput();
 
   input = getCodeInput();
-  console.log(input);
+  input = preprocess(input);
+  document.getElementById("output-area").innerHTML = "";
   setCodeOutput("");
   setErrorText("");
   setTree("");
@@ -50,7 +51,7 @@ let translateInputCode = function() {
 
         try {
           code = genCode(tree);
-          setCodeOutput(js_beautify(code));
+          setCodeOutput(code);
         } catch (error) {
           setErrorText("Code generation error:\n" + error);
         }
@@ -108,8 +109,20 @@ let getCodeInput = function() {
 let evalCodeOutput = function() {
   let outputArea = document.getElementById("output-area");
   let code       = document.getElementById("box2-code").innerHTML;
-  outputArea.innerHTML = eval(code.replace(/<p *class=\"code-paragraph\">/g, "")
-                                  .replace(/<\/p>/g, "\n"));
+  let result;
+
+  try {
+    result = eval(code.replace(/<\/p>/g, "\n")
+                      .replace(/<.*?>/g, "")
+                      .replace(/&amp;/g, "&")
+                      .replace(/&lt;/g,  "<")
+                      .replace(/&gt;/g,  ">")
+                      .replace(/<br>/g, ""));
+  } catch (error) {
+    result = "Eval error: " + error;
+  }
+
+  outputArea.innerHTML = result;
 }
 
 let addTabEvents = function() {

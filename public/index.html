@@ -10,7 +10,11 @@
 
     <div class="top-bar">
       <div class="dropdown">
-        <button id="dropdown-button" onclick="showDropdown()">Dropdown</button>
+        <button id="dropdown-button" onclick="showDropdown()">Examples</button>
+        <button>Tutorial</button>
+        <button>Tests</button>
+        <button>Github</button>
+        <button>More</button>
         <div id="dropdown-examples" class="dropdown-content">
           <span onclick="loadExample(0)">Load example 1</span>
           <span onclick="loadExample(1)">Load example 2</span>
@@ -28,7 +32,7 @@
           <button type="button" name="button" onclick="translateInputCode();">Translate</button>
         </div>
         <code id="box1-code" contentEditable="true">
-          <p class="code-paragraph">void add(numeric a, numeric b) {</p>
+          <p class="code-paragraph">numeric add(numeric a, numeric b) {</p>
           <p class="code-paragraph">  return a + b;</p>
           <p class="code-paragraph">}</p>
         </code>
@@ -69,6 +73,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.14/beautify.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.14/beautify-css.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.14/beautify-html.js"></script>
+    <script type="text/javascript" src="app/grammar/preprocess.js"></script>
     <script type="text/javascript" src="app/grammar/semanticAnalysis.js"></script>
     <script type="text/javascript" src="app/grammar/grammar.js"></script>
     <script type="text/javascript" src="app/grammar/genCode.js"></script>
