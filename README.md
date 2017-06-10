@@ -30,31 +30,7 @@
 
 ### Descripción del Lenguaje
 
-    1.  Σ = { ADDOP, MULOP, COMMA, ASSIGN, LEFTPAR, RIGHTPAR, SEMICOLON, LEFTBRACE,
-       RIGHTBRACE, LOOP, RETURN, EXIT, FUNCTION, IF, ELIF, ELSE, CONST, NUMBER, ID,
-       COMPARISON }
-
-    2.  V = { start, sentences, sentence, if_statement, for_statement, function_statement,
-       comma, loop_statement, assign, condition, expression, term, factor, arguments,
-       integer}
-
-    3.  Productions:
-
-        1.  start     → sentences
-        2.  sentences → if_statement / lopp_statement / function_statement / assign ';'
-
-        3.  if_statement       →  IF condition '{' sentences '}' (ELSE IF condition '{' sentences '}' )* (ELSE '{' sentences '}' )
-        4.  function_statement → FUNCTION ID '(' (ID (',' ID)* )? ')' '{' sentences '}'
-        5.  loop_statement     → FOR '(' comma ';' condition ';' comma ')' '{' sentences '}'
-
-        6.  comma       → assign (',' assign)*
-        7.  assign      → CONST? ID '=' assign / condition
-        8.  condition   → expression COMPARISON expression / expression
-        9.  expression  → term ADDOP expression / term
-        10. term        → factor MULOP term / factor
-        11. factor      → integer / RETURN assign? / EXIT / ID arguments / ID / '(' assign ')'
-        12. arguments   → '(' comma? ')'
-        13. integer     → NUMBER
+    - La descripción del lenguaje se encuentra en `./Rules.md`.
 
 ### Descripción de uso del Lenguaje
 
@@ -62,7 +38,7 @@
 2. Las funciones se declaran de la siguiente forma. Pueden ser declaradas en cualquier momento y accedidas globalmente:
 
     ```javascript
-    function ID(ID, ID, ...) {
+    function <type> ID(ID, ID, ...) {
       ...
       return ...;
     }
@@ -71,11 +47,11 @@
     Por ejemplo:
 
     ```javascript
-    function test(x){
+    void test(x){
       x = 3;
     }
 
-    funtion foo() {
+    numeric foo() {
       return 3;
     }
     ```
@@ -101,9 +77,14 @@
 5. Bucles:
 
     ```javascript
-    for (#1 ; #2; #3) {
+    for (#1; #2; #3) {
      ...
-    }
+    }[else {...}]
+
+    while (parcondition) {
+     ...
+   }[else {...}]
+
     // #1 => Operaciones que se ejecutan antes de entrar al bucle.
     // #2 => Condición que se debe cumplir para que continue el bucle.
     // #3 => Operaciones que se ejecutan cada vez que se itera sobre el bucle.
@@ -112,8 +93,14 @@
    Por ejemplo:
 
     ```javascript
-    for ( i = 0; i < 3; i = i + 1) {
+    for (i = 0; i < 3; i = i + 1) {
       ...
+    } else {
+      ...
+    }
+
+    while (i < 50) {
+     ...
     }
     ```
 
