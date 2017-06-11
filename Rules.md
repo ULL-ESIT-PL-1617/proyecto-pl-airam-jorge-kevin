@@ -33,6 +33,9 @@
  08. parcondition →
         '(' condition ')'
 
+ 09. element →
+        access / arrayAccess / ID
+
  09. assign →
         ['const'? TYPE ARRAY*]? ID '=' assign (',' ID '=' assign)*
         / condition
@@ -71,11 +74,16 @@
         / string
         / bool
         / ID arguments
-        / ID ('.' ID arguments?)+
-        / ID '[' INTEGER ']'+
+        / access
+        / arrayAccess
         / ID
-        / arguments
         / '(' assign ')'
+
+ 19. access
+        (arrayAccess / ID) ('.' ID arguments?)+
+
+ 20. arrayAccess
+        ID ('[' assign ']')+
 
  18. arguments →
         '(' (assign (',' assign)\*)? ')'

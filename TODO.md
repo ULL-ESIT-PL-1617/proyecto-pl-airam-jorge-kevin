@@ -1,5 +1,0 @@
-- Condicional ternario
-- Generación de código
-- Convertir en tipeado
-- Análisis de tipo
-- Análisis de ámbito

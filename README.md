@@ -12,19 +12,19 @@
 <td> Airam Manuel Navas Simón </td>
 <td> <a href="https://github.com/AiramNavas">GitHub</a> </td>
 <td> <a href="https://airamnavas.github.io/">Página personal</a> </td>
-<td> <a href="https://dprairamnavas.herokuapp.com/">Heroku</a> </td>
+<td> <a href="https://proyecto-pl-airam-jorge-kevin.herokuapp.com/">Heroku</a> </td>
 </tr>
 <tr>
 <td> Kevin Días Marrero </td>
 <td> <a href="https://github.com/alu0100880625">GitHub</a> </td>
 <td> <a href="https://alu0100880625.github.io/">Página personal</a></td>
-<td> <a href="https://dprairamnavas.herokuapp.com/">Heroku</a></td>
+<td> <a href="https://proyecto-pl-airam-jorge-kevin.herokuapp.com/">Heroku</a></td>
 </tr>
 <tr>
 <td> Jorge Sierra Acosta </td>
 <td> <a href="https://github.com/Ediolot">GitHub</a> </td>
 <td> <a href="https://ediolot.github.io/">Página personal</a> </td>
-<td> <a href="https://dprairamnavas.herokuapp.com/">Heroku</a> </td>
+<td> <a href="https://proyecto-pl-airam-jorge-kevin.herokuapp.com/">Heroku</a> </td>
 </tr>
 </table>
 
