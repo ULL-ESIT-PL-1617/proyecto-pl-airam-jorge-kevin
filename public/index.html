@@ -5,6 +5,8 @@
     <title></title>
     <link rel="stylesheet" href="style/main.css">
     <link rel="stylesheet" href="style/mainSizes.css">
+    <link rel="icon" href="image/icon.png">
+    <title>Ragevi</title>
   </head>
   <body>
 
@@ -12,8 +14,7 @@
       <div class="dropdown">
         <button class = "btn-top" onclick="showHome()">Home</button>
         <button class = "btn-top" id="dropdown-button" onclick="showDropdown()">Examples</button>
-        <button class = "btn-top" >Tutorial</button>
-        <button class = "btn-top" >Tests</button>
+        <button class = "btn-top" onclick="showTutorial()">Tutorial</button>
         <button class = "btn-top" onclick="location.href = 'https://github.com/ULL-ESIT-PL-1617/proyecto-pl-airam-jorge-kevin';">Github</button>
         <button class = "btn-top" onclick="showMore()">More</button>
         <div id="dropdown-examples" class="dropdown-content">
@@ -98,6 +99,180 @@
           Las pruebas son ejecutas al desplegar la aplicación web. En la pestaña Tests.
         </div>
       </div>
+    </div>
+
+
+    <div id = "mainTutorial">
+      <div class="infoTutorial">
+        <h3>Descripción de uso del Lenguaje</h3>
+        <br />
+        <ol>
+          <li>Las sentencias pueden ser asignaciones, funciones o declaraciones.</li>
+          <br />
+          <li>Las funciones se declaran de la siguiente forma. Pueden ser declaradas en cualquier         momento y accedidas globalmente:</li>
+          <br />
+          <div class="codebox">
+            <code>
+              &lttype&gt ID(ID, ID, ...) {
+                ...
+                return ...;
+                }
+            </code>
+          </div>
+          <br />
+            Por ejemplo:
+          <br /><br />
+          <div class="codebox">
+            <code>
+              void test(x){
+              x = 3;
+              }
+
+              numeric foo() {
+              return 3;
+              }
+            </code>
+          </div>
+          <br />
+          <li>Condicionales:</li>
+          <br />
+            <div class="codebox">
+              <code>
+                if condicion {
+                ...
+                }
+
+                if condition {
+                ...
+                } else if condition {
+                ...
+                } else if condition {
+                ...
+                } else {
+                ...
+                }
+              </code>
+            </div>
+          <br />
+          <li>Bucles:</li>
+          <br />
+          <div class="codebox">
+            <code>
+              for (#1; #2; #3) {
+              ...
+              }[else {...}]
+
+              while (parcondition) {
+              ...
+              }[else {...}]
+
+              // #1 => Operaciones que se ejecutan antes de entrar al bucle.
+              // #2 => Condición que se debe cumplir para que continue el bucle.
+              // #3 => Operaciones que se ejecutan cada vez que se itera sobre el bucle.
+            </code>
+          </div>
+          <br />
+            Por ejemplo:
+            <br /><br />
+            <div class="codebox">
+              <code>
+                for (i = 0; i < 3; i = i + 1) {
+                ...
+                } else {
+                ...
+                }
+
+                while (i < 50) {
+                ...
+                }
+              </code>
+            </div>
+            <br />
+            <li>La asignación puede se puede realizar a cualquier tipo de expresión
+              Dichas asignaciones se declaran de la siguiente forma:</li>
+            <br />
+            <div class="codebox">
+              <code>
+                y = 5;
+                x = 3 * 2;
+                z = foo( 3 * 4) * 4;
+                h = 1 > 2;
+              </code>
+            </div>
+            <br />
+            No es necesario declarar las variables previamente para que la asignación se
+            produzca.
+            <br /><br />
+            <li>Las condiciones toman valor true o false.</li>
+            <br />
+            Por ejemplo:
+            <br /><br />
+            <div class="codebox">
+              <code>
+                condition1 = TRUE
+                condition2 = i < 5
+              </code>
+            </div>
+            <br />
+            <li>Podemos declarar atributos de la clase de la siguiente forma:</li>
+            <br />
+            <div class="codebox">
+              <code>
+                &ltvisibility&gt &ltreturnType&gt &ltname&gt = [&ltvalue&gt | &ltconstructor&gt];
+              </code>
+            </div>
+            <br />
+            Por ejemplo:
+            <br /><br />
+            <div class="codebox">
+              <code>
+                public numeric x = 7;
+                private otraClase y = otraClase.init();
+              </code>
+            </div>
+            <br />
+            <li>Para declarar métodos de una clase hacemos lo siguiente:</li>
+            <br />
+            <div class="codebox">
+              <code>
+                &ltvisibility&gt &ltfunctionDeclare&gt ;
+              </code>
+            </div>
+            <br />
+            <div class="codebox">
+              <code>
+                public void x() {}
+                private numeric y(numeric a) { return a*7; }
+              </code>
+            </div>
+            <br />
+            <li>Para declarar una clase seguiremos la siguiente sintáxis:</li>
+            <br />
+            <div class="codebox">
+              <code>
+                class &ltname&gt {
+                [&ltatributos&gt | &ltmetodos&gt ]*
+                }
+              </code>
+            </div>
+            <br />
+              Por ejemplo:
+            <br /><br />
+            <div class="codebox">
+              <code>
+                class A {
+                public numeric n = 0;
+                }
+                class B {
+                public A a = A.init();
+                }
+                class C {
+                public B b = B.init();
+                }
+              </code>
+            </div>
+          </ol>
+        </div>
     </div>
 
 
