@@ -41,29 +41,29 @@ let translateInputCode = function() {
   if (input === undefined)
     return;
 
-  //try {
+  try {
     tree = peg$parse(input);
     setTree(JSON.stringify(tree, null, 2));
-    //try {
+    try {
       symbolTable = scopeAnalisis(tree);
-      //try {
+      try {
         semanticAnalisis(tree, symbolTable);
 
-        //try {
+        try {
           code = genCode(tree);
           setCodeOutput(code);
-        //} catch (error) {
-          //setErrorText("Code generation error:\n" + error);
-        //}
-      //} catch (error) {
-        //setErrorText("Semantic analysis error:\n" + error);
-      //}
-    //} catch (error) {
-      //setErrorText("Scope analysis error:\n" + error);
-    //}
-  //} catch (error) {
-    //setErrorText("Pegjs parse error:\n" + error);
-  //}
+        } catch (error) {
+          setErrorText("Code generation error:\n" + error);
+        }
+      } catch (error) {
+        setErrorText("Semantic analysis error:\n" + error);
+      }
+    } catch (error) {
+      setErrorText("Scope analysis error:\n" + error);
+    }
+  } catch (error) {
+    setErrorText("Pegjs parse error:\n" + error);
+  }
 }
 
 let setTree = function(jsonTree) {

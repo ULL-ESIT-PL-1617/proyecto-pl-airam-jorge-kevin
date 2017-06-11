@@ -98,21 +98,65 @@ m.set(1, 0, 2);
 return m;
 `;
 
-examples[4] =
-`class A {
-  public numeric n = 0;
+examples[4] =`
+/* Some generic errors and examples */
+
+// numeric []z = {3, "asas"}; // Cant initialize value to string
+numeric a = 8;
+numeric b = 9;
+numeric c = 10;
+numeric f = b;
+string h = "asas";
+b = c;
+c = 9;
+a = 20;
+// h = a; // Invalid types for assignation
+
+
+
+class Foo {
+  private numeric k = 3;
+  public void sayHello(){ k = 2; }
 }
 
-class B {
-  public A a = A.init();
+class Foo1 {
+  public void funcion(){}
 }
 
-class C {
-  public B b = B.init();
-}
+// class Foo1 {} // Redeclaration of class Foo1
 
-C c = C.init();
-c.b.a.n = 1;`;
+Foo1 test = Foo1.init();
+
+test.funcion();
+
+if (a == 4) {} else {}
+
+/*
+numeric ab() {
+  return; // Returning void is not valid
+}
+*/
+
+while (a == 3) {}
+while (a == 3) {} else {}
+
+/*
+for (i = 0; i < 50; i = i + 1) {} // Variable i is undeclared
+else {}
+*/
+
+class Foo2 {
+  private numeric n = 0;
+  public void init(numeric n) {
+     n = 1;
+  }
+  public numeric test(numeric k) {
+    n = k;
+    return n;
+  }
+}
+// Foo2 prueba = Foo2.init(); // Constructor requires a numeric value
+`;
 
 let loadExample = function(example) {
   if ((example < 0) || (example > examples.length))
