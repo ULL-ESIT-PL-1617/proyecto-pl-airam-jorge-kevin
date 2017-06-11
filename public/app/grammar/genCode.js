@@ -17,6 +17,7 @@ let genCode = function(tree) {
 
 let __currentClassAttributesStack = [];
 let __currentFuncParametersStack  = [];
+let __currentClassMethodsStack    = [];
 let __currentLocalVariablesStack  = [[]];
 let translate = function(tree) {
     let text = "";
@@ -97,13 +98,17 @@ let class_ = function(tree) {
 
     // Inicializar variables
     let parameters = [];
+    let methods = [];
     tree.content.classStatement.forEach(x => {
         if (x.type === "attribute") {
             x.assignations.forEach(y => {
               parameters.push(y.id);
             });
+        } else if (x.type === "method") {
+          methods.push(x.functionName);
         }
     });
+    __currentClassMethodsStack.push(methods);
     __currentClassAttributesStack.push(parameters);
     tree.content.classStatement.forEach(x => {
         if (x.type === "attribute") {
@@ -129,6 +134,7 @@ let class_ = function(tree) {
     }
     text += "}\n";
     __currentClassAttributesStack.pop();
+    __currentClassMethodsStack.pop();
     return text;
 }
 
@@ -326,6 +332,11 @@ let idIsAttribute = function(id) {
           && (__currentClassAttributesStack.slice(-1)[0].indexOf(id) !== -1);
 }
 
+let idIsMethod = function(id) {
+  return (__currentClassMethodsStack.length > 0)
+          && (__currentClassMethodsStack.slice(-1)[0].indexOf(id) !== -1);
+}
+
 // Check if is local variable of parameter
 let idIsLocal = function(id) {
   let isParameter = (__currentFuncParametersStack.length > 0)
@@ -338,6 +349,10 @@ let idIsLocal = function(id) {
 let id = function(tree) {
     let id = (typeof(tree) === "string") ? tree : tree.id;
     let text = "";
+
+    if (id === "push") { return "push"; }
+    if (id === "pop" ) { return "pop" ; }
+
     text += (idIsAttribute(id) && !idIsLocal(id)) ? "this._" : "_";
     text += id;
     return text;
@@ -362,7 +377,8 @@ let idAccess = function(tree) {
 }
 
 let call = function(tree) {
-    return id(tree) + arguments_(tree.args);
+
+    return (idIsMethod(tree.id) ? ("this." + id(tree)) : id(tree)) + arguments_(tree.args);
 }
 
 let arguments_ = function(tree) {

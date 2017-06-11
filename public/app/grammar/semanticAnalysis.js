@@ -23,16 +23,35 @@ let semanticAnalisis = function(tree, symbolTable) {
     };
 
     validAccess2 = function(rule, symbolTable) {
-      let params = [];
-      let ruleAux = symbolTable.search(symbolTable.search(rule.base, ["class", "variable"]).type, ["class"]).local.array
-      for(var i in ruleAux) {
-        if(ruleAux[i].kind === "method" && ruleAux[i].local.array.length > 0)
-          params.push(ruleAux[i].local.array)
+      let type = symbolTable.search(rule.base, ["class", "variable"]).type;
+
+      if (type.array && rule.access[0].id === "push") {
+        if (rule.access[0].arguments.arguments.length !== 1)
+          throw "Push() solo puede recibir un argumento.";
+        return true;
       }
+      if (type.array && rule.access[0].id === "pop") {
+        if (rule.access[0].arguments.arguments.length !== 0)
+          throw "Pop() no puede recibir ningún argumento.";
+        return true;
+      }
+
+      let params = [];
+      let ruleAux = symbolTable.search(type, ["class"]).local.array
+      for(var i in ruleAux) {
+        if(ruleAux[i].kind === "method" && ruleAux[i].id === rule.access[0].id && ruleAux[i].local.array.length > 0) {
+          for (var j in ruleAux[i].local.array) {
+            if (ruleAux[i].local.array[j].kind === "parameter") {
+              params.push(ruleAux[i].local.array[j]);
+            }
+          }
+        }
+      }
+      console.log(params)
       if(params.length !== rule.access[0].arguments.arguments.length)
         return false;
       for(var i in params) {
-        if(params[0][i].type !== rule.access[0].arguments.arguments[i].type)
+        if(params[i].type !== rule.access[0].arguments.arguments[i].type)
           return false
       }
       return true;
@@ -149,7 +168,7 @@ let semanticAnalisis = function(tree, symbolTable) {
         case "arrayAccess":
           let row = symbolTable.search(x.id, ["variable", "parameter", "attribute"]).type;
           row.arrayCount -= x.index.length;
-          return row;
+          return (row.arrayCount <= 0) ? row.type : row;
           break;
         case "idAccess":
 
@@ -184,7 +203,7 @@ let semanticAnalisis = function(tree, symbolTable) {
 
             indice += 1;
           }
-          
+
           return symbolTableAux.search(x.access[indice].id, ["method", "attribute"]).type
           break;
         default:
@@ -203,6 +222,7 @@ let semanticAnalisis = function(tree, symbolTable) {
     };
 
     validRule = function(rule, symbolTable) {
+      if (rule === null) return true;
       switch(rule.type) {
         case "term":
         case "expression":
@@ -254,7 +274,7 @@ let semanticAnalisis = function(tree, symbolTable) {
               }
               else
               {
-                if(["string", "bool", "numeric"].indexOf(rule.varType) === -1) {
+                if(["string", "bool", "numeric", "void"].indexOf(rule.varType) === -1) {
                   if(!validAccess(rule.assignations[0].to, symbolTable))
                     throw "Declaración inválida";
                 } else
@@ -271,7 +291,7 @@ let semanticAnalisis = function(tree, symbolTable) {
             from = getType(rule.assignations[a].element, symbolTable);
             to = getType(rule.assignations[a].to, symbolTable);
             if(JSON.stringify(from) !== JSON.stringify(to))
-              throw "ERROR asignación de elementos incompatibles";
+              throw "Asignación de elementos incompatibles";
         }
 
           break;

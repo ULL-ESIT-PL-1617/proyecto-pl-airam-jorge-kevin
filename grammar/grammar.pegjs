@@ -1,7 +1,7 @@
 {
   var reservedWords = new Set([
     "else", "if", "while", "for", "const", "numeric", "bool", "string", "void",
-    "public", "private", "class", "true", "false", "return"
+    "public", "private", "class", "true", "false", "return", "push", "pop"
   ]);
 
   var builtInTypes = new Set([

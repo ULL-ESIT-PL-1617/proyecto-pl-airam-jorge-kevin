@@ -25,7 +25,7 @@ que se ejecutará solo si no se entró dentro de la
 estructura de control */
 bool foo = false;
 // Comenta la siguiente línea para que se ejecuta el else en vez del for
-//foo = true;
+foo = true;
 
 string palabra = "";
 for (numeric a = 0; (a < 10) && foo; a = a + 1) {
@@ -61,47 +61,42 @@ array[1].z = B.init();
 return array; // Remove the other return for this one to work
 `;
 
-examples[3] =
-`numeric []z = {3, 4};
-numeric a = 8;
-numeric b = 9;
-numeric c = 10;
-numeric f = b;
-b = c;
-c = 9;
-a = 20;
+examples[3] =`
 
-class hola {
-  private numeric kevin = 3;
-  public void diHola(){ kevin = 2; }
-}
+/* Class that represents a matrix */
+class Matrix {
+  private numeric rows_ = 0;
+  private numeric cols_ = 0;
+  private numeric[] data_ = { 0 };
 
-class hola1 {
-  public void funcion(){}
-}
-hola1 test = hola1.init();
-test.funcion();
-
-if (a == 4) {} else {}
-
-numeric ab () { return 5; }
-
-while (a == 3) {} else {}
-for ( numeric i = 0; i < 50; i = i + 1) {} else {}
-
-class custom1 {
-  private numeric n = 0;
-  public void init(numeric n) {
-     n = 1;
+  public void generate(numeric rows, numeric cols) {
+    rows_ = rows;
+    cols_ = cols;
+    data_ = { 0 };
+    for (numeric i = 0; i < (rows * cols - 1); i = i + 1) {
+      data_.push(0);
+    }
   }
-  public numeric test(numeric k) {
-    n = k;
-    return n;
+
+  private numeric pos(numeric row, numeric col) {
+    return col + (row * cols_);
+  }
+
+  public void set(numeric row, numeric col, numeric val) {
+    data_[pos(row, col)] = val;
+  }
+
+  public numeric get(numeric row, numeric col) {
+    return data_[pos(row, col)];
   }
 }
 
-custom1 prueba = custom1.init(1);
-prueba.test(2);`;
+Matrix m = Matrix.init();
+m.generate(2, 3);
+m.set(0, 0, 1);
+m.set(1, 0, 2);
+return m;
+`;
 
 examples[4] =
 `class A {

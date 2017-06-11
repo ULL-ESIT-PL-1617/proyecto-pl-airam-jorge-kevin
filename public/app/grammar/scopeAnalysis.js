@@ -430,14 +430,29 @@ let checkIdAccess = function(idAccess) {
     if (row === null) {
         throw base + " is not a valid object";
     }
-    var currentType = row.type.array ? row.type.type : row.type;
+    var currentType = row.type;
 
     for (var i in idAccess.access) {
 
+        if (currentType.array) {
+          if (idAccess.base.index) {
+            let dimension = currentType.arrayCount - idAccess.base.index.length;
+            if (dimension <= 0) continue;
+          }
+
+          if (idAccess.access[i].id === "push") {
+            currentType = "void";
+            continue;
+          } else if (idAccess.access[i].id === "pop") {
+            currentType = "void";
+            continue;
+          } else {
+            throw "Only available methods for array are push() and pop()";
+          }
+        }
         if (scope.isBuiltInType(currentType)) {
             throw "Cant access method or attribute of built in type";
         }
-
         var typeClass = scope.search(currentType, ["class"]);
         var atype     = idAccess.access[i].type;
         var find      = (atype === "methodAccess") ? "method" : "attribute";
@@ -489,7 +504,7 @@ let checkAssignations = function(assignation) {
 }
 
 let checkCall = function(call) {
-    if (!scope.search(call.id, ["function"])) {
+    if (!scope.search(call.id, ["function", "method"])) {
         throw "Unknown function to call " + call.id;
     }
 }
