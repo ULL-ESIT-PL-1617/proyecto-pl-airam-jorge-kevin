@@ -225,17 +225,30 @@ let generateTab = function() {
 }
 
 let showMore = function(){
-  document.getElementById("mainPrincipal").style.opacity = "0";
-  document.getElementById("mainPrincipal").style.display = "none";
+  showNathing();
   document.getElementById("mainMore").style.opacity = "1";
   document.getElementById("mainMore").style.display = "flex";
 }
 
 let showHome = function(){
+  showNathing();
   document.getElementById("mainPrincipal").style.opacity = "1";
   document.getElementById("mainPrincipal").style.display = "block";
+}
+
+let showTutorial = function(){
+  showNathing();
+  document.getElementById("mainTutorial").style.opacity = "1";
+  document.getElementById("mainTutorial").style.display = "flex";
+}
+
+let showNathing = function(){
+  document.getElementById("mainPrincipal").style.opacity = "0";
+  document.getElementById("mainPrincipal").style.display = "none";
   document.getElementById("mainMore").style.opacity = "0";
   document.getElementById("mainMore").style.display = "none";
+  document.getElementById("mainTutorial").style.opacity = "0";
+  document.getElementById("mainTutorial").style.display = "none";
 }
 
 main();
