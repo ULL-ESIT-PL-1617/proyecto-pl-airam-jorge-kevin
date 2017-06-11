@@ -1,40 +1,40 @@
 
 let examples = [];
 
-examples[0] = `string[] c = {"a", "b"};
-numeric k = 0;
-
-numeric function(string a, numeric d) {
-  numeric l = 0;
-  for (numeric i = 0; i < 10; i = i + 1) {
-
-  } else { numeric x = 0; }
-
-  while (TRUE) { numeric xx = 1; } else { numeric ll = 11; }
-
-  if (TRUE) { numeric a = 1; } else { numeric d = 1; }
-  if (TRUE) { numeric a = 1; } else if (TRUE) { numeric x = 0; a = "9"; }
+examples[0] = `
+/* Función simple para sumar números */
+numeric add(numeric a, numeric b) {
+  return a + b;
 }
 
-class x {
-  private numeric test = 0;
-  private void test2() {}
-}`;
+/* Descomenta este ejemplo para probar un error
+   Cambiando el nombre de la función, aparece el error por el valor
+   de retorno.
+*/
+/*string add(numeric a, numeric b) {
+  return a + b;
+}*/
 
-examples[1] =
-`class x {}
+/* Se devuelve un array con dos sumas */
+return {add(3, 4), add(1, 2)};
+`;
 
-class MyClass {
-  private numeric n = 0;
+examples[1] =`
+/* Las estructuras de control de flujo incorporan un else
+que se ejecutará solo si no se entró dentro de la
+estructura de control */
+bool foo = false;
+// Comenta la siguiente línea para que se ejecuta el else en vez del for
+//foo = true;
 
-  public void init() {}
-  public void test1(numeric n) {}
-  private string test2() { return "asd"; }
+string palabra = "";
+for (numeric a = 0; (a < 10) && foo; a = a + 1) {
+  palabra = palabra + "a";
+} else {
+  palabra = "else executed";
 }
-
-
-MyClass c = MyClass.init();
-c.test1(32);`;
+return palabra;
+`;
 
 examples[2] =
 `numeric b = 1;

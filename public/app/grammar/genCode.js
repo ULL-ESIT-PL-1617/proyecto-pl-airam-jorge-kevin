@@ -66,7 +66,7 @@ let for_ = function(tree) {
     text += " $$executed_" + tree.id + " = true)" + block(tree.contents);
 
     if (tree.else !== null) {
-        text += "if (!$$executed_" + tree.id + ")" + block(tree.else.contents);
+        text += "if (!$$executed_" + tree.id + ")" + block(tree.else);
     }
 
     return text;
@@ -80,7 +80,7 @@ let while_ = function(tree) {
     text += "&& ($$executed_" + tree.id + " = true))" + block(tree.contents);
 
     if (tree.else !== null) {
-        text += "if (!$$executed_" + tree.id + ")" + block(tree.else.contents);
+        text += "if (!$$executed_" + tree.id + ")" + block(tree.else);
     }
 
     return text;
@@ -310,7 +310,7 @@ let factor = function(tree) {
     if (tree.type === "idAccess") return idAccess(tree);
     if (tree.type === "id"      ) return id(tree);
     if (tree.type === "arrayAccess") return arrayAccess(tree);
-    return tree;
+    return assignation(tree);
 }
 
 let arrayAccess = function(tree) {

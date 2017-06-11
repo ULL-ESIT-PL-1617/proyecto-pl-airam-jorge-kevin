@@ -88,6 +88,8 @@ let semanticAnalisis = function(tree, symbolTable) {
           case "<":
           case "<=":
           case ">=":
+          case "&&":
+          case "||":
           case "!":
           case "!=":
             return true;
@@ -137,6 +139,8 @@ let semanticAnalisis = function(tree, symbolTable) {
             throw "Return is not allowed to use arrays";
           return getType(x.returnValue, symbolTable);
           break;
+        case "condition":
+          return "bool";
         case "call":
           if(!validCall(x, symbolTable.search(x.id, ["function"]), symbolTable))
             throw "Error llamando a función";
@@ -145,7 +149,6 @@ let semanticAnalisis = function(tree, symbolTable) {
         case "arrayAccess":
           let row = symbolTable.search(x.id, ["variable", "parameter", "attribute"]).type;
           row.arrayCount -= x.index.length;
-          console.log("ROW:", x, row);
           return row;
           break;
         case "idAccess":
@@ -263,11 +266,8 @@ let semanticAnalisis = function(tree, symbolTable) {
         case "assign":
           for(var a in rule.assignations) {
             var from, to;
-            console.log(rule);
             from = getType(rule.assignations[a].element, symbolTable);
             to = getType(rule.assignations[a].to, symbolTable);
-            console.log("FROM:", from);
-            console.log("TO:", to);
             if(JSON.stringify(from) !== JSON.stringify(to))
               throw "ERROR asignación de elementos incompatibles";
         }
