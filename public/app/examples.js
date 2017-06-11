@@ -36,54 +36,30 @@ for (numeric a = 0; (a < 10) && foo; a = a + 1) {
 return palabra;
 `;
 
-examples[2] =
-`numeric b = 1;
-const numeric a = 1;
-// l(1, 2); // Mostrará un error de que no está definido l
-
-class y {
-  public numeric o = 1;
+examples[2] =`
+/* You can access attributes of classes */
+class A {
+  public numeric x = 1;
 }
-
-class x {
-  public y yy = y.init();
-  public void test(){}
+class B {
+  public A y = A.init(); // init calls the constructor of the class
+                         // If the constructor does not exists
+                         // the default constructor is called
 }
-
-x xx = x.init();
-xx.yy.o = 1;
-
-numeric[] num = {9,8};
-numeric p = 2;
-// num[1][num[2] * 2 + xx.yy.o + p + (2 * 3)] = 199;
-
-// return num[1][num[2] * 2 + xx.yy.o + p + (2 * 3)] = 199;
-
-void reset(numeric a, x lol) {
- numeric i1 = 0;
- numeric i2 = 0;
- numeric i3 = 0;
- numeric i4 = 0;
- return;
-}
-
-if (TRUE) {} else if (TRUE) {} else if (TRUE) {} else {}
-
-for (numeric a = 1; a < 0; a = a + 1) {} else {}
-
-while (false) { } else {}
-
 class C {
- private numeric x = 1;
- public void init(numeric a){
-    x = a;
- }
- private string t(numeric p){
-  x = p;
- }
+  public B z = B.init();
 }
+C c = C.init();
+return c.z.y.x = c.z.y.x + 3;
 
-C ccc = C.init(1);`;
+/* You can also create an array of classes. (Comment the return
+in the superior line) */
+
+C[] array = { C.init(), C.init() };
+array[0].z.y.x = 0;
+array[1].z = B.init();
+return array; // Remove the other return for this one to work
+`;
 
 examples[3] =
 `numeric []z = {3, 4};

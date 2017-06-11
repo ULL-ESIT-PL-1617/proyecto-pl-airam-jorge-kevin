@@ -165,25 +165,27 @@ let semanticAnalisis = function(tree, symbolTable) {
               return x.base;
           }
 
-          let rowBase = symbolTable.search(x.base, ["variable", "parameter", "attribute"]);
+          let search = (x.base.type === "arrayAccess") ? x.base.id : x.base;
+          let rowBase = symbolTable.search(search, ["variable", "parameter", "attribute"]);
           if (rowBase === null)
-            throw "Id " + x.base + " is not declared.";
-          let rowClass = symbolTable.search(rowBase.type, ["class"]);
+            throw "Id " + JSON.stringify(search) + " is not declared.";
+
+          let rowClass = symbolTable.search((x.base.type === "arrayAccess") ? rowBase.type.type : rowBase.type, ["class"]);
           if (rowClass === null)
-            throw "Id " + x.base + " is of type class.";
+            throw "Id " + JSON.stringify(search) + " is not of type class.";
           let symbolTableAux = rowClass.local;
 
           let indice = 0;
-          while(indice < x.access.length) {
+          //let symbolTableAux = symbolTableAux;
+          while(indice < (x.access.length -1)) {
 
             let newClass = symbolTableAux.search(symbolTableAux.search(x.access[indice].id, ["attribute"]).type, ["class"]);
             if (!!newClass) symbolTableAux = newClass.local;
 
             indice += 1;
           }
-          indice -= 1;
-
-          return symbolTableAux.search(x.access[indice].id, ["method", "attribute"], "ITSME").type
+          
+          return symbolTableAux.search(x.access[indice].id, ["method", "attribute"]).type
           break;
         default:
           if (x instanceof Array) {
